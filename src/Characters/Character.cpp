@@ -1,7 +1,7 @@
-#include "Character.hpp"
+#include "Characters/Character.hpp"
 using namespace std ;
 
-Character::Character(const string name , int maxHP , int movement) : 
+Character::Character(const string& name , int maxHP , int movement) : 
     name(name) ,
     maxHp(maxHP) ,
     hp(maxHP)  ,
@@ -38,7 +38,7 @@ int Character::getPosition() const
     return position ;
 }
 
-void Character::setPostirion(int newPosition)
+void Character::setPosition(int newPosition)
 {
     position = newPosition ;
 }

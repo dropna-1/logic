@@ -8,5 +8,6 @@ class DamageEffect : public IEffect
         int damage ;
     public :
         DamageEffect(int damage) ;
+        int getdamage() ;
         void execute(GameContext& context) override ;
 };

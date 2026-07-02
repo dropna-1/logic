@@ -1,0 +1,63 @@
+#include "Cards/Cards.hpp"
+
+Card::Card(const std::string& name,
+           CardType type,
+           FighterType fighter,
+           TriggerType trigger,
+           int value,
+           int boost,
+           const std::string& description)
+    : name(name),
+      type(type),
+      fighter(fighter),
+      trigger(trigger),
+      value(value),
+      boost(boost),
+      description(description)
+{
+}
+
+const std::string& Card::getName() const
+{
+    return name;
+}
+
+CardType Card::getType() const
+{
+    return type;
+}
+
+FighterType Card::getFighter() const
+{
+    return fighter;
+}
+
+TriggerType Card::getTrigger() const
+{
+    return trigger;
+}
+
+int Card::getValue() const
+{
+    return value;
+}
+
+int Card::getBoost() const
+{
+    return boost;
+}
+
+const std::string& Card::getDescription() const
+{
+    return description;
+}
+
+const std::vector<std::shared_ptr<IEffect>>& Card::getEffects() const
+{
+    return effects;
+}
+
+void Card::addEffect(std::shared_ptr<IEffect> effect)
+{
+    effects.push_back(effect);
+}

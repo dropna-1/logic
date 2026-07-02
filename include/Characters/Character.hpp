@@ -13,7 +13,7 @@ class Character
         int position ;
 
     public :
-        Character(const std::string name , int maxHP , int movement) ;
+        Character(const std::string& name , int maxHP , int movement) ;
         
         virtual ~Character() = default ;
 
@@ -21,14 +21,14 @@ class Character
         void heal(int) ;
         bool isAlive() const ;
         int getPosition() const ;
-        void setPostirion(int) ;
+        void setPosition(int) ;
 
         std::string getname() const ; 
         int getMaxhp() const ;
         int getHp() const ;
         int getMovement() const ;
 
-        virtual void printInfo() const ;
+        virtual void printInfo() const = 0 ;
 };
 
 
