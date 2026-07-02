@@ -1,20 +1,41 @@
 #include <algorithm>
+#include <queue>
 #include "Game.hpp"
 
 Game::Game() : self(&drakula), enemy(&Sherlock){}
 
-vector<int> Game::moves(){
+vector<int> Game::moves(int move){
     vector<int> reachable;
-    for(int i : board.getSpace(self->get_position()).neighbors){
-        if(i == enemy->get_position()){continue;}
-        reachable.push_back(i);
-        for(int j : board.getSpace(i).neighbors){
-            if(j == enemy->get_position() || j == self->get_position()){continue;}
-            reachable.push_back(j);
+    queue<pair<int, int>> q;
+    vector<bool> visited(board.size(), false);
+
+    int start = self->get_position();
+    q.push({start, 0});
+    visited[start] = true;
+
+    while(!q.empty()){
+        auto current = q.front();
+        q.pop();
+
+        int place = current.first;
+        int dist = current.second;
+
+        if(dist == move)
+            continue;
+
+        for(int next : board.getSpace(place).neighbors){
+            if(visited[next])
+                continue;
+
+            if(next == enemy->get_position())
+                continue;
+
+            visited[next] = true;
+            reachable.push_back(next);
+            q.push({next, dist+1});
         }
     }
     sort(reachable.begin(), reachable.end());
-    reachable.erase(unique(reachable.begin(), reachable.end()), reachable.end()); 
     return reachable;
 }
 
@@ -31,7 +52,7 @@ void Game::changeTurn(){
 
 int main(){
     Game game;
-    for(int k : game.moves())
+    for(int k : game.moves(2))
         cout << k << endl;
     return 0;
 }

@@ -14,7 +14,7 @@ class Game {
     Hero* enemy;
 public:
     Game();
-    vector<int> moves();
+    vector<int> moves(int move);
     bool canMove(int to, const vector<int>& reachable);
     void changeTurn();
 };

@@ -14,9 +14,6 @@ public:
 class Board {
     vector<Space> spaces;
 public:
-    Space& getSpace(int id){
-        return spaces.at(id);
-    }
     Board(){
         spaces.push_back({{1, 2}, {1}, true});
         spaces.push_back({{0, 4}, {1}, false});
@@ -50,5 +47,11 @@ public:
         spaces.push_back({{17, 28, 30, 31}, {7}, false});
         spaces.push_back({{29, 31}, {7}, false});
         spaces.push_back({{16, 29, 30}, {5, 7}, false});
+    }
+    Space& getSpace(int id){
+        return spaces.at(id);
+    }
+    int size(){
+        return spaces.size();
     }
 };
