@@ -3,20 +3,34 @@
 #include <vector>
 #include "board.hpp"
 #include "include/Characters/Hero.hpp"
+#include "Factory/HeroFactory.hpp"
+#include "Cards/Cards.hpp"
+#include "player.hpp"
 using namespace std;
 
 class Game {
+
     Board board;
-    Hero drakula;
-    Hero Sherlock;
+
+    Player player1;
+    Player player2;
+    
+    shared_ptr<Hero> drakula;
+    shared_ptr<Hero> sherlock;
 
     Hero* self;
     Hero* enemy;
+
 public:
+
     Game();
-    vector<int> moves(const int& move);
+    vector<int> getAvailableMoves(const int& move);
     bool canMove(int to, const vector<int>& reachable);
+    vector<int> free_spaces_for_Sidekicks();
     void changeTurn();
+    void startGame();
     Hero* checkWinner();
     Character* targetEnemy();
+    vector<int> boost(Card& card);
+    
 };

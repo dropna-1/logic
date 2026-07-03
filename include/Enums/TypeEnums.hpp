@@ -28,3 +28,9 @@ enum class FighterType
     Sidekick,
     Any
 };
+
+enum class AttackType
+{
+    Melee , 
+    Ranged 
+};
