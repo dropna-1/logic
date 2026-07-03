@@ -1,9 +1,10 @@
 #include "Characters/SideKick.hpp"
 
-SideKick::SideKick(const std::string& name, int health, int movement) : Character(
-    name, 
-    health, 
-    movement) 
+SideKick::SideKick(const std::string& name, int maxHp, int movement , AttackType attacktype ) : Character(
+    name , 
+    maxHp ,
+    movement,
+    attacktype) 
 {
 }
 

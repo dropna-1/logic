@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 #include "Character.hpp"
-#include "TypeEnums.hpp"
+#include "Enums/TypeEnums.hpp"
 
 class Deck ;
 class SideKick ; 
@@ -21,7 +21,7 @@ class Hero : public Character
         std::shared_ptr<IAbility> ability ;
         std::vector<std::shared_ptr<SideKick>> sidekicks ;
     public :
-        Hero(const std::string& name , int hp , int movement , HeroType type) ;
+        Hero(const std::string& name , int hp , int movement , AttackType attacktype, HeroType type) ;
         HeroType getHeroType() const ;
         std::shared_ptr<Deck> getDeck() ;
         std::shared_ptr<IAbility> getAbility() ;

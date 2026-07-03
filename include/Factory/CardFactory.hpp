@@ -2,12 +2,27 @@
 
 #include <vector>
 #include <memory>
-class Card;
+#include "Cards/Cards.hpp"
+#include "Cards/Deck.hpp"
 
 class CardFactory
 {
-public:
-
-    static std::vector<std::shared_ptr<Card>> createSherlockDeck();
-    static std::vector<std::shared_ptr<Card>> createDraculaDeck();
+    private :
+        static std::shared_ptr<Card> createCard(
+        const std::string& name,
+        CardType type,
+        FighterType fighter,
+        TriggerType trigger,
+        int value,
+        int boost,
+        const std::string& description
+        );
+        static void addCopies(
+        std::shared_ptr<Deck> deck,
+        int count,
+        const std::shared_ptr<Card>& card
+        );
+    public:
+        static std::shared_ptr<Deck> createSherlockDeck();
+        static std::shared_ptr<Deck> createDraculaDeck();
 };

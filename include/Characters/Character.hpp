@@ -2,6 +2,7 @@
 #define CHARACTER_HPP
 
 #include <iostream> 
+#include "Enums/TypeEnums.hpp"
 
 class Character
 {
@@ -11,9 +12,10 @@ class Character
         int hp ; 
         int movement ; 
         int position ;
+        AttackType attackType ;
 
     public :
-        Character(const std::string& name , int maxHP , int movement) ;
+        Character(const std::string& name , int maxHP , int movement  ,AttackType attackType) ;
         
         virtual ~Character() = default ;
 
@@ -27,7 +29,7 @@ class Character
         int getMaxhp() const ;
         int getHp() const ;
         int getMovement() const ;
-
+        AttackType getAttackType() const;
         virtual void printInfo() const = 0 ;
 };
 

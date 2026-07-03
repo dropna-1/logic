@@ -1,7 +1,7 @@
 #include "Characters/Character.hpp"
 using namespace std ;
 
-Character::Character(const string& name , int maxHP , int movement) : 
+Character::Character(const string& name , int maxHP , int movement , AttackType attackType) : 
     name(name) ,
     maxHp(maxHP) ,
     hp(maxHP)  ,
@@ -61,4 +61,9 @@ int Character::getMaxhp() const
 int Character::getMovement() const
 {
     return movement;
+}
+
+AttackType Character::getAttackType() const
+{
+    return attackType ;
 }
