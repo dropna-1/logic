@@ -4,33 +4,50 @@
 #include "Game.hpp"
 #include "Cards/Deck.hpp"
 
-Game::Game() : drakula(HeroFactory::createDracula())
+Game::Game() : dracula(HeroFactory::createDracula())
 , sherlock(HeroFactory::createSherlock()){}
 
+void Game::setPlayer1(const string& name, const int& age){
+    player1.setName(name);
+    player1.setAge(age);
+}
+
+void Game::setPlayer2(const string& name, const int& age){
+    player2.setName(name);
+    player2.setAge(age);
+}
+
+Player* Game::getFirstPlayer(){
+    if(player1.getAge() <= player2.getAge())
+        return &player1;
+    return &player2;
+}
+
+void Game::choiceHero(Player& player, HeroType choice){
+    player.setHero((choice == dracula.get()->getHeroType() ? dracula : sherlock));
+}
+
 void Game::startGame(){
-    string p1Name, p2Name;
-    int p1Age, p2Age;
-
-    cout << "Player1:\nEnter Your Name" << endl;
-    cin >> p1Name;
-    cout << "Enter Your Age" << endl;
-    cin >> p1Age;
-
-
-    player1.setName(p1Name);
-    player1.setAge(p1Age);
-
-    cout << "Player2:\nEnter Your Name" << endl;
-    cin >> p2Name;
-    cout << "Enter Your Age" << endl;
-    cin >> p2Age;
-
-    player2.setName(p2Name);
-    player2.setAge(p2Age);
-
-
+    if(player1.getAge() <= player2.getAge()){
+        self = player1.getHero().get();
+        enemy = player2.getHero().get();
+    }
+    else{
+        enemy = player1.getHero().get();
+        self = player2.getHero().get();
+    }
     for(int i = 0; i < 10; i++)
         (i < 5 ? self : enemy)->getDeck().get()->drawCard();
+}
+
+Player* Game::getCurrentPlayer(){
+    if(self == player1.getHero().get())
+        return &player1;
+    return &player2;
+}
+
+Board& Game::getBoard(){
+    return board;
 }
 
 vector<int> Game::getAvailableMoves(const int& move){
@@ -81,6 +98,10 @@ bool Game::canMove(int to, const vector<int>& reachable){
     return false;
 }
 
+void Game::move(const int& pos){
+    self->setPosition(pos);
+}
+
 vector<int> Game::free_spaces_for_Sidekicks(){
     vector<int> reachable;
     for(int zone : board.getSpace(self->getPosition()).zone){
@@ -112,7 +133,7 @@ Character* Game::targetEnemy(){
         if(enemy->getPosition() == i)
             return enemy;
         for(auto j : enemy->getSidekicks())
-            if(j.get()->getPosition() == i)
+            if(j->getPosition() == i)
                 return j.get();
     }
     return nullptr;

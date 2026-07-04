@@ -15,7 +15,7 @@ class Game {
     Player player1;
     Player player2;
     
-    shared_ptr<Hero> drakula;
+    shared_ptr<Hero> dracula;
     shared_ptr<Hero> sherlock;
 
     Hero* self;
@@ -32,5 +32,12 @@ public:
     Hero* checkWinner();
     Character* targetEnemy();
     vector<int> boost(Card& card);
+    void setPlayer1(const string& name, const int& age);
+    void setPlayer2(const string& name, const int& age);
+    Player* getCurrentPlayer();
+    Player* getFirstPlayer();
+    void choiceHero(Player& player, HeroType choice);
+    Board& getBoard();
+    void move(const int& pos);
     
 };
