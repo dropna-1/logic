@@ -28,6 +28,7 @@ void Game::choiceHero(Player& player, HeroType choice){
 }
 
 void Game::startGame(){
+    actionsRemaining = 2;
     if(player1.getAge() <= player2.getAge()){
         self = player1.getHero().get();
         enemy = player2.getHero().get();
@@ -48,6 +49,17 @@ Player* Game::getCurrentPlayer(){
 
 Board& Game::getBoard(){
     return board;
+}
+
+bool Game::useAction(){
+    if(actionsRemaining == 0)
+        return false;
+    actionsRemaining--;
+    return true;
+}
+
+int Game::getRemainingActions() const{
+    return actionsRemaining;
 }
 
 vector<int> Game::getAvailableMoves(const int& move){
@@ -96,6 +108,24 @@ bool Game::canMove(int to, const vector<int>& reachable){
         if(to == i)
             return true;
     return false;
+}
+
+const vector<string>& Game::get_Avalable_Attack_Cards(){
+    vector<string> availableCards;
+    for(auto card : self->getDeck().get()->getHand())
+        if(card.get()->getType() == CardType::Attack 
+        || card.get()->getType() == CardType::Multiple)
+            availableCards.push_back(card.get()->getName());
+    return availableCards;
+}
+
+const vector<string>& Game::get_Avalable_Defence_Cards(){
+    vector<string> availableCards;
+    for(auto card : self->getDeck().get()->getHand())
+        if(card.get()->getType() == CardType::Defend 
+        || card.get()->getType() == CardType::Multiple)
+            availableCards.push_back(card.get()->getName());
+    return availableCards;
 }
 
 void Game::move(const int& pos){

@@ -21,6 +21,8 @@ class Game {
     Hero* self;
     Hero* enemy;
 
+    int actionsRemaining = 2;
+
 public:
 
     Game();
@@ -34,10 +36,16 @@ public:
     vector<int> boost(Card& card);
     void setPlayer1(const string& name, const int& age);
     void setPlayer2(const string& name, const int& age);
+    const vector<string>& get_Avalable_Attack_Cards();
+    const vector<string>& get_Avalable_Defence_Cards();
     Player* getCurrentPlayer();
     Player* getFirstPlayer();
     void choiceHero(Player& player, HeroType choice);
     Board& getBoard();
     void move(const int& pos);
+    bool useAction();
+    int getRemainingActions() const;
+    vector<Character*> getAttackableTargets();
+    void combat(const string& attackCard, const string& defendCard);
     
 };
