@@ -2,6 +2,7 @@
 #include "Ability/IAbility.hpp"
 #include "Cards/Deck.hpp"
 #include "Characters/SideKick.hpp"
+using namespace std; 
 
 #include <iostream> 
 using namespace std ;
@@ -19,32 +20,32 @@ HeroType Hero::getHeroType() const
     return herotype;
 }
 
-std::shared_ptr<Deck> Hero::getDeck()
+shared_ptr<Deck> Hero::getDeck()
 {
     return deck;
 }
 
-std::shared_ptr<IAbility> Hero::getAbility()
+shared_ptr<IAbility> Hero::getAbility()
 {
     return ability;
 }
 
-std::vector<std::shared_ptr<SideKick>>& Hero::getSidekicks()
+vector<shared_ptr<SideKick>>& Hero::getSidekicks()
 {
     return sidekicks;
 }
 
-void Hero::setDeck(std::shared_ptr<Deck> deck)
+void Hero::setDeck(shared_ptr<Deck> deck)
 {
     this->deck = deck;
 }
 
-void Hero::setAbility(std::shared_ptr<IAbility> ability)
+void Hero::setAbility(shared_ptr<IAbility> ability)
 {
     this->ability = ability;
 }
 
-void Hero::addSidekick(std::shared_ptr<SideKick> sidekick)
+void Hero::addSidekick(shared_ptr<SideKick> sidekick)
 {
     sidekicks.push_back(sidekick);
 }
@@ -63,30 +64,34 @@ bool Hero::hasAliveSidekicks() const
 
 void Hero::printInfo() const
 {
-    std::cout << "=========================\n";
-    std::cout << "Hero : " << name << '\n';
-    std::cout << "HP : " << hp << "/" << maxHp << '\n';
-    std::cout << "Movement : " << movement << '\n';
+    cout << "=========================\n";
+    cout << "Hero : " << name << '\n';
+    cout << "HP : " << hp << "/" << maxHp << '\n';
+    cout << "Movement : " << movement << '\n';
 
-    std::cout << "Attack Type : ";
+    cout << "Attack Type : ";
 
     if (attackType == AttackType::Melee)
-        std::cout << "Melee\n";
+        cout << "Melee\n";
     else
-        std::cout << "Ranged\n";
+        cout << "Ranged\n";
 
-    std::cout << "Sidekicks : " << sidekicks.size() << '\n';
+    cout << "Sidekicks : " << sidekicks.size() << '\n';
 
     if (ability)
-        std::cout << "Ability Loaded\n";
+        cout << "Ability Loaded\n";
     else
-        std::cout << "No Ability\n";
+        cout << "No Ability\n";
 
     if (deck)
-        std::cout << "Deck Loaded\n";
+        cout << "Deck Loaded\n";
     else
-        std::cout << "No Deck\n";
+        cout << "No Deck\n";
 
-    std::cout << "=========================\n";
+    cout << "=========================\n";
 }
             
+bool Hero::isHero() const
+{
+    return true ;
+}

@@ -1,12 +1,13 @@
 #include "Cards/Cards.hpp"
+using namespace std ;
 
-Card::Card(const std::string& name,
+Card::Card(const string& name,
            CardType type,
            FighterType fighter,
            TriggerType trigger,
            int value,
            int boost,
-           const std::string& description)
+           const string& description)
     : name(name),
       type(type),
       fighter(fighter),
@@ -17,7 +18,7 @@ Card::Card(const std::string& name,
 {
 }
 
-const std::string& Card::getName() const
+const string& Card::getName() const
 {
     return name;
 }
@@ -47,17 +48,17 @@ int Card::getBoost() const
     return boost;
 }
 
-const std::string& Card::getDescription() const
+const string& Card::getDescription() const
 {
     return description;
 }
 
-const std::vector<std::shared_ptr<IEffect>>& Card::getEffects() const
+const vector<std::shared_ptr<IEffect>>& Card::getEffects() const
 {
     return effects;
 }
 
-void Card::addEffect(std::shared_ptr<IEffect> effect)
+void Card::addEffect(shared_ptr<IEffect> effect)
 {
     effects.push_back(effect);
 }

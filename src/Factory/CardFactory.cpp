@@ -1,5 +1,5 @@
 #include "Factory/CardFactory.hpp"
-#include "Effects/DamageEffect.hpp"
+#include "Effects/Effects.hpp"
 using namespace std ;
 
 shared_ptr<Card> CardFactory::createCard(

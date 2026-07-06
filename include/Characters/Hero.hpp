@@ -31,6 +31,7 @@ class Hero : public Character
         void addSidekick(std::shared_ptr<SideKick> sidekick) ;
         void printInfo() const override ;
         bool hasAliveSidekicks() const;
+        bool isHero() const override ; 
 };
 
 #endif 

@@ -18,6 +18,7 @@ class Character
         Character(const std::string& name , int maxHP , int movement  ,AttackType attackType) ;
         
         virtual ~Character() = default ;
+        virtual bool isHero() const; 
 
         void takeDamage(int) ; 
         void heal(int) ;
