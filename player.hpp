@@ -1,18 +1,19 @@
 #pragma once
 #include <iostream>
+#include <memory>
 #include "include/Characters/Hero.hpp"
 using namespace std;
 
 class Player {
     string name;
     int age;
-    Hero* hero = nullptr;
+    shared_ptr<Hero> hero;
 public:
     Player() = default;
-    void setHero(const Hero& h);
+    void setHero(shared_ptr<Hero> hero);
     void setName(const string& n);
     void setAge(const int& a);
-    Hero* getHero();
+    shared_ptr<Hero> getHero();
     int getAge();
     string getName();
 };

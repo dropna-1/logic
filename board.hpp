@@ -48,10 +48,10 @@ public:
         spaces.push_back({{29, 31}, {7}});
         spaces.push_back({{16, 29, 30}, {5, 7}});
     }
-    Space& getSpace(int id){
+    const Space& getSpace(int id) const{
         return spaces.at(id);
     }
-    int size(){
+    int size() const{
         return spaces.size();
     }
 };

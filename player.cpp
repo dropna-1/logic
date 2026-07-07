@@ -1,7 +1,7 @@
 #include "player.hpp"
 
-void Player::setHero(const Hero& h){
-    *hero = h;
+void Player::setHero(shared_ptr<Hero> hero){
+    this->hero = hero;
 }
 
 void Player::setName(const string& n){
@@ -12,7 +12,7 @@ void Player::setAge(const int& a){
     this->age = a;
 }
 
-Hero* Player::getHero(){
+shared_ptr<Hero> Player::getHero(){
     return hero;
 }
 

@@ -8,6 +8,11 @@
 #include "player.hpp"
 using namespace std;
 
+struct AttackOption {
+    Character* attacker;
+    Character* target;
+};
+
 class Game {
 
     Board board;
@@ -15,16 +20,18 @@ class Game {
     Player player1;
     Player player2;
     
-    shared_ptr<Hero> drakula;
+    shared_ptr<Hero> dracula;
     shared_ptr<Hero> sherlock;
 
-    Hero* self;
-    Hero* enemy;
+    Player* currentPlayer;
+    Player* otherPlayer;
+
+    int actionsRemaining = 2;
 
 public:
 
     Game();
-    vector<int> getAvailableMoves(const int& move);
+    vector<int> getAvailableMoves(Character* character, const int& move);
     bool canMove(int to, const vector<int>& reachable);
     vector<int> free_spaces_for_Sidekicks();
     void changeTurn();
@@ -32,5 +39,20 @@ public:
     Hero* checkWinner();
     Character* targetEnemy();
     vector<int> boost(Card& card);
+    void setPlayer1(const string& name, const int& age);
+    void setPlayer2(const string& name, const int& age);
+    Player* getCurrentPlayer();
+    Player* getFirstPlayer();
+    void choiceHero(Player& player, HeroType choice);
+    Board& getBoard();
+    void move(Character* character, const int& pos);
+    bool useAction();
+    int getRemainingActions() const;
+    vector<Character*> getAttackableTargets();
+    int calculateDamage(Card* attack, Card* defense);
+    vector<Card*> getPlayableAttackCard(Character* attacker);
+    vector<Card*> getPlayableDefenseCard(Character* defender);
+    void combat(AttackOption option, const int& attackCardIndex, 
+        const int& defenseCardIndex);
     
 };
