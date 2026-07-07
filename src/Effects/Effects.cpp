@@ -4,23 +4,23 @@ DamageEffect::DamageEffect(int damage) : damage(damage)
 {
 }
 
-void DamageEffect::execute(GameContext& context, Card& card)
+void DamageEffect::execute(GameContext& context, const vector<Character*>& targets)
 {
-    if(context.getTarget())
+    for(auto character : targets)
     {
-        context.getTarget()->takeDamage(damage);
+        character->takeDamage(damage);
     }
 }
 
-HealEffect::HealEffect(int heal) : heal(heal) 
+HealEffect::HealEffect(int heal) : heal(heal)
 {
 }
 
-void HealEffect::execute(GameContext& context, Card& card)
+void HealEffect::execute(GameContext& context,const vector<Character*>& targets)
 {
-    if(context.getTarget())
+    for(auto character : targets)
     {
-        context.getTarget()->heal(heal);
+        character->heal(heal);
     }
 }
 
@@ -28,9 +28,9 @@ DrawCardEffect::DrawCardEffect(int count) : count(count)
 {
 }
 
-void DrawCardEffect::execute(GameContext& context, Card& card)
+void DrawCardEffect::execute(GameContext& context, const vector<Character*>& targets )
 {
-    auto deck = context.getCurrentHero()->getDeck() ;
+    auto deck = context.currentPlayer->getHero()->getDeck() ;
     for(int i = 0 ; i < count ; i++)
     {
         deck->drawCard() ;

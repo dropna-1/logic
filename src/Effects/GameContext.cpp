@@ -1,33 +1,33 @@
 #include "Effects/GameContext.hpp"
+using namespace std ;
 
-GameContext::GameContext(Hero* currentHero , Hero* enemyHero , Board* Board) : 
-    currenthero(currentHero) , 
-    enemyhero(enemyHero) , 
-    board(Board) 
+vector<Character*> GameContext::getTargets(EffectTarget target)
 {
-}
-
-Hero* GameContext::getCurrentHero() const
-{
-    return currenthero ;
-}
-
-Hero* GameContext::getenemyHero() const 
-{
-    return enemyhero ;
-}
-
-Board* GameContext::getBoard() const
-{
-    return board ;
-}
-
-Character* GameContext::getTarget() const
-{
-    return currenttarget ;
-}
-
-void GameContext::setTarget(Character* target)
-{
-    currenttarget = target;
+    switch(target)
+    {
+        case EffectTarget::FriendlyHero :
+        {
+            return {currentPlayer->getHero()};
+        }
+        case EffectTarget::FriendlyCharacters:
+        {
+            return currentPlayer->getAllCharacters();
+        }
+        case EffectTarget::EnemyCharacters:
+        {
+            return enemyPlayer->getAllCharacters();
+        }
+        case EffectTarget::Attacker:
+        {
+            return { attacker };
+        }
+        case EffectTarget::Defender:
+        {
+            return { defender };
+        }
+        default:
+        {
+            return {};
+        }
+    }
 }
