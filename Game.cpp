@@ -144,7 +144,7 @@ vector<Card*> Game::getPlayableAttackCard(Character* attacker){
     vector<Card*> playableCards;
     for(auto card : currentPlayer->getHero().get()->getDeck().get()->getHand())
         if(card.get()->getType() == CardType::Attack || 
-        card.get()->getType() == CardType::Multiple){
+        card.get()->getType() == CardType::Versalite){
 
             if(card.get()->getFighter() == FighterType::Any)
                 playableCards.push_back(card.get());
@@ -164,7 +164,7 @@ vector<Card*> Game::getPlayableDefenseCard(Character* defender){
     vector<Card*> playableCards;
     for(auto card : otherPlayer->getHero().get()->getDeck().get()->getHand())
         if(card.get()->getType() == CardType::Defend || 
-        card.get()->getType() == CardType::Multiple){
+        card.get()->getType() == CardType::Versalite){
 
             if(card.get()->getFighter() == FighterType::Any)
                 playableCards.push_back(card.get());

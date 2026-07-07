@@ -50,3 +50,15 @@ enum class EffectTarget
     Defender ,
     None
 };
+
+enum class ConditionTarget
+{
+    FriendlyHero,
+    EnemyHero,
+    FriendlySidekicks,
+    EnemySidekicks,
+    FriendlyCharacters,
+    EnemyCharacters,
+    Attacker,
+    Defender
+};

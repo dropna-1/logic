@@ -30,7 +30,7 @@ DrawCardEffect::DrawCardEffect(int count) : count(count)
 
 void DrawCardEffect::execute(GameContext& context, const vector<Character*>& targets )
 {
-    auto deck = context.currentPlayer->getHero()->getDeck() ;
+    auto deck = context.getCurrentPlayer()->getHero()->getDeck() ;
     for(int i = 0 ; i < count ; i++)
     {
         deck->drawCard() ;

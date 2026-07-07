@@ -60,7 +60,7 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
     auto ServiceRevolver = createCard(
         "Service Revolver" , 
         CardType::Attack , 
-        FighterType::Sidekick , 
+        FighterType::Sidekick ,     
         TriggerType::None ,  
         5 , 
         3 ,
@@ -68,15 +68,19 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
     ) ;
     addCopies(deck , 2 , ServiceRevolver) ;
 
-
-
-    /*auto FPIACA = createCard(
+    auto FPIACA = createCard(
         "Fixed Point In A Changing Age" , 
         CardType::Versalite ,
         FighterType::Sidekick , 
         TriggerType::AfterCombat , 
-        EffectTarget::
-    );*/
+        3 , 
+        1 ,
+        "AFTER COMBAT: if Dr.watson is adjacent to Holmes, they each recover 1 health"
+    );
+    FPIACA->addEffect(
+        TriggerType::AfterCombat , EffectTarget::FriendlyCharacters , make_shared<AdjacentCondition>(
+            ConditionTarget::FriendlyHero , ConditionTarget::FriendlySidekicks) , make_shared<HealEffect>(1));
+    addCopies(deck , 2 , FPIACA) ;
 
     deck->shuffleDeck();
     return deck ;

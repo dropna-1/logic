@@ -8,7 +8,12 @@ bool areAdjacent(const Board* board , const Character* first , const Character* 
 bool areInSameZone(const Board* board , const Character* first , const Character* Second) ;
 //bool IsInZone(const Board* board , const Character* first , int zone) ;
 
-class AdjacentCondition : IConditions
+class AdjacentCondition : public IConditions
 {
-    bool check(GameContext& context) const override ;
+    private :
+        ConditionTarget first ;
+        ConditionTarget Second ;
+    public :
+        AdjacentCondition(ConditionTarget first , ConditionTarget Second) ;
+        bool check(GameContext& context) const override ;
 };

@@ -22,8 +22,24 @@ bool areInSameZone(Board* board , const Character* first , const Character* Seco
     return false ; 
 }
 
+AdjacentCondition::AdjacentCondition(ConditionTarget first , ConditionTarget Second) : first(first) , Second(Second) 
+{
+}
+
 bool AdjacentCondition::check(GameContext& context) const
 {
-    return areAdjacent(context.board , context.currentPlayer->getHero() , context.enemyPlayer->getHero()); 
+    auto FirstTarget = context.resolve(first) ;
+    auto SecondTarget = context.resolve(Second) ;
+    for(auto* c1 : FirstTarget)
+    {
+        for (auto* c2 : SecondTarget)
+        {
+            if(areAdjacent(context.getBoard() , c1 , c2)) 
+            {
+                return true ;
+            }
+        }
+    }
+    return false ;
 }
 
