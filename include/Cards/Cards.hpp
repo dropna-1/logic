@@ -5,29 +5,39 @@
 #include <vector> 
 #include <memory>
 #include "Enums/TypeEnums.hpp"
+#include "Effects/IConditions.hpp"
 
 class IEffect ;
+
+
+struct EffectEntry
+{
+    TriggerType trigger ;
+    EffectTarget target ;
+    std::shared_ptr<IConditions> condition;
+    std::shared_ptr<IEffect> effect ;
+};
 
 class Card 
 {
     private:
         std::string name ; 
         CardType type ; 
-        FighterType fighter ;
         TriggerType trigger ;
+        FighterType fighter ;
         int value ;
         int boost ;
         std::string description ;
-        std::vector<std::shared_ptr<IEffect>> effects ;
+        std::vector<EffectEntry> effects ;
     public :
         Card(const std::string& name,
             CardType type,
             FighterType fighter,
-            TriggerType trigger,
+            TriggerType trigger , 
             int value,
             int boost ,
             const std::string& description);
-    void addEffect(std::shared_ptr<IEffect> effect);
+    void addEffect(TriggerType , EffectTarget , std::shared_ptr<IConditions> , shared_ptr<IEffect>) ;
     const std::string& getName() const;
     int getValue() const;
     int getBoost() const;

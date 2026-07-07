@@ -16,4 +16,5 @@ public:
     shared_ptr<Hero> getHero();
     int getAge();
     string getName();
+    vector<Character*> getAllCharacters();
 };

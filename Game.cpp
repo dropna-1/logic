@@ -144,7 +144,7 @@ vector<Card*> Game::getPlayableAttackCard(Character* attacker){
     vector<Card*> playableCards;
     for(auto card : currentPlayer->getHero().get()->getDeck().get()->getHand())
         if(card.get()->getType() == CardType::Attack || 
-        card.get()->getType() == CardType::Multiple){
+        card.get()->getType() == CardType::Versalite){
 
             if(card.get()->getFighter() == FighterType::Any)
                 playableCards.push_back(card.get());
@@ -164,7 +164,7 @@ vector<Card*> Game::getPlayableDefenseCard(Character* defender){
     vector<Card*> playableCards;
     for(auto card : otherPlayer->getHero().get()->getDeck().get()->getHand())
         if(card.get()->getType() == CardType::Defend || 
-        card.get()->getType() == CardType::Multiple){
+        card.get()->getType() == CardType::Versalite){
 
             if(card.get()->getFighter() == FighterType::Any)
                 playableCards.push_back(card.get());
@@ -214,17 +214,25 @@ Hero* Game::checkWinner(){
     return nullptr;
 }
 
-Character* Game::targetEnemy(){
-    for(int i : board.getSpace(currentPlayer->getHero()->getPosition()).neighbors){
-        if(otherPlayer->getHero()->getPosition() == i)
-            return otherPlayer->getHero().get();
 
-        for(auto j : otherPlayer->getHero()->getSidekicks())
-            if(j->getPosition() == i)
-                return j.get();
-    }
-    return nullptr;
+vector<AttackOption>& Game::getAttackableTargets(){
+
+    vector<AttackOption> targets;
+    for(Character* self : currentPlayer->getAllCharacters())
+        for(int neighbor : board.getSpace(self->getPosition()).neighbors)
+            for(Character* enemy : otherPlayer->getAllCharacters())
+                if(neighbor == enemy->getPosition())
+                    targets.push_back({self, enemy});
+
+    return targets;
 }
+
+
+int Game::boost(Card& card){
+    return currentPlayer->getHero().get()->getMovement() 
+    + card.getBoost();
+}
+
 
 void Game::combat(AttackOption option, const int& attackCardIndex, 
     const int& defenseCardIndex){
@@ -232,7 +240,8 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
 
     int damage = calculateDamage(
         currentPlayer->getHero().get()->getDeck().get()->getHand().at(attackCardIndex).get(),
-        otherPlayer->getHero().get()->getDeck().get()->getHand().at(defenseCardIndex).get());
+        otherPlayer->getHero().get()->getDeck().get()->getHand().at(defenseCardIndex).get()
+    );
 
     if(damage != 0)
         option.target->takeDamage(damage);

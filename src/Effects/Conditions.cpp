@@ -1,0 +1,45 @@
+#include "Effects/Conditions.hpp"
+#include <algorithm>
+using namespace std; 
+
+bool areAdjacent( Board* board , const Character* first , const Character* Second) 
+{
+    const auto& neighbors = board->getSpace(first->getPosition()).neighbors ;
+    return (find(neighbors.begin(), neighbors.end() , Second->getPosition()) != neighbors.end()) ;
+}
+
+bool areInSameZone(Board* board , const Character* first , const Character* Second)
+{
+    const auto& firstZone = board->getSpace(first->getPosition()).zone;
+    const auto& SecondZone = board->getSpace(Second->getPosition()).zone ; 
+    for(int zone : firstZone)
+    {
+        if(find(SecondZone.begin() , SecondZone.end() , zone) != SecondZone.end())
+        {
+            return true ;
+        }
+    }
+    return false ; 
+}
+
+AdjacentCondition::AdjacentCondition(ConditionTarget first , ConditionTarget Second) : first(first) , Second(Second) 
+{
+}
+
+bool AdjacentCondition::check(GameContext& context) const
+{
+    auto FirstTarget = context.resolve(first) ;
+    auto SecondTarget = context.resolve(Second) ;
+    for(auto* c1 : FirstTarget)
+    {
+        for (auto* c2 : SecondTarget)
+        {
+            if(areAdjacent(context.getBoard() , c1 , c2)) 
+            {
+                return true ;
+            }
+        }
+    }
+    return false ;
+}
+

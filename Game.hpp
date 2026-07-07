@@ -37,8 +37,7 @@ public:
     void changeTurn();
     void startGame();
     Hero* checkWinner();
-    Character* targetEnemy();
-    vector<int> boost(Card& card);
+    int boost(Card& card);
     void setPlayer1(const string& name, const int& age);
     void setPlayer2(const string& name, const int& age);
     Player* getCurrentPlayer();
@@ -48,7 +47,7 @@ public:
     void move(Character* character, const int& pos);
     bool useAction();
     int getRemainingActions() const;
-    vector<Character*> getAttackableTargets();
+    vector<AttackOption>& getAttackableTargets();
     int calculateDamage(Card* attack, Card* defense);
     vector<Card*> getPlayableAttackCard(Character* attacker);
     vector<Card*> getPlayableDefenseCard(Character* defender);

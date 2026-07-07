@@ -10,7 +10,7 @@ class DamageEffect : public IEffect
         int damage ;
     public :
         DamageEffect(int damage) ;
-        void execute(GameContext& context , Card& card) override ;
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
 
 class DrawCardEffect : public IEffect
@@ -19,16 +19,16 @@ class DrawCardEffect : public IEffect
         int count ;
     public:
         DrawCardEffect(int count);
-        void execute(GameContext& context , Card& card) override ;
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
 
 class HealEffect : public IEffect
-{
+{   
     private:
         int heal;
     public:
         HealEffect(int heal);
-        void execute(GameContext& context , Card& card) override ;
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
 
 class MoveEffect : public IEffect

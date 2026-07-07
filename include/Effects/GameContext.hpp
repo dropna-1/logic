@@ -1,21 +1,25 @@
 #pragma once
 
 #include "Characters/Hero.hpp"
+#include "Characters/SideKick.hpp"
 #include "board.hpp"
+#include "player.hpp"
 
 class GameContext
 {
     private :
-        Hero* currenthero ; 
-        Hero* enemyhero ;
-        Board* board ;
-        Character* currenttarget ;
+        Player* currentPlayer ;
+        Player* enemyPlayer;
+        Character* attacker;
+        Character* defender;
+        Board* board;
     public :
-        GameContext(Hero* , Hero* , Board*) ;
-        Hero* getCurrentHero() const ;
-        Hero* getenemyHero() const ;
+        GameContext(Player* , Player*, Character* , Character* , Board* );
+        Player* getCurrentPlayer() const ;
+        Player* getEnemyPlayer() const ;
+        Character* getAttacker() const ;
+        Character* getDefender() const ; 
         Board* getBoard() const ;
-        Character* getTarget() const ;
-        void setTarget(Character*) ; 
-
+        std::vector<Character*> getTargets(EffectTarget target);
+        std::vector<Character*> resolve(ConditionTarget target) const;
 };
