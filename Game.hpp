@@ -48,6 +48,7 @@ public:
     bool canMove(int to, const vector<int>& reachable);
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
+    bool canManever(vector<int> availableMoves) const;
     /*------------------------------------------------------------------*/
     bool useAction();
     int getRemainingActions() const;
@@ -55,8 +56,13 @@ public:
     vector<AttackOption>& getAttackableTargets();
     vector<Card*> getPlayableAttackCard(Character* attacker);
     vector<Card*> getPlayableDefenseCard(Character* defender);
+    bool canDefense(vector<Card*> playableDefenseCard) const;
+    bool canAttack(vector<Card*> playableAttackCard,
+        vector<AttackOption> targets) const;
     /*------------------------------------------------------------------*/
     void playScheme(Character* source, const int& schemeCardIndex);
+    vector<Card*> getSchemeCards(Character* character);
+    bool canPlayScheme(vector<Card*> playableSchemeCard) const;
     /*------------------------------------------------------------------*/
     int calculateDamage(Card* attack, Card* defense);
     void combat(AttackOption option, const int& attackCardIndex, 

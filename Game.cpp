@@ -132,6 +132,13 @@ void Game::move(Character* character, const int& pos){
 }
 
 
+bool Game::canManever(vector<int> availableMoves) const{
+    if(availableMoves.empty())
+        return false;
+    return true;
+}
+
+
 int Game::calculateDamage(Card* attack, Card* defense){
     if(defense == nullptr)
         return attack->getValue();
@@ -141,9 +148,10 @@ int Game::calculateDamage(Card* attack, Card* defense){
 }
 
 
-vector<Card*> Game::getPlayableAttackCard(Character* attacker){
-
+vector<Card*> Game::getPlayableAttackCard(Character* attacker)
+{
     vector<Card*> playableCards;
+    bool ishero = attacker->isHero();
     for(auto card : currentPlayer->getHero().get()->getDeck().get()->getHand())
 
         if(card.get()->getType() == CardType::Attack || 
@@ -151,18 +159,19 @@ vector<Card*> Game::getPlayableAttackCard(Character* attacker){
         {
             if(card.get()->getFighter() == FighterType::Any)
                 playableCards.push_back(card.get());
-            else if(attacker->isHero() && card.get()->getFighter() == FighterType::Hero)
+            else if(ishero && card.get()->getFighter() == FighterType::Hero)
                 playableCards.push_back(card.get());
-            else if(!attacker->isHero() && card.get()->getFighter() == FighterType::Sidekick)
+            else if(!ishero && card.get()->getFighter() == FighterType::Sidekick)
                 playableCards.push_back(card.get()); 
         }
     return playableCards;
 }
 
 
-vector<Card*> Game::getPlayableDefenseCard(Character* defender){
-
+vector<Card*> Game::getPlayableDefenseCard(Character* defender)
+{
     vector<Card*> playableCards;
+    bool ishero = defender->isHero();
     for(auto card : otherPlayer->getHero().get()->getDeck().get()->getHand())
     
         if(card.get()->getType() == CardType::Defend || 
@@ -170,9 +179,26 @@ vector<Card*> Game::getPlayableDefenseCard(Character* defender){
         {
             if(card.get()->getFighter() == FighterType::Any)
                 playableCards.push_back(card.get());
-            else if(defender->isHero() && card.get()->getFighter() == FighterType::Hero)
+            else if(ishero && card.get()->getFighter() == FighterType::Hero)
                 playableCards.push_back(card.get());
-            else if(!defender->isHero() && card.get()->getFighter() == FighterType::Sidekick)
+            else if(!ishero && card.get()->getFighter() == FighterType::Sidekick)
+                playableCards.push_back(card.get());
+        }
+    return playableCards;
+}
+
+
+vector<Card*> Game::getSchemeCards(Character* character)
+{
+    vector<Card*> playableCards;
+    bool ishero = character->isHero();
+    for(auto card : otherPlayer->getHero().get()->getDeck().get()->getHand())
+
+        if(card.get()->getType() == CardType::Scheme)
+        {
+            if(ishero && card.get()->getFighter() == FighterType::Hero)
+                playableCards.push_back(card.get());
+            else if(!ishero && card.get()->getFighter() == FighterType::Sidekick)
                 playableCards.push_back(card.get());
         }
     return playableCards;
@@ -182,7 +208,7 @@ vector<Card*> Game::getPlayableDefenseCard(Character* defender){
 vector<int> Game::getSidekickPlacement(){
 
     vector<int> reachable;
-    for(int zone : board.getSpace(currentPlayer->getHero()->getPosition()).zone){
+    for(int zone : board.getSpace(currentPlayer->getHero()->getPosition()).zone)
         for(int i = 0; i < 32; i++)
         {
             if(i == currentPlayer->getHero()->getPosition())
@@ -191,7 +217,6 @@ vector<int> Game::getSidekickPlacement(){
             if(find(zones.begin(), zones.end(), zone) != zones.end())
                 reachable.push_back(i);
         }
-    }
     return reachable;
 }
 
@@ -218,8 +243,23 @@ vector<AttackOption>& Game::getAttackableTargets()
             for(Character* enemy : otherPlayer->getAllCharacters())
                 if(neighbor == enemy->getPosition())
                     targets.push_back({self, enemy});
-
     return targets;
+}
+
+
+bool Game::canAttack(vector<Card*> playableAttackCard,
+    vector<AttackOption> targets) const
+{
+    if(playableAttackCard.empty() || targets.empty())
+        return false;
+    return true;
+}
+
+
+bool Game::canDefense(vector<Card*> playableDefenseCard) const{
+    if(playableDefenseCard.empty())
+        return false;
+    return true;
 }
 
 
@@ -233,6 +273,13 @@ int Game::boost(Character* self, vector<int>& cards){
         .get()->discardFromHand(cardIndex);
     }
     return movement;
+}
+
+
+bool Game::canPlayScheme(vector<Card*> playableSchemeCard) const{
+    if(playableSchemeCard.empty())
+        return false;
+    return true;
 }
 
 
@@ -255,7 +302,6 @@ void Game::playScheme(Character* source, const int& schemeCardIndex)
 }
 
 
-
 void Game::combat(AttackOption option, const int& attackCardIndex, 
     const int& defenseCardIndex){
 
@@ -276,19 +322,19 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
     int damage = calculateDamage(attackCard.get(), defenseCard.get());
 
     /*immediate*/
-    attackCard->execute(TriggerType::Immediately, context);
     defenseCard->execute(TriggerType::Immediately, context);
+    attackCard->execute(TriggerType::Immediately, context);
+
+    /*during*/
+    defenseCard->execute(TriggerType::DuringCombat, context);
+    attackCard->execute(TriggerType::DuringCombat, context);
 
     if(damage != 0)
         option.target->takeDamage(damage);
     
-    /*during*/
-    attackCard->execute(TriggerType::DuringCombat, context);
-    defenseCard->execute(TriggerType::DuringCombat, context);
-
     /*after*/
-    attackCard->execute(TriggerType::AfterCombat, context);
     defenseCard->execute(TriggerType::AfterCombat, context);
+    attackCard->execute(TriggerType::AfterCombat, context);
 
     /*discard*/
     currentPlayer->getHero().get()->getDeck()
