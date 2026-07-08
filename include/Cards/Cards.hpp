@@ -6,8 +6,7 @@
 #include <memory>
 #include "Enums/TypeEnums.hpp"
 #include "Effects/IConditions.hpp"
-
-class IEffect ;
+#include "Effects/IEffects.hpp"
 
 
 struct EffectEntry
@@ -45,7 +44,8 @@ class Card
     FighterType getFighter() const;
     TriggerType getTrigger() const;
     const std::string& getDescription() const ;
-    const std::vector<std::shared_ptr<IEffect>>& getEffects() const;
+    const std::vector<EffectEntry>& getEffects() const;
+    void execute(TriggerType , GameContext&) ;
             
 };
 

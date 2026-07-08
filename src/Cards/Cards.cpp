@@ -53,12 +53,32 @@ const string& Card::getDescription() const
     return description;
 }
 
-/*const vector<std::shared_ptr<IEffect>>& Card::getEffects() const
+const vector<EffectEntry>& Card::getEffects() const
 {
     return effects;
-}*/
+}
 
 void Card::addEffect(TriggerType trigger,EffectTarget target,shared_ptr<IConditions> condition,shared_ptr<IEffect> effect)
 {
     effects.push_back({trigger , target , condition , effect});
+}
+
+void Card::execute(TriggerType trigger , GameContext& context)
+{
+    for(const auto& entry : effects)
+    {
+        if(entry.trigger != trigger)
+        {
+            continue; 
+        }
+        if(entry.condition)
+        {
+            if(!entry.condition->check(context))
+            {
+                continue ;
+            }
+        }
+        auto targets = context.getTargets(entry.target) ;
+        entry.effect->execute(context , targets) ;
+    }
 }

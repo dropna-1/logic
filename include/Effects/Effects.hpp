@@ -33,9 +33,9 @@ class HealEffect : public IEffect
 
 class MoveEffect : public IEffect
 {
-private:
-    int distance;
-public:
-    MoveEffect(int distance);
-    int getDistance() const;
+    private:
+        int distance;
+    public:
+        MoveEffect(int distance);
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
 };

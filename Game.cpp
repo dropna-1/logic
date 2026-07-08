@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <queue>
 #include "include/Characters/SideKick.hpp"
+#include "Effects/GameContext.hpp"
 #include "Game.hpp"
 #include "Cards/Deck.hpp"
 
@@ -27,15 +28,17 @@ Player* Game::getFirstPlayer(){
 }
 
 
+Player* Game::getCurrentPlayer(){
+    return currentPlayer;
+}
+
+
 void Game::choiceHero(Player& player, HeroType choice){
     player.setHero((choice == dracula.get()->getHeroType() ? dracula : sherlock));
 }
 
 
-void Game::startGame(){
-
-    actionsRemaining = 2;
-
+void Game::setupGame(){
     if(player1.getAge() <= player2.getAge()){
         currentPlayer = &player1;
         otherPlayer = &player2;
@@ -50,8 +53,8 @@ void Game::startGame(){
 }
 
 
-Player* Game::getCurrentPlayer(){
-    return currentPlayer;
+void Game::startTurn(){
+    actionsRemaining = 2;
 }
 
 
@@ -74,8 +77,8 @@ int Game::getRemainingActions() const{
 
 
 vector<int> Game::getAvailableMoves(Character* character, 
-    const int& move){
-
+    const int& move)
+{
     vector<int> reachable;
     queue<pair<int, int>> q;
     vector<bool> visited(board.size(), false);
@@ -87,7 +90,6 @@ vector<int> Game::getAvailableMoves(Character* character,
     while(!q.empty()){
         auto current = q.front();
         q.pop();
-
         int place = current.first;
         int dist = current.second;
 
@@ -113,7 +115,6 @@ vector<int> Game::getAvailableMoves(Character* character,
         }
     }
     sort(reachable.begin(), reachable.end());
-
     return reachable;
 }
 
@@ -141,60 +142,56 @@ int Game::calculateDamage(Card* attack, Card* defense){
 
 
 vector<Card*> Game::getPlayableAttackCard(Character* attacker){
+
     vector<Card*> playableCards;
     for(auto card : currentPlayer->getHero().get()->getDeck().get()->getHand())
-        if(card.get()->getType() == CardType::Attack || 
-        card.get()->getType() == CardType::Versalite){
 
+        if(card.get()->getType() == CardType::Attack || 
+        card.get()->getType() == CardType::Versalite)
+        {
             if(card.get()->getFighter() == FighterType::Any)
                 playableCards.push_back(card.get());
-
             else if(attacker->isHero() && card.get()->getFighter() == FighterType::Hero)
                 playableCards.push_back(card.get());
-
             else if(!attacker->isHero() && card.get()->getFighter() == FighterType::Sidekick)
-                playableCards.push_back(card.get());
-                
+                playableCards.push_back(card.get()); 
         }
     return playableCards;
 }
 
 
 vector<Card*> Game::getPlayableDefenseCard(Character* defender){
+
     vector<Card*> playableCards;
     for(auto card : otherPlayer->getHero().get()->getDeck().get()->getHand())
+    
         if(card.get()->getType() == CardType::Defend || 
-        card.get()->getType() == CardType::Versalite){
-
+        card.get()->getType() == CardType::Versalite)
+        {
             if(card.get()->getFighter() == FighterType::Any)
                 playableCards.push_back(card.get());
-
             else if(defender->isHero() && card.get()->getFighter() == FighterType::Hero)
                 playableCards.push_back(card.get());
-
             else if(!defender->isHero() && card.get()->getFighter() == FighterType::Sidekick)
                 playableCards.push_back(card.get());
-
         }
     return playableCards;
 }
 
 
-vector<int> Game::free_spaces_for_Sidekicks(){
+vector<int> Game::getSidekickPlacement(){
+
     vector<int> reachable;
-
     for(int zone : board.getSpace(currentPlayer->getHero()->getPosition()).zone){
-
-        for(int i = 0; i < 32; i++){
+        for(int i = 0; i < 32; i++)
+        {
             if(i == currentPlayer->getHero()->getPosition())
                 continue;
-
             vector<int> zones = board.getSpace(i).zone;
             if(find(zones.begin(), zones.end(), zone) != zones.end())
                 reachable.push_back(i);
         }
     }
-
     return reachable;
 }
 
@@ -207,16 +204,14 @@ void Game::changeTurn(){
 Hero* Game::checkWinner(){
     if(!currentPlayer->getHero()->isAlive())
         return otherPlayer->getHero().get();
-
     if(!otherPlayer->getHero()->isAlive())
         return currentPlayer->getHero().get();
-
     return nullptr;
 }
 
 
-vector<AttackOption>& Game::getAttackableTargets(){
-
+vector<AttackOption>& Game::getAttackableTargets()
+{
     vector<AttackOption> targets;
     for(Character* self : currentPlayer->getAllCharacters())
         for(int neighbor : board.getSpace(self->getPosition()).neighbors)
@@ -228,29 +223,78 @@ vector<AttackOption>& Game::getAttackableTargets(){
 }
 
 
-int Game::boost(Card& card){
-    return currentPlayer->getHero().get()->getMovement() 
-    + card.getBoost();
+int Game::boost(Character* self, vector<int>& cards){
+    int movement = self->getMovement();
+    for(int cardIndex : cards){
+        movement += currentPlayer->getHero().get()->getDeck()
+        .get()->getHand().at(cardIndex).get()->getBoost();
+
+        currentPlayer->getHero().get()->getDeck()
+        .get()->discardFromHand(cardIndex);
+    }
+    return movement;
 }
+
+
+void Game::playScheme(Character* source, const int& schemeCardIndex)
+{
+    GameContext context(
+        currentPlayer,
+        otherPlayer,
+        source,
+        nullptr,
+        &board
+    );
+    auto schemeCard = currentPlayer->getHero().get()->getDeck()
+    .get()->playCard(schemeCardIndex);
+
+    schemeCard.get()->execute(TriggerType::None, context);
+
+    currentPlayer->getHero().get()->getDeck()
+    .get()->discardCard(schemeCard);
+}
+
 
 
 void Game::combat(AttackOption option, const int& attackCardIndex, 
     const int& defenseCardIndex){
-    /*immediate*/
 
-    int damage = calculateDamage(
-        currentPlayer->getHero().get()->getDeck().get()->getHand().at(attackCardIndex).get(),
-        otherPlayer->getHero().get()->getDeck().get()->getHand().at(defenseCardIndex).get()
+    auto attackCard = currentPlayer->getHero().get()->getDeck()
+    .get()->playCard(attackCardIndex);
+
+    auto defenseCard = otherPlayer->getHero().get()->getDeck().
+    get()->playCard(defenseCardIndex);
+
+    GameContext context(
+        currentPlayer,
+        otherPlayer,
+        option.attacker,
+        option.target,
+        &board
     );
+
+    int damage = calculateDamage(attackCard.get(), defenseCard.get());
+
+    /*immediate*/
+    attackCard->execute(TriggerType::Immediately, context);
+    defenseCard->execute(TriggerType::Immediately, context);
 
     if(damage != 0)
         option.target->takeDamage(damage);
     
     /*during*/
+    attackCard->execute(TriggerType::DuringCombat, context);
+    defenseCard->execute(TriggerType::DuringCombat, context);
 
     /*after*/
+    attackCard->execute(TriggerType::AfterCombat, context);
+    defenseCard->execute(TriggerType::AfterCombat, context);
 
-    currentPlayer->getHero().get()->getDeck().get()->discardCard(attackCardIndex);
-    otherPlayer->getHero().get()->getDeck().get()->discardCard(defenseCardIndex);
+    /*discard*/
+    currentPlayer->getHero().get()->getDeck()
+    .get()->discardCard(attackCard);
+
+    otherPlayer->getHero().get()->getDeck()
+    .get()->discardCard(defenseCard);
 
 }

@@ -31,27 +31,34 @@ class Game {
 public:
 
     Game();
-    vector<int> getAvailableMoves(Character* character, const int& move);
-    bool canMove(int to, const vector<int>& reachable);
-    vector<int> free_spaces_for_Sidekicks();
+    void setupGame();
+    void startTurn();
     void changeTurn();
-    void startGame();
     Hero* checkWinner();
-    int boost(Card& card);
+    Board& getBoard();
+    /*-----------------------------------------------------------------*/
     void setPlayer1(const string& name, const int& age);
     void setPlayer2(const string& name, const int& age);
     Player* getCurrentPlayer();
     Player* getFirstPlayer();
     void choiceHero(Player& player, HeroType choice);
-    Board& getBoard();
+    vector<int> getSidekickPlacement();
+    /*-----------------------------------------------------------------*/
+    vector<int> getAvailableMoves(Character* character, const int& move);
+    bool canMove(int to, const vector<int>& reachable);
     void move(Character* character, const int& pos);
+    int boost(Character* self, vector<int>& cards);
+    /*------------------------------------------------------------------*/
     bool useAction();
     int getRemainingActions() const;
+    /*------------------------------------------------------------------*/
     vector<AttackOption>& getAttackableTargets();
-    int calculateDamage(Card* attack, Card* defense);
     vector<Card*> getPlayableAttackCard(Character* attacker);
     vector<Card*> getPlayableDefenseCard(Character* defender);
+    /*------------------------------------------------------------------*/
+    void playScheme(Character* source, const int& schemeCardIndex);
+    /*------------------------------------------------------------------*/
+    int calculateDamage(Card* attack, Card* defense);
     void combat(AttackOption option, const int& attackCardIndex, 
         const int& defenseCardIndex);
-    
 };

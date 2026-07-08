@@ -17,7 +17,6 @@ enum CardType
 enum class TriggerType
 {
     Immediately,
-    BeforeCombat,
     DuringCombat,
     AfterCombat , 
     None 

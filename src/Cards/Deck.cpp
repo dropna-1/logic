@@ -28,7 +28,7 @@ bool Deck::drawCard()
     return true ;
 }
 
-void Deck::discardCard(int handIndex)
+void Deck::discardFromHand(int handIndex)
 {
     if(handIndex < 0 || handIndex  >= hand.size())
     {
@@ -38,6 +38,15 @@ void Deck::discardCard(int handIndex)
     hand.erase(hand.begin() + handIndex) ;
 }
 
+void Deck::discardCard(shared_ptr<Card> card)
+{
+    if(card== nullptr)
+    {
+        return; 
+    }
+    discardPile.push_back(card) ;
+
+}
 int Deck::getDrawPileSize() const
 {
     return drawPile.size();
@@ -56,4 +65,15 @@ int Deck::getDiscardPileSize() const
 const vector<shared_ptr<Card>>& Deck::getHand() const
 {
     return hand;
+}
+
+shared_ptr<Card> Deck::playCard(int handIndex)
+{
+    if(handIndex < 0 || handIndex>= hand.size() )
+    {
+        return nullptr ;
+    }
+    auto card = hand[handIndex] ;
+    hand.erase(hand.begin() + handIndex);
+    return card ;
 }
