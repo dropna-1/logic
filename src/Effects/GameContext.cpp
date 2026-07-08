@@ -63,11 +63,11 @@ vector<Character*> GameContext::getTargets(EffectTarget target)
         }
         case EffectTarget::FriendlyCharacters:
         {
-            //return currentPlayer->getAllCharacters();
+            return currentPlayer->getAllCharacters();
         }
         case EffectTarget::EnemyCharacters:
         {
-            //return enemyPlayer->getAllCharacters();
+            return enemyPlayer->getAllCharacters();
         }
         case EffectTarget::Attacker:
         {
@@ -116,11 +116,11 @@ std::vector<Character*> GameContext::resolve(ConditionTarget target) const
         }
         case ConditionTarget::FriendlyCharacters:
         {
-            //return currentPlayer->getAllCharacters();
+            return currentPlayer->getAllCharacters();
         }
         case ConditionTarget::EnemyCharacters:
         {
-            //return enemyPlayer->getAllCharacters();
+            return enemyPlayer->getAllCharacters();
         }
         case ConditionTarget::Attacker:
         {
