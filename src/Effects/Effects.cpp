@@ -37,3 +37,12 @@ void DrawCardEffect::execute(GameContext& context, const vector<Character*>& tar
     }
 }
 
+MoveEffect::MoveEffect(int distance) : distance(distance)
+{
+}
+
+void MoveEffect::execute(GameContext& context, const vector<Character*>& targets)
+{
+    
+}
+
