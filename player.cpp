@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "include/Characters/SideKick.hpp"
 
 void Player::setHero(shared_ptr<Hero> hero){
     this->hero = hero;
@@ -22,4 +23,11 @@ int Player::getAge(){
 
 string Player::getName(){
     return name;
+}
+
+vector<Character*> Player::getAllCharacters(){
+    vector<Character*> characters{hero.get()};
+    for(auto sidekick : hero.get()->getSidekicks())
+        characters.push_back(sidekick.get());
+    return characters;
 }

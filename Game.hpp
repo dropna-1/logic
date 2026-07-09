@@ -31,28 +31,41 @@ class Game {
 public:
 
     Game();
-    vector<int> getAvailableMoves(Character* character, const int& move);
-    bool canMove(int to, const vector<int>& reachable);
-    vector<int> free_spaces_for_Sidekicks();
+    void setupGame();
+    void startTurn();
     void changeTurn();
-    void startGame();
     Hero* checkWinner();
-    Character* targetEnemy();
-    vector<int> boost(Card& card);
+    Board& getBoard();
+    /*-----------------------------------------------------------------*/
     void setPlayer1(const string& name, const int& age);
     void setPlayer2(const string& name, const int& age);
     Player* getCurrentPlayer();
     Player* getFirstPlayer();
     void choiceHero(Player& player, HeroType choice);
-    Board& getBoard();
+    vector<int> getSidekickPlacement();
+    /*-----------------------------------------------------------------*/
+    vector<int> getAvailableMoves(Character* character, const int& move);
+    bool canMove(int to, const vector<int>& reachable);
     void move(Character* character, const int& pos);
+    int boost(Character* self, vector<int>& cards);
+    bool canManever(vector<int> availableMoves) const;
+    /*------------------------------------------------------------------*/
     bool useAction();
     int getRemainingActions() const;
-    vector<Character*> getAttackableTargets();
-    int calculateDamage(Card* attack, Card* defense);
+    void addAction();
+    /*------------------------------------------------------------------*/
+    vector<AttackOption>& getAttackableTargets();
     vector<Card*> getPlayableAttackCard(Character* attacker);
     vector<Card*> getPlayableDefenseCard(Character* defender);
+    bool canDefense(vector<Card*> playableDefenseCard) const;
+    bool canAttack(vector<Card*> playableAttackCard,
+        vector<AttackOption> targets) const;
+    /*------------------------------------------------------------------*/
+    void playScheme(Character* source, const int& schemeCardIndex);
+    vector<Card*> getSchemeCards(Character* character);
+    bool canPlayScheme(vector<Card*> playableSchemeCard) const;
+    /*------------------------------------------------------------------*/
+    int calculateDamage(Card* attack, Card* defense);
     void combat(AttackOption option, const int& attackCardIndex, 
         const int& defenseCardIndex);
-    
 };

@@ -76,5 +76,4 @@ shared_ptr<Card> Deck::playCard(int handIndex)
     auto card = hand[handIndex] ;
     hand.erase(hand.begin() + handIndex);
     return card ;
-
 }
