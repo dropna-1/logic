@@ -1,8 +1,11 @@
 #include "Effects/GameContext.hpp"
 using namespace std ;
 
-GameContext::GameContext(Player* currentPlayer, Player* enemyPlayer, Character* attacker , Character* defender , Board* board) :
-    currentPlayer(currentPlayer) , enemyPlayer(enemyPlayer) , attacker(attacker) , defender(defender) , board(board)
+GameContext::GameContext(
+Player* currentPlayer, Player* enemyPlayer, Character* attacker , Character* defender , Board* board , Card* attackerCard, 
+Card* defenderCard , Game* game) :
+    currentPlayer(currentPlayer) , enemyPlayer(enemyPlayer) , attacker(attacker) , defender(defender) , board(board) ,
+    attackerCard(attackerCard) , defenderCard(defenderCard) , game(game)
 {
 }
 
@@ -29,6 +32,21 @@ Character* GameContext::getDefender() const
 Board* GameContext::getBoard() const
 {
     return board ;
+}
+
+Card* GameContext::getAttackerCard() const
+{
+    return attackerCard ;
+}
+
+Card* GameContext::getDefenderCard() const
+{
+    return defenderCard ;
+}
+
+Game* GameContext::getGame() const
+{
+    return game ;
 }
 
 vector<Character*> GameContext::getTargets(EffectTarget target)
@@ -135,4 +153,14 @@ std::vector<Character*> GameContext::resolve(ConditionTarget target) const
             return {};
         }
     }
+}
+
+void GameContext::setWinner(Character* TheWinner)
+{
+    Winner = TheWinner ;
+}
+
+Character* GameContext::getWinner() const
+{
+    return Winner ;
 }

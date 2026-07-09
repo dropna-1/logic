@@ -43,3 +43,37 @@ bool AdjacentCondition::check(GameContext& context) const
     return false ;
 }
 
+WonBattleCondition::WonBattleCondition(ConditionTarget Winner) : Winner(Winner)
+{
+}
+
+bool WonBattleCondition::check(GameContext& context) const
+{
+    auto IsWinner = context.resolve(Winner); 
+    for(auto c : IsWinner)
+    {
+        if(c == context.getWinner())
+        {
+            return true ;
+        }
+    }
+    return false ;
+}
+
+LossBattleCondition::LossBattleCondition(ConditionTarget Winner) : Winner(Winner)
+{
+}
+
+bool LossBattleCondition::check(GameContext& context) const
+{
+    auto IsWinner = context.resolve(Winner); 
+    for(auto c : IsWinner)
+    {
+        if(c != context.getWinner())
+        {
+            return true ;
+        }
+    }
+    return false ;
+}
+

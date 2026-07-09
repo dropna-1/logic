@@ -17,3 +17,22 @@ class AdjacentCondition : public IConditions
         AdjacentCondition(ConditionTarget first , ConditionTarget Second) ;
         bool check(GameContext& context) const override ;
 };
+
+class WonBattleCondition : public IConditions
+{
+    private :
+        ConditionTarget Winner ;
+    public :
+        WonBattleCondition(ConditionTarget) ;
+        bool check(GameContext& context) const override ;
+};
+
+class LossBattleCondition : public IConditions
+{
+    private :
+        ConditionTarget Winner ;
+    public :
+        LossBattleCondition(ConditionTarget) ;
+        bool check(GameContext& context) const override ;
+};
+

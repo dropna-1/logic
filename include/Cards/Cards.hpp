@@ -44,7 +44,8 @@ class Card
     FighterType getFighter() const;
     TriggerType getTrigger() const;
     const std::string& getDescription() const ;
-    const std::vector<EffectEntry>& getEffects() const;
+    std::vector<EffectEntry>& getEffects() ;
+    const std::vector<EffectEntry>& getEffects() const ;
     void execute(TriggerType , GameContext&) ;
             
 };

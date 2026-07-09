@@ -43,6 +43,27 @@ MoveEffect::MoveEffect(int distance) : distance(distance)
 
 void MoveEffect::execute(GameContext& context, const vector<Character*>& targets)
 {
-    
+    //will do it later
 }
 
+DiscardCardEffect::DiscardCardEffect(int count) : count(count) 
+{
+}
+
+void DiscardCardEffect::execute(GameContext& context, const vector<Character*>& targets )
+{
+    auto deck = context.getEnemyPlayer()->getHero()->getDeck() ;
+    for(int i = 0 ; i < count ; i++)
+    {
+        deck->discardFromHand(count) ;
+    }
+}
+
+void CancelEffectsEffect::execute(GameContext& context, const vector<Character*>& targets)
+{
+    if(context.getDefenderCard() == nullptr)
+    {
+        return ;
+    }
+    context.getDefenderCard()->getEffects().clear(); 
+}
