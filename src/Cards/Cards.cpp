@@ -58,6 +58,11 @@ const vector<EffectEntry>& Card::getEffects() const
     return effects;
 }
 
+vector<EffectEntry>& Card::getEffects() 
+{
+    return effects;
+}
+
 void Card::addEffect(TriggerType trigger,EffectTarget target,shared_ptr<IConditions> condition,shared_ptr<IEffect> effect)
 {
     effects.push_back({trigger , target , condition , effect});

@@ -295,7 +295,10 @@ void Game::playScheme(Character* source, const int& schemeCardIndex)
         otherPlayer,
         source,
         nullptr,
-        &board
+        &board,
+        nullptr,
+        nullptr,
+        this
     );
     auto schemeCard = currentPlayer->getHero().get()->getDeck()
     .get()->playCard(schemeCardIndex);
@@ -321,10 +324,11 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
         otherPlayer,
         option.attacker,
         option.target,
-        &board
+        &board,
+        attackCard.get(),
+        defenseCard.get(),
+        this
     );
-
-    int damage = calculateDamage(attackCard.get(), defenseCard.get());
 
     /*immediate*/
     defenseCard->execute(TriggerType::Immediately, context);
@@ -334,8 +338,13 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
     defenseCard->execute(TriggerType::DuringCombat, context);
     attackCard->execute(TriggerType::DuringCombat, context);
 
+    int damage = calculateDamage(attackCard.get(), defenseCard.get());
+
     if(damage != 0)
         option.target->takeDamage(damage);
+
+    if(damage > 0) {context.setWinner(option.attacker);}
+    else {context.setWinner(option.target);}
     
     /*after*/
     defenseCard->execute(TriggerType::AfterCombat, context);

@@ -39,3 +39,17 @@ class MoveEffect : public IEffect
         MoveEffect(int distance);
         void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
+
+class DiscardCardEffect : public IEffect
+{
+    private :
+        int count ;
+        DiscardCardEffect(int count) ;
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class CancelEffectsEffect : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;   
+};
