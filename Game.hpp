@@ -52,6 +52,7 @@ public:
     /*------------------------------------------------------------------*/
     bool useAction();
     int getRemainingActions() const;
+    void addAction();
     /*------------------------------------------------------------------*/
     vector<AttackOption>& getAttackableTargets();
     vector<Card*> getPlayableAttackCard(Character* attacker);

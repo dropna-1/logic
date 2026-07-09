@@ -226,6 +226,11 @@ void Game::changeTurn(){
 }
 
 
+void Game::addAction(){
+    actionsRemaining++;
+}
+
+
 Hero* Game::checkWinner(){
     if(!currentPlayer->getHero()->isAlive())
         return otherPlayer->getHero().get();
