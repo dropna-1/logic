@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <optional>
 #include "board.hpp"
 #include "include/Characters/Hero.hpp"
 #include "Factory/HeroFactory.hpp"
@@ -11,6 +12,11 @@ using namespace std;
 struct AttackOption {
     Character* attacker;
     Character* target;
+};
+
+struct PendingMove {
+    Character* character;
+    int range;
 };
 
 class Game {
@@ -27,6 +33,7 @@ class Game {
     Player* otherPlayer;
 
     int actionsRemaining = 2;
+    std::optional<PendingMove> pendingMove;
 
 public:
 
@@ -49,6 +56,11 @@ public:
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
     bool canManever(vector<int> availableMoves) const;
+    /*------------------------------------------------------------------*/
+    void requestMove(Character* character, int range);
+    bool hasPendingMove() const;
+    PendingMove getPendingMove() const;
+    void completePendingMove();
     /*------------------------------------------------------------------*/
     bool useAction();
     int getRemainingActions() const;

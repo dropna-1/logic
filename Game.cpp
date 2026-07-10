@@ -139,6 +139,27 @@ bool Game::canManever(vector<int> availableMoves) const{
 }
 
 
+void Game::requestMove(Character* character, int range){
+    pendingMove = {character, range};
+}
+
+
+bool Game::hasPendingMove() const{
+    return pendingMove.has_value();
+}
+
+
+PendingMove Game::getPendingMove() const{
+    return pendingMove.value();
+}
+
+
+void Game::completePendingMove(){
+    move(pendingMove->character, pendingMove->range);
+    pendingMove.reset();
+}
+
+
 int Game::calculateDamage(Card* attack, Card* defense){
     if(defense == nullptr)
         return attack->getValue();
