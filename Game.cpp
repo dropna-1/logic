@@ -261,7 +261,7 @@ Hero* Game::checkWinner(){
 }
 
 
-vector<AttackOption>& Game::getAttackableTargets()
+vector<AttackOption> Game::getAttackableTargets()
 {
     vector<AttackOption> targets;
     for(Character* self : currentPlayer->getAllCharacters())

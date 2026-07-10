@@ -66,7 +66,7 @@ public:
     int getRemainingActions() const;
     void addAction();
     /*------------------------------------------------------------------*/
-    vector<AttackOption>& getAttackableTargets();
+    vector<AttackOption> getAttackableTargets();
     vector<Card*> getPlayableAttackCard(Character* attacker);
     vector<Card*> getPlayableDefenseCard(Character* defender);
     bool canDefense(vector<Card*> playableDefenseCard) const;
