@@ -43,7 +43,17 @@ MoveEffect::MoveEffect(int distance) : distance(distance)
 
 void MoveEffect::execute(GameContext& context, const vector<Character*>& targets)
 {
-    //will do it later
+    for(auto c : targets)
+    {
+        auto places = context.getGame()->getAvailableMoves(c , 3) ;
+        for(auto c2 : places)
+        {
+            if(context.getGame()->canMove(c2 , places))
+            {
+                c->setPosition(c2) ;
+            }
+        }
+    }
 }
 
 DiscardCardEffect::DiscardCardEffect(int count) : count(count) 
@@ -66,4 +76,18 @@ void CancelEffectsEffect::execute(GameContext& context, const vector<Character*>
         return ;
     }
     context.getDefenderCard()->getEffects().clear(); 
+}
+
+void SwapEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    auto SecondTarget = context.getTargets(EffectTarget::EnemyHero) ;
+    for(auto c1 : targets)
+    {
+        for(auto c2 : SecondTarget)
+        {
+            auto temp = c1->getPosition() ;
+            c1->setPosition(c2->getPosition()) ;
+            c2->setPosition(temp) ;
+        }
+    }
 }

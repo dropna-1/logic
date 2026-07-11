@@ -1,5 +1,7 @@
 #pragma once 
-#include "GameContext.hpp"
+#include "Effects/GameContext.hpp"
+
+class GameContext ;
 
 class IConditions 
 {

@@ -44,6 +44,7 @@ class DiscardCardEffect : public IEffect
 {
     private :
         int count ;
+    public :
         DiscardCardEffect(int count) ;
         void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
@@ -53,3 +54,13 @@ class CancelEffectsEffect : public IEffect
     public :
         void execute(GameContext& context , const vector<Character*>& targets) override ;   
 };
+
+class SwapEffect : public IEffect
+{
+    private :
+        EffectTarget first ;
+        EffectTarget second ;
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+

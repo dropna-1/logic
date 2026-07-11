@@ -135,6 +135,30 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
     Feint->addEffect(TriggerType::Immediately , EffectTarget::EnemyHero , nullptr , make_shared<CancelEffectsEffect>());
     addCopies(deck , 3 , Feint); 
 
+    auto MasterOfDisguise = createCard(
+        "Master Of Disguise" ,
+        CardType::Scheme , 
+        FighterType::Hero , 
+        TriggerType::None ,
+        0 , 
+        2 , 
+        "Choose an Opponet, Holmes Swaps to"
+    );
+    MasterOfDisguise->addEffect(TriggerType::None , EffectTarget::FriendlyHero , nullptr , make_shared<SwapEffect>()) ;
+    addCopies(deck , 2 , MasterOfDisguise); 
+
+
+    auto TheGameIsAfoot = createCard(
+        "The Game Is AFoot" , 
+        CardType::Attack ,
+        FighterType::Hero ,
+        TriggerType::AfterCombat ,
+        5 , 
+        2 ,
+        "AFTER COMBAT: Move Holmes up to 3 spaces."
+    );
+    TheGameIsAfoot->addEffect(TriggerType::AfterCombat , EffectTarget::FriendlyHero, nullptr , make_shared<MoveEffect>());
+    addCopies(deck , 2 , TheGameIsAfoot);
     
 
     deck->shuffleDeck();
