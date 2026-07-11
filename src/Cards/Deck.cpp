@@ -45,8 +45,8 @@ void Deck::discardCard(shared_ptr<Card> card)
         return; 
     }
     discardPile.push_back(card) ;
-
 }
+
 int Deck::getDrawPileSize() const
 {
     return drawPile.size();

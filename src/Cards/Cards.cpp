@@ -68,6 +68,15 @@ void Card::addEffect(TriggerType trigger,EffectTarget target,shared_ptr<IConditi
     effects.push_back({trigger , target , condition , effect});
 }
 
+void Card::setBoost(int New)
+{
+    boost = New ;
+}
+
+void Card::setValue(int New)
+{
+    value = New ;
+}
 void Card::execute(TriggerType trigger , GameContext& context)
 {
     for(const auto& entry : effects)

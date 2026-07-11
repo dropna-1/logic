@@ -91,3 +91,36 @@ void SwapEffect::execute(GameContext& context , const vector<Character*>& target
         }
     }
 }
+
+void MoveToAdjacentEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    for(auto c : targets) 
+    {
+        auto places = context.getBoard()->getSpace(c->getPosition()).neighbors ;
+        for(auto c2 : places)
+        {
+            if(context.getGame()->canMove(c2,places))
+            {
+                c->setPosition(c2) ;
+            }
+        }
+    }
+}
+
+void DeduceEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    if(context.getCurrentCard() == context.getDefenderCard())
+    {
+        int temp = context.getAttackerCard()->getBoost() ;
+        context.getAttackerCard()->setBoost(context.getAttackerCard()->getValue()) ;
+        context.getAttackerCard()->setValue(temp) ;
+        return ;
+    }
+    if(context.getCurrentCard() == context.getAttackerCard())
+    {
+        int temp = context.getDefenderCard()->getBoost() ;
+        context.getDefenderCard()->setBoost(context.getDefenderCard()->getValue()) ;
+        context.getDefenderCard()->setValue(temp) ;
+        return ;
+    }
+}

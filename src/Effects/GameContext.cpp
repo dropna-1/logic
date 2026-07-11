@@ -49,6 +49,16 @@ Game* GameContext::getGame() const
     return game ;
 }
 
+void GameContext::setCurrentCard(Card* currentcard)
+{
+    currentCard = currentcard;
+}
+
+Card* GameContext::getCurrentCard() const
+{
+    return currentCard ;
+}
+
 vector<Character*> GameContext::getTargets(EffectTarget target)
 {
     switch(target)

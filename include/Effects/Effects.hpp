@@ -64,3 +64,15 @@ class SwapEffect : public IEffect
         void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
 
+class MoveToAdjacentEffect : public IEffect  
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+
+};
+
+class DeduceEffect : public IEffect
+{
+    public : 
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};

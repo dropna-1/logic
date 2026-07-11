@@ -20,6 +20,7 @@ class GameContext
         Card* attackerCard ;
         Card* defenderCard ;
         Game* game ;
+        Card* currentCard ;
     public :
         GameContext(Player* , Player*, Character* , Character* , Board* , Card* ,Card* , Game*);
         Player* getCurrentPlayer() const ;
@@ -32,6 +33,8 @@ class GameContext
         std::vector<Character*> getTargets(EffectTarget target);
         void setWinner(Character*) ;
         Character* getWinner() const ;
+        void setCurrentCard(Card*) ;
+        Card* getCurrentCard() const ;
         std::vector<Character*> resolve(ConditionTarget target) const;
         Game* getGame() const ;
 };

@@ -47,6 +47,8 @@ class Card
     std::vector<EffectEntry>& getEffects() ;
     const std::vector<EffectEntry>& getEffects() const ;
     void execute(TriggerType , GameContext&) ;
+    void setBoost(int) ;
+    void setValue(int) ;
             
 };
 
