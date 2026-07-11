@@ -1,6 +1,2 @@
-cards.*
-Game.exe
-Heroes.*
-sidekicks.*
-effect.*
 build/
+*.exe
