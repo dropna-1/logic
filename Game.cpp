@@ -63,6 +63,11 @@ Board& Game::getBoard(){
 }
 
 
+const vector<shared_ptr<Card>>& Game::showOtherHand(){
+    return otherPlayer->getHero().get()->getDeck().get()->getHand();
+}
+
+
 bool Game::useAction(){
     if(actionsRemaining == 0)
         return false;
@@ -77,7 +82,7 @@ int Game::getRemainingActions() const{
 
 
 vector<int> Game::getAvailableMoves(Character* character, 
-    const int& move)
+    const int& spacing)
 {
     vector<int> reachable;
     queue<pair<int, int>> q;
@@ -93,7 +98,7 @@ vector<int> Game::getAvailableMoves(Character* character,
         int place = current.first;
         int dist = current.second;
 
-        if(dist == move)
+        if(dist == spacing)
             continue;
 
         for(int next : board.getSpace(place).neighbors){
@@ -119,6 +124,17 @@ vector<int> Game::getAvailableMoves(Character* character,
 }
 
 
+vector<int> Game::getAllSpaces(){
+    vector<int> allSpaces;
+
+    for(int space = 0; space < 32; space++)
+        if(canMove(space))
+            allSpaces.push_back(space);
+
+    return allSpaces;
+}
+
+
 bool Game::canMove(int to) const{
     for(auto character : currentPlayer->getAllCharacters())
         if(character->getPosition() == to)
@@ -126,7 +142,7 @@ bool Game::canMove(int to) const{
     for(auto character : otherPlayer->getAllCharacters())
         if(character->getPosition() == to)
             return false;
-    return false;
+    return true;
 }
 
 
@@ -157,8 +173,8 @@ PendingMove Game::getPendingMove() const{
 }
 
 
-void Game::completePendingMove(){
-    move(pendingMove->character, pendingMove->range);
+void Game::completePendingMove(const int& position){
+    move(pendingMove->character, position);
     pendingMove.reset();
 }
 
@@ -229,8 +245,8 @@ vector<Card*> Game::getSchemeCards(Character* character)
 }
 
 
-vector<int> Game::getSidekickPlacement(){
-
+vector<int> Game::getSidekickPlacement()
+{
     vector<int> reachable;
     for(int zone : board.getSpace(currentPlayer->getHero()->getPosition()).zone)
         for(int i = 0; i < 32; i++)

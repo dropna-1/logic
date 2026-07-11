@@ -50,8 +50,10 @@ public:
     Player* getFirstPlayer();
     void choiceHero(Player& player, HeroType choice);
     vector<int> getSidekickPlacement();
+    const vector<shared_ptr<Card>>& showOtherHand();
     /*-----------------------------------------------------------------*/
-    vector<int> getAvailableMoves(Character* character, const int& move);
+    vector<int> getAvailableMoves(Character* character, const int& spacing);
+    vector<int> getAllSpaces();
     bool canMove(int to) const;
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
@@ -60,7 +62,7 @@ public:
     void requestMove(Character* character, int range);
     bool hasPendingMove() const;
     PendingMove getPendingMove() const;
-    void completePendingMove();
+    void completePendingMove(const int& position);
     /*------------------------------------------------------------------*/
     bool useAction();
     int getRemainingActions() const;
