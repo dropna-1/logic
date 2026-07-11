@@ -119,10 +119,13 @@ vector<int> Game::getAvailableMoves(Character* character,
 }
 
 
-bool Game::canMove(int to, const vector<int>& reachable){
-    for(int i : reachable)
-        if(to == i)
-            return true;
+bool Game::canMove(int to) const{
+    for(auto character : currentPlayer->getAllCharacters())
+        if(character->getPosition() == to)
+            return false;
+    for(auto character : otherPlayer->getAllCharacters())
+        if(character->getPosition() == to)
+            return false;
     return false;
 }
 

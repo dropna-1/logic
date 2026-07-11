@@ -52,7 +52,7 @@ public:
     vector<int> getSidekickPlacement();
     /*-----------------------------------------------------------------*/
     vector<int> getAvailableMoves(Character* character, const int& move);
-    bool canMove(int to, const vector<int>& reachable);
+    bool canMove(int to) const;
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
     bool canManever(vector<int> availableMoves) const;
