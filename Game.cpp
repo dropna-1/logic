@@ -63,6 +63,11 @@ Board& Game::getBoard(){
 }
 
 
+const vector<shared_ptr<Card>>& Game::showOtherHand(){
+    return otherPlayer->getHero().get()->getDeck().get()->getHand();
+}
+
+
 bool Game::useAction(){
     if(actionsRemaining == 0)
         return false;
@@ -77,7 +82,7 @@ int Game::getRemainingActions() const{
 
 
 vector<int> Game::getAvailableMoves(Character* character, 
-    const int& move)
+    const int& spacing)
 {
     vector<int> reachable;
     queue<pair<int, int>> q;
@@ -93,7 +98,7 @@ vector<int> Game::getAvailableMoves(Character* character,
         int place = current.first;
         int dist = current.second;
 
-        if(dist == move)
+        if(dist == spacing)
             continue;
 
         for(int next : board.getSpace(place).neighbors){
@@ -119,11 +124,25 @@ vector<int> Game::getAvailableMoves(Character* character,
 }
 
 
-bool Game::canMove(int to, const vector<int>& reachable){
-    for(int i : reachable)
-        if(to == i)
-            return true;
-    return false;
+vector<int> Game::getAllSpaces(){
+    vector<int> allSpaces;
+
+    for(int space = 0; space < 32; space++)
+        if(canMove(space))
+            allSpaces.push_back(space);
+
+    return allSpaces;
+}
+
+
+bool Game::canMove(int to) const{
+    for(auto character : currentPlayer->getAllCharacters())
+        if(character->getPosition() == to)
+            return false;
+    for(auto character : otherPlayer->getAllCharacters())
+        if(character->getPosition() == to)
+            return false;
+    return true;
 }
 
 
@@ -136,6 +155,27 @@ bool Game::canManever(vector<int> availableMoves) const{
     if(availableMoves.empty())
         return false;
     return true;
+}
+
+
+void Game::requestMove(Character* character, int range){
+    pendingMove = {character, range};
+}
+
+
+bool Game::hasPendingMove() const{
+    return pendingMove.has_value();
+}
+
+
+PendingMove Game::getPendingMove() const{
+    return pendingMove.value();
+}
+
+
+void Game::completePendingMove(const int& position){
+    move(pendingMove->character, position);
+    pendingMove.reset();
 }
 
 
@@ -205,8 +245,8 @@ vector<Card*> Game::getSchemeCards(Character* character)
 }
 
 
-vector<int> Game::getSidekickPlacement(){
-
+vector<int> Game::getSidekickPlacement()
+{
     vector<int> reachable;
     for(int zone : board.getSpace(currentPlayer->getHero()->getPosition()).zone)
         for(int i = 0; i < 32; i++)
@@ -240,7 +280,7 @@ Hero* Game::checkWinner(){
 }
 
 
-vector<AttackOption>& Game::getAttackableTargets()
+vector<AttackOption> Game::getAttackableTargets()
 {
     vector<AttackOption> targets;
     for(Character* self : currentPlayer->getAllCharacters())
@@ -295,7 +335,10 @@ void Game::playScheme(Character* source, const int& schemeCardIndex)
         otherPlayer,
         source,
         nullptr,
-        &board
+        &board,
+        nullptr,
+        nullptr,
+        this
     );
     auto schemeCard = currentPlayer->getHero().get()->getDeck()
     .get()->playCard(schemeCardIndex);
@@ -321,10 +364,11 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
         otherPlayer,
         option.attacker,
         option.target,
-        &board
+        &board,
+        attackCard.get(),
+        defenseCard.get(),
+        this
     );
-
-    int damage = calculateDamage(attackCard.get(), defenseCard.get());
 
     /*immediate*/
     defenseCard->execute(TriggerType::Immediately, context);
@@ -334,8 +378,13 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
     defenseCard->execute(TriggerType::DuringCombat, context);
     attackCard->execute(TriggerType::DuringCombat, context);
 
+    int damage = calculateDamage(attackCard.get(), defenseCard.get());
+
     if(damage != 0)
         option.target->takeDamage(damage);
+
+    if(damage > 0) {context.setWinner(option.attacker);}
+    else {context.setWinner(option.target);}
     
     /*after*/
     defenseCard->execute(TriggerType::AfterCombat, context);

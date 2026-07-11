@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <optional>
 #include "board.hpp"
 #include "include/Characters/Hero.hpp"
 #include "Factory/HeroFactory.hpp"
@@ -11,6 +12,11 @@ using namespace std;
 struct AttackOption {
     Character* attacker;
     Character* target;
+};
+
+struct PendingMove {
+    Character* character;
+    int range;
 };
 
 class Game {
@@ -27,6 +33,7 @@ class Game {
     Player* otherPlayer;
 
     int actionsRemaining = 2;
+    std::optional<PendingMove> pendingMove;
 
 public:
 
@@ -43,18 +50,25 @@ public:
     Player* getFirstPlayer();
     void choiceHero(Player& player, HeroType choice);
     vector<int> getSidekickPlacement();
+    const vector<shared_ptr<Card>>& showOtherHand();
     /*-----------------------------------------------------------------*/
-    vector<int> getAvailableMoves(Character* character, const int& move);
-    bool canMove(int to, const vector<int>& reachable);
+    vector<int> getAvailableMoves(Character* character, const int& spacing);
+    vector<int> getAllSpaces();
+    bool canMove(int to) const;
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
     bool canManever(vector<int> availableMoves) const;
+    /*------------------------------------------------------------------*/
+    void requestMove(Character* character, int range);
+    bool hasPendingMove() const;
+    PendingMove getPendingMove() const;
+    void completePendingMove(const int& position);
     /*------------------------------------------------------------------*/
     bool useAction();
     int getRemainingActions() const;
     void addAction();
     /*------------------------------------------------------------------*/
-    vector<AttackOption>& getAttackableTargets();
+    vector<AttackOption> getAttackableTargets();
     vector<Card*> getPlayableAttackCard(Character* attacker);
     vector<Card*> getPlayableDefenseCard(Character* defender);
     bool canDefense(vector<Card*> playableDefenseCard) const;
