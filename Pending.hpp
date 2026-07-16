@@ -17,7 +17,6 @@ protected:
 public:
     virtual std::vector<Option> getOption(Game& game) = 0;
     virtual void submit(Game& game, vector<int> choice) = 0;
-    void finish();
 };
 
 

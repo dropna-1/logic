@@ -2,8 +2,6 @@
 #include "include/Cards/Deck.hpp"
 using namespace std;
 
-void PendingAction::finish(){isFinished = true;}
-
 MoveAction::MoveAction(Character* Char, MoveMode mode, int value) :
 character(Char), mode(mode), range(value) {}
 
