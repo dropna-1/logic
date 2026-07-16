@@ -78,3 +78,8 @@ shared_ptr<Card> Deck::playCard(int handIndex)
     return card ;
 
 }
+
+Card* Deck::previewCard(int index) const 
+{
+    return hand[index].get() ;
+}

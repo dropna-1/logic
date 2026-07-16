@@ -190,7 +190,10 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
         3 ,
         "DURING COMBAT: This card's value +1 for each Sister in the same zone as the opposing fighter."
     );
-    
+    FeedingFrenzy->addEffect(TriggerType::DuringCombat, EffectTarget::FriendlySidekicks, nullptr, 
+        make_shared<FeedingFrenzyEffect>());
+    addCopies(deck , 2 , FeedingFrenzy) ;
+        
     auto Feint = createCard(
         "Feint" ,
         CardType::Versalite ,
@@ -214,19 +217,91 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
     );
     Dash->addEffect(TriggerType::AfterCombat , EffectTarget::FriendlyCharacters , nullptr , make_shared<MoveEffect>(3));
     addCopies(deck , 2 , Dash);
-    /*auto mistform = createCard(
+
+    auto ThirstForSustenance = createCard(
+        "Thirst for Sustenance" , 
+        CardType::Attack , 
+        FighterType::Hero , 
+        TriggerType::AfterCombat ,
+        3 ,
+        3 , 
+        "AFTER COMBAT: If you won the combat, place Dracula in any space Adjacent to the Opposing Fighter" 
+    );
+    // افکتاش اماده نیست
+
+    auto Exploit = createCard(
+        "Exploit" , 
+        CardType::Versalite ,
+        FighterType::Any , 
+        TriggerType::AfterCombat ,
+        4 , 
+        1 , 
+        "AFTER COMBAT: Draw 1 card." 
+    ); 
+    Exploit->addEffect(TriggerType::AfterCombat, EffectTarget::FriendlyHero, nullptr , make_shared<DrawCardEffect>(1) );
+    addCopies(deck ,3 , Exploit);
+
+    auto BaptismOfBlood = createCard(
+        "Baptism Of Blood" , 
+        CardType::Scheme ,
+        FighterType::Hero , 
+        TriggerType::None ,
+        0 , 
+        2 , 
+        "Recover 2 health. Return any defeated Sister(if any) to any space in Dracula zone."
+    );
+    BaptismOfBlood->addEffect(TriggerType::None, EffectTarget::FriendlyHero, nullptr , make_shared<HealEffect>(2)) ;
+    //باید افکت ریوایو سیستر رو بزنم 
+
+    auto Ambush = createCard(
+        "Ambush" , 
+        CardType::Attack , 
+        FighterType::Any , 
+        TriggerType::DuringCombat , 
+        2 , 
+        2 , 
+        "DURING COMBAT: Your opponet discards 1 random card. add its BOOST's value to this card's attacks value." 
+    );
+    Ambush->addEffect(TriggerType::DuringCombat, EffectTarget::FriendlyHero, nullptr, make_shared<AmbushEffect>()) ;
+    addCopies(deck, 2 , Ambush) ;
+
+    auto Mistform = createCard(
         "Mistform",
         CardType::Scheme,
         FighterType::Hero,
-        TriggerType::Immediately,
-        EffectTarget::anycharacter,
+        TriggerType::None,
         0,
         2,
         "Place Dracula in any space. Gain 1 action."
-    );*/
-    // mistform->addEffect(std::make_shared<MoveEffect>(...));
-    // mistform->addEffect(std::make_shared<GainActionEffect>(1));
-    //addCopies(deck,1,mistform);
+    );
+    Mistform->addEffect(TriggerType::None, EffectTarget::FriendlyHero, nullptr , make_shared<MoveEffect>(-1)) ;
+    Mistform->addEffect(TriggerType::None, EffectTarget::FriendlyHero, nullptr , make_shared<GainActionEffect>()) ;
+    addCopies(deck , 2 , Mistform) ;
+
+    auto PreyUpon = createCard(
+        "Prey Upon" , 
+        CardType::Scheme,
+        FighterType::Hero , 
+        TriggerType::None,
+        0 , 
+        4 , 
+        "Deal 1 Damage to all opposing fighters adjacent to Dracula, Dracula recover 1 health fo reach damage dealt" 
+    );
+    PreyUpon->addEffect(TriggerType::None, EffectTarget::EnemyCharacters,nullptr , make_shared<PreyUponEffect>()) ;
+    addCopies(deck , 2 , PreyUpon) ;
+
+    auto LookIntoMyEyes = createCard(
+        "Look Into My Eyes" , 
+        CardType::Defend , 
+        FighterType::Hero,
+        TriggerType::DuringCombat, 
+        1 ,
+        2 ,
+        "DURING COMBAT: Add the BOOSt value from your opponet's card to the defense value of this card" 
+    );
+    LookIntoMyEyes->addEffect(TriggerType::DuringCombat, EffectTarget::FriendlyHero, nullptr , make_shared<LookIntoMyEyesEffect>());
+    addCopies(deck , 3 , LookIntoMyEyes) ; 
+
     deck->shuffleDeck();
     return deck;
 }

@@ -6,6 +6,7 @@
 #include <vector>
 #include "Character.hpp"
 #include "Enums/TypeEnums.hpp"
+#include "Ability/IAbility.hpp"
 
 class Deck ;
 class SideKick ; 

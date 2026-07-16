@@ -34,5 +34,14 @@ class LossBattleCondition : public IConditions
     public :
         LossBattleCondition(ConditionTarget) ;
         bool check(GameContext& context) const override ;
+};  
+
+class AreDeadSisters : public IConditions
+{
+    private :
+        ConditionTarget sisters ;
+    public : 
+        AreDeadSisters(ConditionTarget) ;
+        bool check(GameContext& context) const override ;
 };
 

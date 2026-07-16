@@ -77,3 +77,18 @@ bool LossBattleCondition::check(GameContext& context) const
     return false ;
 }
 
+AreDeadSisters::AreDeadSisters(ConditionTarget target)
+{
+    sisters = target ;
+}
+bool AreDeadSisters::check(GameContext& context) const
+{ 
+    for(auto sister : context.resolve(sisters))
+    {
+        if(!sister->isAlive())
+        {
+            return true ;
+        }
+    }
+    return false ;
+};

@@ -11,3 +11,12 @@ string SherlockAbility::getDescription() const
 {
     return "Sherlock ABility";
 }
+
+bool SherlockAbility::allowCancel(Card* card , GameContext& context) 
+{
+    if(card->getFighter() == FighterType::Any)
+    {
+        return true ;
+    }
+    return false ;
+}

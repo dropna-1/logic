@@ -4,6 +4,7 @@
 #include "GameContext.hpp"
 #include "Cards/Deck.hpp"
 
+
 class DamageEffect : public IEffect
 {
     private :
@@ -74,5 +75,48 @@ class MoveToAdjacentEffect : public IEffect
 class DeduceEffect : public IEffect
 {
     public : 
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class ReviveSister : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class AmbushEffect : public IEffect 
+{
+    public : 
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class GainActionEffect : public IEffect 
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class FeedingFrenzyEffect : public IEffect 
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class RaveningSeduction : public IEffect
+{
+    public : 
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class PreyUponEffect : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+
+};
+
+class LookIntoMyEyesEffect : public IEffect 
+{
+    public :
         void execute(GameContext& context , const vector<Character*>& targets) override ;
 };

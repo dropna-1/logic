@@ -7,6 +7,7 @@
 #include "Cards/Cards.hpp"
 #include "Game.hpp"
 class Card ;
+class Player;
 
 class GameContext
 {

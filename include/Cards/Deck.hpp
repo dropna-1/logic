@@ -23,5 +23,6 @@ class Deck
         int getDiscardPileSize() const;        
         const std::vector<std::shared_ptr<Card>>& getHand() const;
         std::shared_ptr<Card> playCard(int handindex) ;
+        Card* previewCard(int) const ;
     
 };

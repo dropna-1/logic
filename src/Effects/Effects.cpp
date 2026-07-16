@@ -1,4 +1,7 @@
 #include "Effects/Effects.hpp"
+#include "Effects/Conditions.hpp"
+#include "Ability/IAbility.hpp"
+#include <cstdlib>
 
 DamageEffect::DamageEffect(int damage) : damage(damage)
 {
@@ -45,14 +48,7 @@ void MoveEffect::execute(GameContext& context, const vector<Character*>& targets
 {
     for(auto c : targets)
     {
-        auto places = context.getGame()->getAvailableMoves(c , 3) ;
-        for(auto c2 : places)
-        {
-            if(context.getGame()->canMove(c2 , places))
-            {
-                c->setPosition(c2) ;
-            }
-        }
+        context.getGame()->requestMove(c,distance) ;
     }
 }
 
@@ -71,11 +67,23 @@ void DiscardCardEffect::execute(GameContext& context, const vector<Character*>& 
 
 void CancelEffectsEffect::execute(GameContext& context, const vector<Character*>& targets)
 {
-    if(context.getDefenderCard() == nullptr)
+    
+    if(context.getDefenderCard() == context.getCurrentCard())
     {
-        return ;
+        if(context.getEnemyPlayer()->getHero()->getAbility()->allowCancel(context.getAttackerCard(),context))
+        {
+            context.getAttackerCard()->getEffects().clear(); 
+            return ;
+        }
     }
-    context.getDefenderCard()->getEffects().clear(); 
+    if(context.getAttackerCard() == context.getCurrentCard())
+    {
+        if(context.getEnemyPlayer()->getHero()->getAbility()->allowCancel(context.getDefenderCard(),context))
+        {
+            context.getDefenderCard()->getEffects().clear(); 
+            return ;
+        }
+    }
 }
 
 void SwapEffect::execute(GameContext& context , const vector<Character*>& targets)
@@ -99,7 +107,7 @@ void MoveToAdjacentEffect::execute(GameContext& context , const vector<Character
         auto places = context.getBoard()->getSpace(c->getPosition()).neighbors ;
         for(auto c2 : places)
         {
-            if(context.getGame()->canMove(c2,places))
+            if(context.getGame()->canMove(c2))
             {
                 c->setPosition(c2) ;
             }
@@ -123,4 +131,66 @@ void DeduceEffect::execute(GameContext& context , const vector<Character*>& targ
         context.getDefenderCard()->setValue(temp) ;
         return ;
     }
+}
+
+void ReviveSister::execute(GameContext& context ,  const vector<Character*>& targets)
+{
+    for(auto sister : targets)
+    {
+        if(!sister->isAlive())
+        {
+            sister->heal(sister->getMaxhp()) ;
+            context.getGame()->requestMove(sister , -1) ;
+        }
+    }   
+}
+
+void AmbushEffect::execute(GameContext& context ,  const vector<Character*>& targets)
+{
+    int randomindex = (rand())%(context.getEnemyPlayer()->getHero()->getDeck()->getHandSize());
+    Card* randomcard = context.getEnemyPlayer()->getHero()->getDeck()->previewCard(randomindex);
+    context.getCurrentCard()->setValue(context.getCurrentCard()->getValue() + randomcard->getBoost()) ;
+    context.getEnemyPlayer()->getHero()->getDeck()->discardFromHand(randomindex);
+}
+
+void GainActionEffect::execute(GameContext& context ,  const vector<Character*>& targets)
+{
+    context.getGame()->addAction() ;
+}
+
+void FeedingFrenzyEffect::execute(GameContext& context ,  const vector<Character*>& targets)
+{
+    int count = 0 ; 
+    for(auto sister : targets)
+    {
+        if(areInSameZone(context.getBoard() , context.getDefender() , sister))
+        {
+            count++ ;
+        }
+    }
+    context.getAttackerCard()->setValue(context.getAttackerCard()->getValue() + count) ;
+}
+
+void RaveningSeduction::execute(GameContext& context , const vector<Character*>& targets)
+{
+    // افککتشو نزدم 
+}
+
+void PreyUponEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    int count = 0 ;
+    for(auto opponet : targets)
+    {
+        if(areAdjacent(context.getBoard() , context.getAttacker() , opponet))
+        {
+            opponet->takeDamage(1) ;
+            count++ ;
+        }
+    }
+    context.getAttacker()->heal(count) ;
+}
+
+void LookIntoMyEyesEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    context.getDefenderCard()->setValue(context.getDefenderCard()->getValue() + context.getAttackerCard()->getBoost()) ;
 }
