@@ -1,12 +1,12 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include <optional>
 #include "board.hpp"
 #include "include/Characters/Hero.hpp"
 #include "Factory/HeroFactory.hpp"
 #include "Cards/Cards.hpp"
 #include "player.hpp"
+#include "Pending.hpp"
 using namespace std;
 
 struct AttackOption {
@@ -14,9 +14,10 @@ struct AttackOption {
     Character* target;
 };
 
-struct PendingMove {
-    Character* character;
-    int range;
+
+struct Option {
+    std::string text;
+    int id;
 };
 
 class Game {
@@ -33,7 +34,7 @@ class Game {
     Player* otherPlayer;
 
     int actionsRemaining = 2;
-    std::optional<PendingMove> pendingMove;
+    queue<unique_ptr<PendingAction>> pendingActions;
 
 public:
 
@@ -47,21 +48,22 @@ public:
     void setPlayer1(const string& name, const int& age);
     void setPlayer2(const string& name, const int& age);
     Player* getCurrentPlayer();
+    Player* getOtherPlayer();
     Player* getFirstPlayer();
     void choiceHero(Player& player, HeroType choice);
-    vector<int> getSidekickPlacement();
+    vector<Option> getSidekickPlacement();
     const vector<shared_ptr<Card>>& showOtherHand();
     /*-----------------------------------------------------------------*/
-    vector<int> getAvailableMoves(Character* character, const int& spacing);
-    vector<int> getAllSpaces();
+    vector<Option> getAvailableMoves(Character* character, const int& spacing);
+    vector<Option> getAllSpaces();
     bool canMove(int to) const;
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
     bool canManever(vector<int> availableMoves) const;
     /*------------------------------------------------------------------*/
-    void requestMove(Character* character, int range);
+    void requestAction(unique_ptr<PendingAction> action);
     bool hasPendingMove() const;
-    PendingMove getPendingMove() const;
+    PendingAction* currentPendingAction();
     void completePendingMove(const int& position);
     /*------------------------------------------------------------------*/
     bool useAction();

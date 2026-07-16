@@ -33,6 +33,11 @@ Player* Game::getCurrentPlayer(){
 }
 
 
+Player* Game::getOtherPlayer(){
+    return otherPlayer;
+}
+
+
 void Game::choiceHero(Player& player, HeroType choice){
     player.setHero((choice == dracula.get()->getHeroType() ? dracula : sherlock));
 }
@@ -81,10 +86,10 @@ int Game::getRemainingActions() const{
 }
 
 
-vector<int> Game::getAvailableMoves(Character* character, 
+vector<Option> Game::getAvailableMoves(Character* character, 
     const int& spacing)
 {
-    vector<int> reachable;
+    vector<Option> reachable;
     queue<pair<int, int>> q;
     vector<bool> visited(board.size(), false);
 
@@ -116,7 +121,7 @@ vector<int> Game::getAvailableMoves(Character* character,
             for(auto sidekick : currentPlayer->getHero()->getSidekicks())
                 if(next == sidekick.get()->getPosition())
                     continue;    
-            reachable.push_back(next);
+            reachable.push_back({"House", next});
         }
     }
     sort(reachable.begin(), reachable.end());
@@ -124,12 +129,12 @@ vector<int> Game::getAvailableMoves(Character* character,
 }
 
 
-vector<int> Game::getAllSpaces(){
-    vector<int> allSpaces;
+vector<Option> Game::getAllSpaces(){
+    vector<Option> allSpaces;
 
     for(int space = 0; space < 32; space++)
         if(canMove(space))
-            allSpaces.push_back(space);
+            allSpaces.push_back({"House", space});
 
     return allSpaces;
 }
@@ -158,24 +163,25 @@ bool Game::canManever(vector<int> availableMoves) const{
 }
 
 
-void Game::requestMove(Character* character, int range){
-    pendingMove = {character, range};
+void Game::requestAction(unique_ptr<PendingAction> action){
+    pendingActions.push(std::move(action));
 }
 
 
 bool Game::hasPendingMove() const{
-    return pendingMove.has_value();
+    return !pendingActions.empty();
 }
 
 
-PendingMove Game::getPendingMove() const{
-    return pendingMove.value();
+PendingAction* Game::currentPendingAction(){
+    if(pendingActions.empty())
+        return nullptr;
+    return pendingActions.front().get();
 }
 
 
 void Game::completePendingMove(const int& position){
-    move(pendingMove->character, position);
-    pendingMove.reset();
+    pendingActions.pop();
 }
 
 
@@ -245,17 +251,17 @@ vector<Card*> Game::getSchemeCards(Character* character)
 }
 
 
-vector<int> Game::getSidekickPlacement()
+vector<Option> Game::getSidekickPlacement()
 {
-    vector<int> reachable;
+    vector<Option> reachable;
     for(int zone : board.getSpace(currentPlayer->getHero()->getPosition()).zone)
         for(int i = 0; i < 32; i++)
         {
-            if(i == currentPlayer->getHero()->getPosition())
+            if(!canMove(i))
                 continue;
             vector<int> zones = board.getSpace(i).zone;
             if(find(zones.begin(), zones.end(), zone) != zones.end())
-                reachable.push_back(i);
+                reachable.push_back({"House", i});
         }
     return reachable;
 }
