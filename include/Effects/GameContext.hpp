@@ -18,10 +18,13 @@ class GameContext
         Character* defender;
         Board* board;
         Character* Winner ;
+        Character* selectedCharacter ;
         Card* attackerCard ;
         Card* defenderCard ;
         Game* game ;
         Card* currentCard ;
+        std::vector<int> seletedCardsIndex ;
+
     public :
         GameContext(Player* , Player*, Character* , Character* , Board* , Card* ,Card* , Game*);
         Player* getCurrentPlayer() const ;
@@ -36,6 +39,10 @@ class GameContext
         Character* getWinner() const ;
         void setCurrentCard(Card*) ;
         Card* getCurrentCard() const ;
+        void setSelectedCharacter(Character*) ;
+        Character* getSelectedCharacter() const ;
         std::vector<Character*> resolve(ConditionTarget target) const;
+        void setSelectedCardsIndex(std::vector<int>)  ;
+        std::vector<int> getSelectedCardsIndex() const  ;
         Game* getGame() const ;
 };

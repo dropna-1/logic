@@ -17,6 +17,16 @@ struct EffectEntry
     std::shared_ptr<IEffect> effect ;
 };
 
+struct RequestEntry
+{
+    RequestType type ;
+    MoveMode mode = MoveMode::AnySpace ;
+    EffectTarget target ;
+    int MoveRange = 0 ; 
+    int count = 0 ;
+};
+
+
 class Card 
 {
     private:
@@ -28,6 +38,7 @@ class Card
         int boost ;
         std::string description ;
         std::vector<EffectEntry> effects ;
+        std::vector<RequestEntry> requests ;
     public :
         Card(const std::string& name,
             CardType type,
@@ -36,19 +47,22 @@ class Card
             int value,
             int boost ,
             const std::string& description);
-    void addEffect(TriggerType , EffectTarget , std::shared_ptr<IConditions> , shared_ptr<IEffect>) ;
-    const std::string& getName() const;
-    int getValue() const;
-    int getBoost() const;
-    CardType getType() const;
-    FighterType getFighter() const;
-    TriggerType getTrigger() const;
-    const std::string& getDescription() const ;
-    std::vector<EffectEntry>& getEffects() ;
-    const std::vector<EffectEntry>& getEffects() const ;
-    void execute(TriggerType , GameContext&) ;
-    void setBoost(int) ;
-    void setValue(int) ;
+        void addEffect(TriggerType , EffectTarget , std::shared_ptr<IConditions> , shared_ptr<IEffect>) ;
+        const std::string& getName() const;
+        int getValue() const;
+        int getBoost() const;
+        CardType getType() const;
+        FighterType getFighter() const;
+        TriggerType getTrigger() const;
+        const std::string& getDescription() const ;
+        std::vector<EffectEntry>& getEffects() ;
+        const std::vector<EffectEntry>& getEffects() const ;
+        const std::vector<RequestEntry>& getRequests() const ;
+        void execute(TriggerType , GameContext&) ;
+        void applyRequest(RequestType , GameContext&) ;
+        void setBoost(int) ;
+        void setValue(int) ;
+        void addRequest(RequestEntry) ;
             
 };
 

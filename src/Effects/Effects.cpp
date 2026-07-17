@@ -2,6 +2,8 @@
 #include "Effects/Conditions.hpp"
 #include "Ability/IAbility.hpp"
 #include <cstdlib>
+#include <algorithm>
+using namespace std ;
 
 DamageEffect::DamageEffect(int damage) : damage(damage)
 {
@@ -48,7 +50,7 @@ void MoveEffect::execute(GameContext& context, const vector<Character*>& targets
 {
     for(auto c : targets)
     {
-        context.getGame()->requestMove(c,distance) ;
+        context.getGame()->requestAction(make_unique<MoveAction>(c , MoveMode::AnySpace , distance)) ;
     }
 }
 
@@ -140,7 +142,8 @@ void ReviveSister::execute(GameContext& context ,  const vector<Character*>& tar
         if(!sister->isAlive())
         {
             sister->heal(sister->getMaxhp()) ;
-            context.getGame()->requestMove(sister , -1) ;
+            context.getGame()->requestAction(make_unique<MoveAction>(sister , MoveMode::Zone ,
+                 context.getCurrentPlayer()->getHero()->getPosition()));
         }
     }   
 }
@@ -193,4 +196,38 @@ void PreyUponEffect::execute(GameContext& context , const vector<Character*>& ta
 void LookIntoMyEyesEffect::execute(GameContext& context , const vector<Character*>& targets)
 {
     context.getDefenderCard()->setValue(context.getDefenderCard()->getValue() + context.getAttackerCard()->getBoost()) ;
+}
+
+void ThirstEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    for(auto c : targets)
+    {
+        context.getGame()->requestAction(make_unique<MoveAction>(c ,MoveMode::Zone , context.getDefender()->getPosition())) ;
+    }
+}
+
+void RaveningEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    int count ;
+    for(auto sister : targets)
+    {
+        if(areAdjacent(context.getBoard() , context.getSelectedCharacter() , sister))
+        {
+            count++ ;
+        }
+    }
+    context.getSelectedCharacter()->takeDamage(count) ;
+}
+
+void BeastFormEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    auto indexes = context.getSelectedCardsIndex() ;
+    sort(indexes.rbegin() , indexes.rend()); 
+    int count = 0 ; 
+    for(auto index : indexes)
+    {
+        context.getCurrentPlayer()->getHero()->getDeck()->discardFromHand(index) ;
+        count++ ;
+    }
+    context.getAttackerCard()->setValue(context.getAttackerCard()->getValue() + count) ;
 }

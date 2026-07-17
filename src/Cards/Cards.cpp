@@ -1,4 +1,5 @@
 #include "Cards/Cards.hpp"
+#include "Pending.hpp"
 using namespace std ;
 
 Card::Card(const string& name,
@@ -94,5 +95,51 @@ void Card::execute(TriggerType trigger , GameContext& context)
         }
         auto targets = context.getTargets(entry.target) ;
         entry.effect->execute(context , targets) ;
+    }
+}
+
+void Card::addRequest(RequestEntry request)
+{
+    requests.push_back(request) ;   
+}
+
+void Card::applyRequest(RequestType requesti , GameContext& context)
+{
+    for(const auto& request : requests)
+    {
+        switch(request.type) 
+        {
+            case RequestType::Move :
+            {
+                context.getGame()->requestAction(make_unique<MoveAction>(context.getSelectedCharacter() , request.mode , request.MoveRange));
+                break ;
+            }
+            case RequestType::Ravening :
+            {
+                context.getGame()->requestAction(make_unique<RaveningAction>(context.getGame())) ;
+                break ;
+            }
+            case RequestType::Card :
+            {
+                switch(request.target)
+                {
+                    case EffectTarget::currentPlayer :
+                    {
+                        context.getGame()->requestAction(make_unique<ChooseCardAction>(context.getCurrentPlayer())) ;
+                        break;
+                    }
+                    case EffectTarget::EnemyPlayer :
+                    {
+                        context.getGame()->requestAction(make_unique<ChooseCardAction>(context.getEnemyPlayer())) ;
+                        break;
+                    }
+                }
+                break; 
+            }
+            case RequestType::None :
+            {
+                break ;
+            }
+        }
     }
 }

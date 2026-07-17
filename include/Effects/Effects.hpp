@@ -120,3 +120,21 @@ class LookIntoMyEyesEffect : public IEffect
     public :
         void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
+
+class ThirstEffect : public IEffect 
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class RaveningEffect : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class BeastFormEffect : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};

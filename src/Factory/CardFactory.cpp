@@ -158,7 +158,7 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
         2 ,
         "AFTER COMBAT: Move Holmes up to 3 spaces."
     );
-    TheGameIsAfoot->addEffect(TriggerType::AfterCombat , EffectTarget::FriendlyHero, nullptr , make_shared<MoveEffect>());
+    TheGameIsAfoot->addEffect(TriggerType::AfterCombat , EffectTarget::FriendlyHero, nullptr , make_shared<MoveEffect>(3));
     addCopies(deck , 2 , TheGameIsAfoot);
     
     auto DeduceStrategy = createCard(
@@ -221,13 +221,15 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
     auto ThirstForSustenance = createCard(
         "Thirst for Sustenance" , 
         CardType::Attack , 
-        FighterType::Hero , 
+        FighterType::Sidekick , 
         TriggerType::AfterCombat ,
         3 ,
         3 , 
         "AFTER COMBAT: If you won the combat, place Dracula in any space Adjacent to the Opposing Fighter" 
     );
-    // افکتاش اماده نیست
+    ThirstForSustenance->addEffect(TriggerType::AfterCombat, EffectTarget::FriendlyHero, 
+        make_shared<WonBattleCondition>(),make_shared<ThirstEffect>());
+    addCopies(deck , 3 , ThirstForSustenance);
 
     auto Exploit = createCard(
         "Exploit" , 
@@ -251,7 +253,8 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
         "Recover 2 health. Return any defeated Sister(if any) to any space in Dracula zone."
     );
     BaptismOfBlood->addEffect(TriggerType::None, EffectTarget::FriendlyHero, nullptr , make_shared<HealEffect>(2)) ;
-    //باید افکت ریوایو سیستر رو بزنم 
+    BaptismOfBlood->addEffect(TriggerType::None, EffectTarget::FriendlySidekicks, nullptr, make_shared<ReviveSister>()) ;
+    addCopies(deck ,2 , BaptismOfBlood) ;
 
     auto Ambush = createCard(
         "Ambush" , 
@@ -301,6 +304,30 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
     );
     LookIntoMyEyes->addEffect(TriggerType::DuringCombat, EffectTarget::FriendlyHero, nullptr , make_shared<LookIntoMyEyesEffect>());
     addCopies(deck , 3 , LookIntoMyEyes) ; 
+
+    auto RaveningSeduction = createCard(
+        "Ravening Seduction" , 
+        CardType::Scheme , 
+        FighterType::Sidekick , 
+        TriggerType::None ,
+        0 , 
+        2 , 
+        "Move any Fighter up to 2 spaces.After Moving deal 1 damage to the moved fighter for each sister adjacent to them."
+    );
+    RaveningSeduction->addRequest({RequestType::Ravening});
+    RaveningSeduction->addEffect(TriggerType::None , EffectTarget::FriendlySidekicks , nullptr , make_shared<RaveningEffect>()) ;
+    addCopies(deck , 3 , RaveningSeduction) ;
+
+    auto BeastForm = createCard(
+        "Beast Form" , 
+        CardType::Attack ,
+        FighterType::Hero ,
+        TriggerType::DuringCombat , 
+        6 , 
+        4 ,
+        "DURING COMBAT: You may discard any number of your cards from your hand. This card's value is +1 for each card you discard."
+    );
+    
 
     deck->shuffleDeck();
     return deck;

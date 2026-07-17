@@ -61,3 +61,12 @@ enum class ConditionTarget
     Attacker,
     Defender
 };
+
+enum class RequestType
+{
+    Move, 
+    Character , 
+    Card ,
+    Ravening , 
+    None ,
+};
