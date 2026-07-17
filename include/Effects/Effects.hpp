@@ -4,6 +4,7 @@
 #include "GameContext.hpp"
 #include "Cards/Deck.hpp"
 
+
 class DamageEffect : public IEffect
 {
     private :
@@ -44,6 +45,7 @@ class DiscardCardEffect : public IEffect
 {
     private :
         int count ;
+    public :
         DiscardCardEffect(int count) ;
         void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
@@ -52,4 +54,87 @@ class CancelEffectsEffect : public IEffect
 {
     public :
         void execute(GameContext& context , const vector<Character*>& targets) override ;   
+};
+
+class SwapEffect : public IEffect
+{
+    private :
+        EffectTarget first ;
+        EffectTarget second ;
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class MoveToAdjacentEffect : public IEffect  
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+
+};
+
+class DeduceEffect : public IEffect
+{
+    public : 
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class ReviveSister : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class AmbushEffect : public IEffect 
+{
+    public : 
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class GainActionEffect : public IEffect 
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class FeedingFrenzyEffect : public IEffect 
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class RaveningSeduction : public IEffect
+{
+    public : 
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class PreyUponEffect : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+
+};
+
+class LookIntoMyEyesEffect : public IEffect 
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class ThirstEffect : public IEffect 
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class RaveningEffect : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};
+
+class BeastFormEffect : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
 };

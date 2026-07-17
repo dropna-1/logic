@@ -13,10 +13,11 @@ enum class MoveMode
 
 class PendingAction {
 protected:
-    bool isFinished = false;
+    bool finished = false;
 public:
     virtual std::vector<Option> getOption(Game& game) = 0;
     virtual void submit(Game& game, vector<int> choice) = 0;
+    bool isFinished() const;
 };
 
 

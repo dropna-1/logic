@@ -1,23 +1,25 @@
 #include "Cards/Cards.hpp"
+#include "Pending.hpp"
+using namespace std ;
 
-Card::Card(const std::string& name,
+Card::Card(const string& name,
            CardType type,
            FighterType fighter,
-           TriggerType trigger,
+           TriggerType trigger ,
            int value,
            int boost,
-           const std::string& description)
+           const string& description)
     : name(name),
       type(type),
       fighter(fighter),
-      trigger(trigger),
+      trigger(trigger) ,
       value(value),
       boost(boost),
-      description(description)
+      description(description) 
 {
 }
 
-const std::string& Card::getName() const
+const string& Card::getName() const
 {
     return name;
 }
@@ -47,17 +49,97 @@ int Card::getBoost() const
     return boost;
 }
 
-const std::string& Card::getDescription() const
+const string& Card::getDescription() const
 {
     return description;
 }
 
-const std::vector<std::shared_ptr<IEffect>>& Card::getEffects() const
+const vector<EffectEntry>& Card::getEffects() const
 {
     return effects;
 }
 
-void Card::addEffect(std::shared_ptr<IEffect> effect)
+vector<EffectEntry>& Card::getEffects() 
 {
-    effects.push_back(effect);
+    return effects;
+}
+
+void Card::addEffect(TriggerType trigger,EffectTarget target,shared_ptr<IConditions> condition,shared_ptr<IEffect> effect)
+{
+    effects.push_back({trigger , target , condition , effect});
+}
+
+void Card::setBoost(int New)
+{
+    boost = New ;
+}
+
+void Card::setValue(int New)
+{
+    value = New ;
+}
+void Card::execute(TriggerType trigger , GameContext& context)
+{
+    for(const auto& entry : effects)
+    {
+        if(entry.trigger != trigger)
+        {
+            continue; 
+        }
+        if(entry.condition)
+        {
+            if(!entry.condition->check(context))
+            {
+                continue ;
+            }
+        }
+        auto targets = context.getTargets(entry.target) ;
+        entry.effect->execute(context , targets) ;
+    }
+}
+
+void Card::addRequest(RequestEntry request)
+{
+    requests.push_back(request) ;   
+}
+
+void Card::applyRequest(RequestType requesti , GameContext& context)
+{
+    for(const auto& request : requests)
+    {
+        switch(request.type) 
+        {
+            case RequestType::Move :
+            {
+                context.getGame()->requestAction(make_unique<MoveAction>(context.getSelectedCharacter() , request.mode , request.MoveRange));
+                break ;
+            }
+            case RequestType::Ravening :
+            {
+                context.getGame()->requestAction(make_unique<RaveningAction>(context.getGame())) ;
+                break ;
+            }
+            case RequestType::Card :
+            {
+                switch(request.target)
+                {
+                    case EffectTarget::currentPlayer :
+                    {
+                        context.getGame()->requestAction(make_unique<ChooseCardAction>(context.getCurrentPlayer())) ;
+                        break;
+                    }
+                    case EffectTarget::EnemyPlayer :
+                    {
+                        context.getGame()->requestAction(make_unique<ChooseCardAction>(context.getEnemyPlayer())) ;
+                        break;
+                    }
+                }
+                break; 
+            }
+            case RequestType::None :
+            {
+                break ;
+            }
+        }
+    }
 }

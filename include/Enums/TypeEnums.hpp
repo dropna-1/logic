@@ -11,15 +11,15 @@ enum CardType
     Attack , 
     Defend , 
     Scheme ,
-    Multiple 
+    Versalite
 };
 
 enum class TriggerType
 {
     Immediately,
-    BeforeCombat,
     DuringCombat,
-    AfterCombat
+    AfterCombat , 
+    None 
 };
 
 enum class FighterType
@@ -33,4 +33,40 @@ enum class AttackType
 {
     Melee , 
     Ranged 
+};
+
+enum class EffectTarget
+{
+    currentPlayer , 
+    EnemyPlayer ,
+    FriendlyHero , 
+    FriendlySidekicks , 
+    FriendlyCharacters , 
+    EnemyHero , 
+    EenmySidekicks , 
+    EnemyCharacters ,
+    Attacker , 
+    Defender ,
+    None
+};
+
+enum class ConditionTarget
+{
+    FriendlyHero,
+    EnemyHero,
+    FriendlySidekicks,
+    EnemySidekicks,
+    FriendlyCharacters,
+    EnemyCharacters,
+    Attacker,
+    Defender
+};
+
+enum class RequestType
+{
+    Move, 
+    Character , 
+    Card ,
+    Ravening , 
+    None ,
 };

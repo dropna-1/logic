@@ -14,3 +14,8 @@ void SideKick::printInfo() const
     std::cout << "Health   : " << hp
               << "/" << maxHp << '\n';
 }
+
+bool SideKick::isHero() const 
+{
+    return false ;
+}

@@ -49,6 +49,16 @@ Game* GameContext::getGame() const
     return game ;
 }
 
+void GameContext::setCurrentCard(Card* currentcard)
+{
+    currentCard = currentcard;
+}
+
+Card* GameContext::getCurrentCard() const
+{
+    return currentCard ;
+}
+
 vector<Character*> GameContext::getTargets(EffectTarget target)
 {
     switch(target)
@@ -163,4 +173,24 @@ void GameContext::setWinner(Character* TheWinner)
 Character* GameContext::getWinner() const
 {
     return Winner ;
+}
+
+void GameContext::setSelectedCharacter(Character* selected)
+{
+    selectedCharacter = selected ;
+}
+
+Character* GameContext::getSelectedCharacter() const
+{
+    return selectedCharacter ;
+}
+
+void GameContext::setSelectedCardsIndex(vector<int> indexes)
+{
+    seletedCardsIndex = indexes ;
+}
+
+vector<int> GameContext::getSelectedCardsIndex() const 
+{
+    return seletedCardsIndex ;
 }
