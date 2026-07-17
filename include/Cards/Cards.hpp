@@ -5,38 +5,29 @@
 #include <vector> 
 #include <memory>
 #include "Enums/TypeEnums.hpp"
-#include "Effects/IConditions.hpp"
-#include "Effects/IEffects.hpp"
 
-
-struct EffectEntry
-{
-    TriggerType trigger ;
-    EffectTarget target ;
-    std::shared_ptr<IConditions> condition;
-    std::shared_ptr<IEffect> effect ;
-};
+class IEffect ;
 
 class Card 
 {
     private:
         std::string name ; 
         CardType type ; 
-        TriggerType trigger ;
         FighterType fighter ;
+        TriggerType trigger ;
         int value ;
         int boost ;
         std::string description ;
-        std::vector<EffectEntry> effects ;
+        std::vector<std::shared_ptr<IEffect>> effects ;
     public :
         Card(const std::string& name,
             CardType type,
             FighterType fighter,
-            TriggerType trigger , 
+            TriggerType trigger,
             int value,
             int boost ,
             const std::string& description);
-    void addEffect(TriggerType , EffectTarget , std::shared_ptr<IConditions> , shared_ptr<IEffect>) ;
+    void addEffect(std::shared_ptr<IEffect> effect);
     const std::string& getName() const;
     int getValue() const;
     int getBoost() const;
@@ -44,9 +35,7 @@ class Card
     FighterType getFighter() const;
     TriggerType getTrigger() const;
     const std::string& getDescription() const ;
-    std::vector<EffectEntry>& getEffects() ;
-    const std::vector<EffectEntry>& getEffects() const ;
-    void execute(TriggerType , GameContext&) ;
+    const std::vector<std::shared_ptr<IEffect>>& getEffects() const;
             
 };
 

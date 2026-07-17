@@ -376,8 +376,25 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
         this
     );
 
+    pendingCombat = make_unique<PendingCombat>(
+        option, attackCard, defenseCard, context
+    );
+
+    continueCombat();
+}
+
+void Game::continueCombat(){
+
+    switch (pendingCombat.value().stage)
+    {
+    case CombatStage::DefenseImmediate:
+        pendingCombat.value().defenseCard->execute(TriggerType::Immediately, context);
+        break;
+    
+    default:
+        break;
+    }
     /*immediate*/
-    defenseCard->execute(TriggerType::Immediately, context);
     attackCard->execute(TriggerType::Immediately, context);
 
     /*during*/
@@ -402,5 +419,4 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
 
     otherPlayer->getHero().get()->getDeck()
     .get()->discardCard(defenseCard);
-
 }

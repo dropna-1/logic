@@ -1,24 +1,23 @@
 #include "Cards/Cards.hpp"
-using namespace std ;
 
-Card::Card(const string& name,
+Card::Card(const std::string& name,
            CardType type,
            FighterType fighter,
-           TriggerType trigger ,
+           TriggerType trigger,
            int value,
            int boost,
-           const string& description)
+           const std::string& description)
     : name(name),
       type(type),
       fighter(fighter),
-      trigger(trigger) ,
+      trigger(trigger),
       value(value),
       boost(boost),
-      description(description) 
+      description(description)
 {
 }
 
-const string& Card::getName() const
+const std::string& Card::getName() const
 {
     return name;
 }
@@ -48,42 +47,17 @@ int Card::getBoost() const
     return boost;
 }
 
-const string& Card::getDescription() const
+const std::string& Card::getDescription() const
 {
     return description;
 }
 
-const vector<EffectEntry>& Card::getEffects() const
+const std::vector<std::shared_ptr<IEffect>>& Card::getEffects() const
 {
     return effects;
 }
 
-vector<EffectEntry>& Card::getEffects() 
+void Card::addEffect(std::shared_ptr<IEffect> effect)
 {
-    return effects;
-}
-
-void Card::addEffect(TriggerType trigger,EffectTarget target,shared_ptr<IConditions> condition,shared_ptr<IEffect> effect)
-{
-    effects.push_back({trigger , target , condition , effect});
-}
-
-void Card::execute(TriggerType trigger , GameContext& context)
-{
-    for(const auto& entry : effects)
-    {
-        if(entry.trigger != trigger)
-        {
-            continue; 
-        }
-        if(entry.condition)
-        {
-            if(!entry.condition->check(context))
-            {
-                continue ;
-            }
-        }
-        auto targets = context.getTargets(entry.target) ;
-        entry.effect->execute(context , targets) ;
-    }
+    effects.push_back(effect);
 }

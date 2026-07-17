@@ -12,7 +12,7 @@ class CardFactory
         const std::string& name,
         CardType type,
         FighterType fighter,
-        TriggerType trigger ,
+        TriggerType trigger,
         int value,
         int boost,
         const std::string& description

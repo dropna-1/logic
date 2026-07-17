@@ -16,12 +16,10 @@ class Deck
         void shuffleDeck() ;
         void addcard(std::shared_ptr<Card> card) ;
         bool drawCard();
-        void discardCard(std::shared_ptr<Card> card);
-        void discardFromHand(int) ;
+        void discardCard(int handIndex);
         int getDrawPileSize() const;
         int getHandSize() const;
         int getDiscardPileSize() const;        
         const std::vector<std::shared_ptr<Card>>& getHand() const;
-        std::shared_ptr<Card> playCard(int handindex) ;
     
 };
