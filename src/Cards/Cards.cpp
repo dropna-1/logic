@@ -98,12 +98,12 @@ void Card::execute(TriggerType trigger , GameContext& context)
     }
 }
 
-void Card::addRequest(RequestEntry request)
+/*void Card::addRequest(RequestEntry request)
 {
     requests.push_back(request) ;   
-}
+}*/
 
-void Card::applyRequest(GameContext& context)
+/*void Card::applyRequest(GameContext& context)
 {
     for(const auto& request : requests)
     {
@@ -142,4 +142,4 @@ void Card::applyRequest(GameContext& context)
             }
         }
     }
-}
+}*/
