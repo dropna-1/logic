@@ -103,7 +103,7 @@ void Card::addRequest(RequestEntry request)
     requests.push_back(request) ;   
 }
 
-void Card::applyRequest(RequestType requesti , GameContext& context)
+void Card::applyRequest(GameContext& context)
 {
     for(const auto& request : requests)
     {

@@ -13,7 +13,7 @@ class IAbility
         {
             return true ;
         }
-
+        virtual void execute(Character*) ;
         virtual std::string getName() const = 0;
         virtual std::string getDescription() const = 0;
 };

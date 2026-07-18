@@ -120,6 +120,7 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
         2 ,
         "Choose one opponet, look at their card hand and choose 1 card for them to discard." 
     );
+    EliminateTheImpossible->addRequest({RequestType::Card , EffectTarget::EnemyPlayer});
     EliminateTheImpossible->addEffect(TriggerType::None , EffectTarget::EnemyHero ,
         nullptr , make_shared<DiscardCardEffect>(1)) ;
     addCopies(deck , 2 , EliminateTheImpossible);
@@ -327,6 +328,9 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
         4 ,
         "DURING COMBAT: You may discard any number of your cards from your hand. This card's value is +1 for each card you discard."
     );
+    BeastForm->addRequest({RequestType::Card , EffectTarget::currentPlayer}) ;
+    BeastForm->addEffect(TriggerType::DuringCombat, EffectTarget::currentPlayer, nullptr, make_shared<BeastFormEffect>()) ;
+    addCopies(deck ,2 , BeastForm) ;
     
 
     deck->shuffleDeck();

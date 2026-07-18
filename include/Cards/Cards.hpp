@@ -20,8 +20,8 @@ struct EffectEntry
 struct RequestEntry
 {
     RequestType type ;
-    MoveMode mode = MoveMode::AnySpace ;
     EffectTarget target ;
+    MoveMode mode = MoveMode::AnySpace ;
     int MoveRange = 0 ; 
     int count = 0 ;
 };
@@ -59,7 +59,7 @@ class Card
         const std::vector<EffectEntry>& getEffects() const ;
         const std::vector<RequestEntry>& getRequests() const ;
         void execute(TriggerType , GameContext&) ;
-        void applyRequest(RequestType , GameContext&) ;
+        void applyRequest(GameContext&) ;
         void setBoost(int) ;
         void setValue(int) ;
         void addRequest(RequestEntry) ;

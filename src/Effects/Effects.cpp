@@ -60,10 +60,10 @@ DiscardCardEffect::DiscardCardEffect(int count) : count(count)
 
 void DiscardCardEffect::execute(GameContext& context, const vector<Character*>& targets )
 {
-    auto deck = context.getEnemyPlayer()->getHero()->getDeck() ;
-    for(int i = 0 ; i < count ; i++)
+    auto index = context.getSelectedCardsIndex() ;
+    for(auto card : index)
     {
-        deck->discardFromHand(count) ;
+        context.getEnemyPlayer()->getHero()->getDeck()->discardFromHand(card) ;
     }
 }
 
@@ -172,11 +172,6 @@ void FeedingFrenzyEffect::execute(GameContext& context ,  const vector<Character
         }
     }
     context.getAttackerCard()->setValue(context.getAttackerCard()->getValue() + count) ;
-}
-
-void RaveningSeduction::execute(GameContext& context , const vector<Character*>& targets)
-{
-    // افککتشو نزدم 
 }
 
 void PreyUponEffect::execute(GameContext& context , const vector<Character*>& targets)

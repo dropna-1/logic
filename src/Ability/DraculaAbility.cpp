@@ -10,3 +10,8 @@ std::string DraculaAbility::getDescription() const
 {
     return "dadadadraaacilaalal";
 }
+
+void DraculaAbility::execute(Character* target)
+{
+    target->takeDamage(1) ;
+}
