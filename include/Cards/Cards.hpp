@@ -20,8 +20,8 @@ struct EffectEntry
 struct RequestEntry
 {
     RequestType type ;
-    MoveMode mode = MoveMode::AnySpace ;
     EffectTarget target ;
+    MoveMode mode = MoveMode::AnySpace ;
     int MoveRange = 0 ; 
     int count = 0 ;
 };
