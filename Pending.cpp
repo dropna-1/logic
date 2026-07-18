@@ -5,7 +5,7 @@ using namespace std;
 bool PendingAction::isFinished() const {
     return finished;
 }
-
+/*-----------------------------------------------------------------*/
 MoveAction::MoveAction(Character* current, Character* other, 
     MoveMode mode, int value) :
 currentCharacter(current), otherCharacter(other), 
@@ -22,7 +22,7 @@ vector<Option> MoveAction::getOption(Game& game){
         return spaces;
     }
     if(mode == MoveMode::Zone){
-        spaces = game.getSidekickPlacement();
+        spaces = game.getSidekickPlacement(currentCharacter);
         return spaces;
     }
     spaces = game.getFreeSpacesNearby(otherCharacter);
@@ -34,13 +34,12 @@ void MoveAction::submit(Game& game, int choice){
     game.getPendingCombat().get()->selection.destination = spaces.at(choice).id;
     finished = true;
 }
-
-
+/*-----------------------------------------------------------------*/
 RaveningAction::RaveningAction(Game& game){
     if(allCharacters.empty()){
         for(auto i : game.getCurrentPlayer()->getAllCharacters())
             allCharacters.push_back(i);
-        for(auto i : game.getCurrentPlayer()->getAllCharacters())
+        for(auto i : game.getOtherPlayer()->getAllCharacters())
             allCharacters.push_back(i);
     }
 }
@@ -68,39 +67,69 @@ void RaveningAction::submit(Game& game, int choice){
         finished = true;
     }
 }
-
-
+/*-----------------------------------------------------------------*/
 ChooseCardAction::ChooseCardAction(Player* player, int min, int max) : 
 selected(player), minCards(min), maxCards(max) {}
 
 std::vector<Option> ChooseCardAction::getOption(Game& game){
-    auto p = selected->getHero().get()->getDeck().get()->getHand();
-    for(int id = 0; id < p.size(); id++) 
-        hand.push_back({p.at(id).get()->getName(), id});
-    return hand;
+    vector<Option> options;
+
+    auto hand = selected->getHero().get()->getDeck().get()->getHand();
+    for(int id = 0; id < hand.size(); id++){
+        bool selected = false;
+
+        for(int card : selectedCards){
+            if(card == id){selected = true; break;}
+        }
+        if(!selected)
+            options.push_back({hand.at(id).get()->getName(), id});
+    }
+    if(selectedCards.size() >= minCards)
+        options.push_back({"Done", -1});
+
+    return options;
 }
 
 void ChooseCardAction::submit(Game& game, int choice=-1){
-    if(maxCards == 0){finished = true; return;}
-    if(choice != -1)
-        cards.push_back(hand.at(choice).id);
-    if(maxCards == cards.size()){
+    if(choice != -1){
         finished = true;
-        game.getPendingCombat().get()->selection.cards = cards;
+        game.getPendingCombat().get()->selection.cards = selectedCards;
+        return;
+    }
+    auto hand = selected->getHero().get()->getDeck().get()->getHand();
+    selectedCards.push_back(choice);
+    if(selectedCards.size() == maxCards){
+        finished = true;
+        game.getPendingCombat().get()->selection.cards = selectedCards;
     }
 }
+/*-----------------------------------------------------------------*/
+ShowCardAction::ShowCardAction(Player* player) : selected(player) {}
 
+std::vector<Option> ShowCardAction::getOption(Game& game){
+    vector<Option> options;
 
+    auto hand = selected->getHero().get()->getDeck().get()->getHand();
+    for(int id = 0; id < hand.size(); id++)
+        options.push_back({hand.at(id).get()->getName(), id});
+
+    options.push_back({"Continue", -1});
+    return options;
+}
+
+void ShowCardAction::submit(Game& game, int choice){
+    finished = true;
+}
+/*-----------------------------------------------------------------*/
 std::vector<Option> DraculaAction::getOption(Game& game){
     vector<Option> options;
     neighboors = game.getEnemiesNearby(game.getDracula().get());
-    for(auto character : neighboors){
+    for(auto character : neighboors)
         options.push_back({character->getname(), character->getPosition()});
-    }
     return options;
 }
 
 void DraculaAction::submit(Game& game, int choice){
-    neighboors.at(choice)->takeDamage(1);
+    game.getDracula().get()->getAbility().get()->execute(neighboors.at(choice));
 }
 
