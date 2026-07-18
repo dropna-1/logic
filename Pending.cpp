@@ -2,7 +2,9 @@
 #include "include/Cards/Deck.hpp"
 using namespace std;
 
-void PendingAction::finish(){isFinished = true;}
+bool PendingAction::isFinished() const {
+    return finished;
+}
 
 MoveAction::MoveAction(Character* Char, MoveMode mode, int value) :
 character(Char), mode(mode), range(value) {}
@@ -26,7 +28,7 @@ vector<Option> MoveAction::getOption(Game& game){
 void MoveAction::submit(Game& game, vector<int> choice){
     if(game.canMove(choice.at(0)))
         game.move(character, choice.at(0));
-    isFinished = true;
+    finished = true;
 }
 
 
@@ -57,7 +59,7 @@ void RaveningAction::submit(Game& game, vector<int> choice){
     }
     else{
         game.move(selected, choice.at(0));
-        isFinished = true;
+        finished = true;
     }
 }
 

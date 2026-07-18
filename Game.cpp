@@ -376,31 +376,99 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
         this
     );
 
-    /*immediate*/
-    defenseCard->execute(TriggerType::Immediately, context);
-    attackCard->execute(TriggerType::Immediately, context);
+    pendingCombat = make_unique<PendingCombat>(
+        option, attackCard, defenseCard, context
+    );
 
-    /*during*/
-    defenseCard->execute(TriggerType::DuringCombat, context);
-    attackCard->execute(TriggerType::DuringCombat, context);
+    continueCombat();
+}
 
-    int damage = calculateDamage(attackCard.get(), defenseCard.get());
+void Game::continueCombat()
+{
+    while(pendingCombat)
+    {
+        switch (pendingCombat.get()->stage)
+        {
+        /*---------------------------immediat---------------------------*/
+        case CombatStage::DefenseImmediate:
+            pendingCombat.get()->defenseCard->execute(TriggerType::Immediately, 
+                pendingCombat.get()->context);
 
-    if(damage != 0)
-        option.target->takeDamage(damage);
+            pendingCombat.get()->stage = CombatStage::AttackImmediate;
+            if(hasPendingMove())
+                return;
+            continue;
+        /*-----------------------------------------------------------------*/
+        case CombatStage::AttackImmediate:
+            pendingCombat.get()->attackCard->execute(TriggerType::Immediately, 
+                pendingCombat.get()->context);
 
-    if(damage > 0) {context.setWinner(option.attacker);}
-    else {context.setWinner(option.target);}
-    
-    /*after*/
-    defenseCard->execute(TriggerType::AfterCombat, context);
-    attackCard->execute(TriggerType::AfterCombat, context);
+            pendingCombat.get()->stage = CombatStage::DefenseDuring;
+            if(hasPendingMove())
+                return;  
+            continue;
+        /*---------------------------during---------------------------*/
+        case CombatStage::DefenseDuring:
+            pendingCombat.get()->defenseCard->execute(TriggerType::DuringCombat, 
+                pendingCombat.get()->context);
 
-    /*discard*/
-    currentPlayer->getHero().get()->getDeck()
-    .get()->discardCard(attackCard);
+            pendingCombat.get()->stage = CombatStage::AttackDuring;
+            if(hasPendingMove())
+                return;
+            continue;
+        /*-----------------------------------------------------------------*/
+        case CombatStage::AttackDuring:
+            pendingCombat.get()->attackCard->execute(TriggerType::DuringCombat, 
+                pendingCombat.get()->context);
 
-    otherPlayer->getHero().get()->getDeck()
-    .get()->discardCard(defenseCard);
+            pendingCombat.get()->stage = CombatStage::DealDamage;
+            if(hasPendingMove())
+                return;
+            continue;
+        /*---------------------------damage---------------------------*/
+        case CombatStage::DealDamage:
+            int damage = calculateDamage(pendingCombat.get()->attackCard.get(), 
+            pendingCombat.get()->defenseCard.get());
 
+            if(damage > 0){
+                pendingCombat.get()->option.target->takeDamage(damage);
+                pendingCombat.get()->context.setWinner(pendingCombat.get()->option.attacker);
+            }
+            else {pendingCombat.get()->context.setWinner(pendingCombat.get()->option.target);}
+            pendingCombat.get()->stage = CombatStage::DefenseAfter;  
+            continue;
+        /*---------------------------after---------------------------*/
+        case CombatStage::DefenseAfter:
+            pendingCombat.get()->defenseCard->execute(TriggerType::AfterCombat, 
+                pendingCombat.get()->context);
+
+            pendingCombat.get()->stage = CombatStage::AttackAfter;
+            if(hasPendingMove())
+                return;
+            continue;
+        /*-----------------------------------------------------------------*/
+        case CombatStage::AttackAfter:
+            pendingCombat.get()->attackCard->execute(TriggerType::AfterCombat, 
+                pendingCombat.get()->context);
+
+            pendingCombat.get()->stage = CombatStage::Discard;
+            if(hasPendingMove())
+                return;
+            continue;
+        /*---------------------------discard---------------------------*/
+        case CombatStage::Discard:
+            currentPlayer->getHero().get()->getDeck()
+                .get()->discardCard(pendingCombat.get()->defenseCard);
+
+            otherPlayer->getHero().get()->getDeck()
+                .get()->discardCard(pendingCombat.get()->attackCard);
+
+            pendingCombat.get()->stage = CombatStage::Finished;
+            continue;
+        /*---------------------------finish---------------------------*/
+        case CombatStage::Finished:
+            pendingCombat.reset();
+            return;
+        }
+    }
 }

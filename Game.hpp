@@ -20,6 +20,39 @@ struct Option {
     int id;
 };
 
+
+enum class CombatStage{
+    DefenseImmediate,
+    AttackImmediate,
+
+    DefenseDuring,
+    AttackDuring,
+
+    DealDamage,
+
+    DefenseAfter,
+    AttackAfter,
+
+    Discard,
+    Finished
+};
+
+
+struct PendingCombat{
+    AttackOption option;
+
+    shared_ptr<Card> attackCard;
+    shared_ptr<Card> defenseCard;
+
+    GameContext context;
+    CombatStage stage;
+
+    PendingCombat(AttackOption option, shared_ptr<Card> attackCard, 
+        shared_ptr<Card> defenseCard, GameContext context) : option(option), 
+        attackCard(attackCard), defenseCard(defenseCard), context(context),
+        stage(CombatStage::DefenseImmediate) {}
+};
+
 class Game {
 
     Board board;
@@ -34,7 +67,9 @@ class Game {
     Player* otherPlayer;
 
     int actionsRemaining = 2;
+
     queue<unique_ptr<PendingAction>> pendingActions;
+    unique_ptr<PendingCombat> pendingCombat;
 
 public:
 
@@ -84,4 +119,5 @@ public:
     int calculateDamage(Card* attack, Card* defense);
     void combat(AttackOption option, const int& attackCardIndex, 
         const int& defenseCardIndex);
+    void continueCombat();
 };
