@@ -59,7 +59,7 @@ class Card
         const std::vector<EffectEntry>& getEffects() const ;
         const std::vector<RequestEntry>& getRequests() const ;
         void execute(TriggerType , GameContext&) ;
-        void applyRequest(RequestType , GameContext&) ;
+        void applyRequest(GameContext&) ;
         void setBoost(int) ;
         void setValue(int) ;
         void addRequest(RequestEntry) ;
