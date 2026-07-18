@@ -57,7 +57,7 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
     );
     AdministerAid->addEffect(TriggerType::None , EffectTarget::FriendlySidekicks, nullptr, make_shared<MoveToAdjacentEffect>());
     addCopies(deck ,2 , AdministerAid) ;
-
+    
     auto ServiceRevolver = createCard(
         "Service Revolver" , 
         CardType::Attack , 
@@ -120,7 +120,7 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
         2 ,
         "Choose one opponet, look at their card hand and choose 1 card for them to discard." 
     );
-    EliminateTheImpossible->addRequest({RequestType::Card , EffectTarget::EnemyPlayer});
+    //EliminateTheImpossible->addRequest({RequestType::Card , EffectTarget::EnemyPlayer});
     EliminateTheImpossible->addEffect(TriggerType::None , EffectTarget::EnemyHero ,
         nullptr , make_shared<DiscardCardEffect>(1)) ;
     addCopies(deck , 2 , EliminateTheImpossible);
@@ -173,6 +173,19 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
     );
     DeduceStrategy->addEffect(TriggerType::DuringCombat, EffectTarget::EnemyHero, nullptr, make_shared<DeduceEffect>()); 
     addCopies(deck , 3 , DeduceStrategy) ;
+
+    auto StudyMethods = createCard(
+        "Study Methods" , 
+        CardType::Versalite ,
+        FighterType::Any , 
+        TriggerType::AfterCombat , 
+        3 , 
+        2 , 
+        "AFTER COMBAT: If you won the combat, look at your opponet's hand."
+    );
+    StudyMethods->addEffect(TriggerType::AfterCombat, EffectTarget::EnemyHero, make_shared<WonBattleCondition>() ,
+        make_shared<ShowHandEffect>()) ;
+    addCopies(deck , 2 , StudyMethods) ;
 
     deck->shuffleDeck();
     return deck ;
@@ -315,7 +328,6 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
         2 , 
         "Move any Fighter up to 2 spaces.After Moving deal 1 damage to the moved fighter for each sister adjacent to them."
     );
-    RaveningSeduction->addRequest({RequestType::Ravening});
     RaveningSeduction->addEffect(TriggerType::None , EffectTarget::FriendlySidekicks , nullptr , make_shared<RaveningEffect>()) ;
     addCopies(deck , 3 , RaveningSeduction) ;
 
@@ -328,7 +340,6 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
         4 ,
         "DURING COMBAT: You may discard any number of your cards from your hand. This card's value is +1 for each card you discard."
     );
-    BeastForm->addRequest({RequestType::Card , EffectTarget::currentPlayer}) ;
     BeastForm->addEffect(TriggerType::DuringCombat, EffectTarget::currentPlayer, nullptr, make_shared<BeastFormEffect>()) ;
     addCopies(deck ,2 , BeastForm) ;
     

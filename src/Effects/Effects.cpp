@@ -1,6 +1,7 @@
 #include "Effects/Effects.hpp"
 #include "Effects/Conditions.hpp"
 #include "Ability/IAbility.hpp"
+#include "Game.hpp"
 #include <cstdlib>
 #include <algorithm>
 using namespace std ;
@@ -45,12 +46,19 @@ void DrawCardEffect::execute(GameContext& context, const vector<Character*>& tar
 MoveEffect::MoveEffect(int distance) : distance(distance)
 {
 }
-
 void MoveEffect::execute(GameContext& context, const vector<Character*>& targets)
 {
-    for(auto c : targets)
+    for(auto c :targets)
     {
-        context.getGame()->requestAction(make_unique<MoveAction>(c , MoveMode::AnySpace , distance)) ;
+        if(context.getGame()->getPendingCombat()->selection.destination == -1)
+        {
+            context.getGame()->requestAction(make_unique<MoveAction>(c , nullptr, MoveMode::AnySpace , distance)) ;
+            return ;
+        }
+        if(context.getGame()->canMove(context.getGame()->getPendingCombat()->selection.destination))
+        {
+            context.getGame()->move(c , context.getGame()->getPendingCombat()->selection.destination) ;
+        }
     }
 }
 
@@ -60,7 +68,16 @@ DiscardCardEffect::DiscardCardEffect(int count) : count(count)
 
 void DiscardCardEffect::execute(GameContext& context, const vector<Character*>& targets )
 {
-    auto index = context.getSelectedCardsIndex() ;
+    if(context.getGame()->getPendingCombat()->selection.cards.empty())
+    {
+        context.getGame()->requestAction(make_unique<ChooseCardAction>(context.getCurrentPlayer() , 1 , count)) ;
+        return ;
+    }
+    auto index = context.getGame()->getPendingCombat()->selection.cards ;
+    if(count == 0 )
+    {
+        return ;
+    }
     for(auto card : index)
     {
         context.getEnemyPlayer()->getHero()->getDeck()->discardFromHand(card) ;
@@ -104,15 +121,16 @@ void SwapEffect::execute(GameContext& context , const vector<Character*>& target
 
 void MoveToAdjacentEffect::execute(GameContext& context , const vector<Character*>& targets)
 {
-    for(auto c : targets) 
+    for(auto c : targets)
     {
-        auto places = context.getBoard()->getSpace(c->getPosition()).neighbors ;
-        for(auto c2 : places)
+        if(context.getGame()->getPendingCombat()->selection.destination == -1)
         {
-            if(context.getGame()->canMove(c2))
-            {
-                c->setPosition(c2) ;
-            }
+            context.getGame()->requestAction(make_unique<MoveAction>(c, context.getAttacker() ,MoveMode::Neighboor ,-1)) ;
+            return ;
+        }
+        if(context.getGame()->canMove(context.getGame()->getPendingCombat()->selection.destination))
+        {
+            context.getGame()->move(c , context.getGame()->getPendingCombat()->selection.destination) ;
         }
     }
 }
@@ -142,8 +160,16 @@ void ReviveSister::execute(GameContext& context ,  const vector<Character*>& tar
         if(!sister->isAlive())
         {
             sister->heal(sister->getMaxhp()) ;
-            context.getGame()->requestAction(make_unique<MoveAction>(sister , MoveMode::Zone ,
-                 context.getCurrentPlayer()->getHero()->getPosition()));
+            if(context.getGame()->getPendingCombat()->selection.destination == -1)
+            {
+                context.getGame()->requestAction(make_unique<MoveAction>(context.getAttacker() , nullptr, MoveMode::Zone , -1)) ;
+                return ;
+            }
+            if(context.getGame()->canMove(context.getGame()->getPendingCombat()->selection.destination))
+            {
+                context.getGame()->move(sister , context.getGame()->getPendingCombat()->selection.destination) ;
+            }
+            
         }
     }   
 }
@@ -197,26 +223,51 @@ void ThirstEffect::execute(GameContext& context , const vector<Character*>& targ
 {
     for(auto c : targets)
     {
-        context.getGame()->requestAction(make_unique<MoveAction>(c ,MoveMode::Zone , context.getDefender()->getPosition())) ;
+        if(context.getGame()->getPendingCombat()->selection.destination == -1)
+        {
+            context.getGame()->requestAction(make_unique<MoveAction>(c, context.getDefender(),MoveMode::Neighboor ,-1)) ;
+            return ;
+        }
+        if(context.getGame()->canMove(context.getGame()->getPendingCombat()->selection.destination))
+        {
+            context.getGame()->move(c , context.getGame()->getPendingCombat()->selection.destination) ;
+        }
     }
 }
 
 void RaveningEffect::execute(GameContext& context , const vector<Character*>& targets)
 {
+    if(context.getGame()->getPendingCombat()->selection.character == nullptr ||
+       context.getGame()->getPendingCombat()->selection.destination == -1 )
+    {
+        context.getGame()->requestAction(make_unique<RaveningAction>()) ;
+        return ;
+    }
+    if(context.getGame()->canMove(context.getGame()->getPendingCombat()->selection.destination))
+    {
+        context.getGame()->move(context.getGame()->getPendingCombat()->selection.character , 
+        context.getGame()->getPendingCombat()->selection.destination) ;
+    }
     int count ;
     for(auto sister : targets)
     {
-        if(areAdjacent(context.getBoard() , context.getSelectedCharacter() , sister))
+        if(areAdjacent(context.getBoard() , context.getGame()->getPendingCombat()->selection.character , sister))
         {
             count++ ;
         }
     }
-    context.getSelectedCharacter()->takeDamage(count) ;
+    context.getGame()->getPendingCombat()->selection.character->takeDamage(count) ;
 }
 
 void BeastFormEffect::execute(GameContext& context , const vector<Character*>& targets)
 {
-    auto indexes = context.getSelectedCardsIndex() ;
+    if(context.getGame()->getPendingCombat()->selection.cards.empty())
+    {
+        context.getGame()->requestAction(make_unique<ChooseCardAction>(context.getCurrentPlayer() , 0 , 
+        context.getCurrentPlayer()->getHero()->getDeck()->getHandSize())) ;
+        return ;
+    }
+    auto indexes = context.getGame()->getPendingCombat()->selection.cards ;
     sort(indexes.rbegin() , indexes.rend()); 
     int count = 0 ; 
     for(auto index : indexes)
@@ -225,4 +276,14 @@ void BeastFormEffect::execute(GameContext& context , const vector<Character*>& t
         count++ ;
     }
     context.getAttackerCard()->setValue(context.getAttackerCard()->getValue() + count) ;
+}
+
+void ShowHandEffect::execute(GameContext& context , const vector<Character*>& targets)
+{
+    if(context.getGame()->getPendingCombat()->selection.destination == -1)
+    {
+        context.getGame()->requestAction(make_unique<ShowCardAction>(context.getEnemyPlayer())) ;
+        return ;
+    }
+    return ;
 }
