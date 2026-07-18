@@ -282,10 +282,10 @@ vector<Card*> Game::getSchemeCards(Character* character)
 }
 
 
-vector<Option> Game::getSidekickPlacement()
+vector<Option> Game::getSidekickPlacement(Character* character)
 {
     vector<Option> reachable;
-    for(int zone : board.getSpace(currentPlayer->getHero()->getPosition()).zone)
+    for(int zone : board.getSpace(character->getPosition()).zone)
         for(int i = 0; i < 32; i++)
         {
             if(!canMove(i))
@@ -378,12 +378,15 @@ void Game::playScheme(Character* source, const int& schemeCardIndex)
         this
     );
     auto schemeCard = currentPlayer->getHero().get()->getDeck()
-    .get()->playCard(schemeCardIndex);
+    .get()->getHand().at(schemeCardIndex);
 
     schemeCard.get()->execute(TriggerType::None, context);
 
+    if(hasPendingMove())
+        return;
+
     currentPlayer->getHero().get()->getDeck()
-    .get()->discardCard(schemeCard);
+    .get()->discardFromHand(schemeCardIndex);
 }
 
 

@@ -19,8 +19,7 @@ public:
     virtual void submit(Game& game, int choice) = 0;
     bool isFinished() const;
 };
-
-
+/*-----------------------------------------------------------------*/
 class MoveAction : public PendingAction {
 private:
     vector<Option> spaces;
@@ -33,8 +32,7 @@ public:
     std::vector<Option> getOption(Game& game) override;
     void submit(Game& game, int choice) override;
 };
-
-
+/*-----------------------------------------------------------------*/
 class RaveningAction : public PendingAction {
 private:
     std::vector<Character*> allCharacters;
@@ -46,12 +44,10 @@ public:
     std::vector<Option> getOption(Game& game) override;
     void submit(Game& game, int choice) override;
 };
-
-
+/*-----------------------------------------------------------------*/
 class ChooseCardAction : public PendingAction {
 private:
-    vector<int> cards;
-    vector<Option> hand;
+    vector<int> selectedCards;
     Player* selected = nullptr;
     int minCards;
     int maxCards;
@@ -60,8 +56,16 @@ public:
     std::vector<Option> getOption(Game& game) override;
     void submit(Game& game, int choice) override;
 };
-
-
+/*-----------------------------------------------------------------*/
+class ShowCardAction : public PendingAction {
+private:
+    Player* selected = nullptr;
+public:
+    ShowCardAction(Player* player);
+    std::vector<Option> getOption(Game& game) override;
+    void submit(Game& game, int choice) override;
+};
+/*-----------------------------------------------------------------*/
 class DraculaAction : public PendingAction {
     vector<Character*> neighboors;
 public:
