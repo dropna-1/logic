@@ -37,6 +37,11 @@ enum class CombatStage{
     Finished
 };
 
+struct PendingSelection{
+    Character* character = nullptr;
+    vector<int> cards;
+    int destination = -1;
+};
 
 struct PendingCombat{
     AttackOption option;
@@ -46,6 +51,7 @@ struct PendingCombat{
 
     GameContext context;
     CombatStage stage;
+    PendingSelection selection;
 
     PendingCombat(AttackOption option, shared_ptr<Card> attackCard, 
         shared_ptr<Card> defenseCard, GameContext context) : option(option), 
@@ -79,6 +85,8 @@ public:
     void changeTurn();
     Hero* checkWinner();
     Board& getBoard();
+    shared_ptr<Hero> getDracula() const;
+    unique_ptr<PendingCombat>& getPendingCombat();
     /*-----------------------------------------------------------------*/
     void setPlayer1(const string& name, const int& age);
     void setPlayer2(const string& name, const int& age);
@@ -95,6 +103,7 @@ public:
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
     bool canManever(vector<int> availableMoves) const;
+    vector<Option> getFreeSpacesNearby(Character* character);
     /*------------------------------------------------------------------*/
     void requestAction(unique_ptr<PendingAction> action);
     bool hasPendingMove() const;
@@ -111,6 +120,7 @@ public:
     bool canDefense(vector<Card*> playableDefenseCard) const;
     bool canAttack(vector<Card*> playableAttackCard,
         vector<AttackOption> targets) const;
+    vector<Character*> getEnemiesNearby(Character* character);
     /*------------------------------------------------------------------*/
     void playScheme(Character* source, const int& schemeCardIndex);
     vector<Card*> getSchemeCards(Character* character);

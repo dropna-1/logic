@@ -9,6 +9,15 @@ Game::Game() : dracula(HeroFactory::createDracula())
 , sherlock(HeroFactory::createSherlock()){}
 
 
+shared_ptr<Hero> Game::getDracula() const{
+    return dracula;
+}
+
+unique_ptr<PendingCombat>& Game::getPendingCombat(){
+    return pendingCombat;
+}
+
+
 void Game::setPlayer1(const string& name, const int& age){
     player1.setName(name);
     player1.setAge(age);
@@ -139,6 +148,14 @@ vector<Option> Game::getAllSpaces(){
     return allSpaces;
 }
 
+vector<Option> Game::getFreeSpacesNearby(Character* character){
+    vector<Option> freeSpaces;
+    for(int neigh : board.getSpace(character->getPosition()).neighbors)
+        if(canMove(neigh))
+            freeSpaces.push_back({"House", neigh});
+    return freeSpaces;
+}
+
 
 bool Game::canMove(int to) const{
     for(auto character : currentPlayer->getAllCharacters())
@@ -193,6 +210,20 @@ int Game::calculateDamage(Card* attack, Card* defense){
     return 0;
 }
 
+
+vector<Character*> Game::getEnemiesNearby(Character* character){
+    vector<Character*> enemies;
+    auto neighboors = board.getSpace(dracula.get()->getPosition()).neighbors;
+    for(int target : neighboors){
+        for(auto character : player1.getAllCharacters())
+            if(character->getPosition() == target)
+                enemies.push_back(character);
+        for(auto character : player2.getAllCharacters())
+            if(character->getPosition() == target)
+                enemies.push_back(character);
+    }
+    return enemies;
+}
 
 vector<Card*> Game::getPlayableAttackCard(Character* attacker)
 {
@@ -393,37 +424,33 @@ void Game::continueCombat()
         case CombatStage::DefenseImmediate:
             pendingCombat.get()->defenseCard->execute(TriggerType::Immediately, 
                 pendingCombat.get()->context);
-
-            pendingCombat.get()->stage = CombatStage::AttackImmediate;
             if(hasPendingMove())
                 return;
+            pendingCombat.get()->stage = CombatStage::AttackImmediate;
             continue;
         /*-----------------------------------------------------------------*/
         case CombatStage::AttackImmediate:
             pendingCombat.get()->attackCard->execute(TriggerType::Immediately, 
                 pendingCombat.get()->context);
-
-            pendingCombat.get()->stage = CombatStage::DefenseDuring;
             if(hasPendingMove())
-                return;  
+                return;
+            pendingCombat.get()->stage = CombatStage::DefenseDuring;
             continue;
         /*---------------------------during---------------------------*/
         case CombatStage::DefenseDuring:
             pendingCombat.get()->defenseCard->execute(TriggerType::DuringCombat, 
                 pendingCombat.get()->context);
-
-            pendingCombat.get()->stage = CombatStage::AttackDuring;
             if(hasPendingMove())
                 return;
+            pendingCombat.get()->stage = CombatStage::AttackDuring;
             continue;
         /*-----------------------------------------------------------------*/
         case CombatStage::AttackDuring:
             pendingCombat.get()->attackCard->execute(TriggerType::DuringCombat, 
                 pendingCombat.get()->context);
-
-            pendingCombat.get()->stage = CombatStage::DealDamage;
             if(hasPendingMove())
                 return;
+            pendingCombat.get()->stage = CombatStage::DealDamage;
             continue;
         /*---------------------------damage---------------------------*/
         case CombatStage::DealDamage:
@@ -441,19 +468,17 @@ void Game::continueCombat()
         case CombatStage::DefenseAfter:
             pendingCombat.get()->defenseCard->execute(TriggerType::AfterCombat, 
                 pendingCombat.get()->context);
-
-            pendingCombat.get()->stage = CombatStage::AttackAfter;
             if(hasPendingMove())
                 return;
+            pendingCombat.get()->stage = CombatStage::AttackAfter;
             continue;
         /*-----------------------------------------------------------------*/
         case CombatStage::AttackAfter:
             pendingCombat.get()->attackCard->execute(TriggerType::AfterCombat, 
                 pendingCombat.get()->context);
-
-            pendingCombat.get()->stage = CombatStage::Discard;
             if(hasPendingMove())
                 return;
+            pendingCombat.get()->stage = CombatStage::Discard;
             continue;
         /*---------------------------discard---------------------------*/
         case CombatStage::Discard:
