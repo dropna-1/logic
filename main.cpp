@@ -1,9 +1,12 @@
 #include <iostream>
-#include "include/ui/MainMenu.hpp"
+#include "ui/App.hpp"
+#include "ui/MainMenu.hpp"
+#include "ui/PlayerSetup.hpp"
 using namespace std;
 
 int main(){
-    MainMenu menu;
-    int selected = menu.show();
+    App app;
+    app.Run();
+
     return 0;
 }

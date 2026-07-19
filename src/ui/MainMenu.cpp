@@ -3,21 +3,37 @@
 #include "ui/MainMenu.hpp"
 
 #include <ftxui/component/component.hpp>
-#include <ftxui/component/screen_interactive.hpp>
+#include <ftxui/component/component_options.hpp>
 #include <ftxui/dom/elements.hpp>
 
 using namespace ftxui;
 
-int MainMenu::show(){
-    auto screen = ScreenInteractive::TerminalOutput();
+MainMenu::MainMenu(std::function<void()> on_play) : on_play_(std::move(on_play))
+{
+    auto play = Button("Play", on_play_);
+    auto help = Button("Help", [] {});
+    auto exit = Button("Exit", [] {});
 
-    std::vector<std::string> options{"Play", "Help", "Exit"};
-    int selected = 0;
+    auto container = Container::Vertical({
+        play,
+        help,
+        exit
+    });
 
-    auto menu = Menu(&options, &selected);
-    auto renderer = Renderer(menu, [&]{return menu->Render();});
+    component_ = Renderer(container, [&]
+    {
+        return vbox({
+            filler(),
+            text("UnMatched") | bold | center,
+            separator(),
+            play->Render(),
+            help->Render(),
+            exit->Render(),
+            filler()
+        });
+    });
+}
 
-    screen.Loop(renderer);
-    return selected;
-
+ftxui::Component MainMenu::GetComponent(){
+    return component_;
 }
