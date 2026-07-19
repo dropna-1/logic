@@ -5,9 +5,10 @@
 #include "board.hpp"
 #include "player.hpp"
 #include "Cards/Cards.hpp"
-#include "Game.hpp"
+
 class Card ;
 class Player;
+class Game;
 
 class GameContext
 {

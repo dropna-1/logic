@@ -2,13 +2,13 @@
 #include <algorithm>
 using namespace std; 
 
-bool areAdjacent( Board* board , const Character* first , const Character* Second) 
+bool areAdjacent(const Board* board , const Character* first , const Character* Second) 
 {
     const auto& neighbors = board->getSpace(first->getPosition()).neighbors ;
     return (find(neighbors.begin(), neighbors.end() , Second->getPosition()) != neighbors.end()) ;
 }
 
-bool areInSameZone(Board* board , const Character* first , const Character* Second)
+bool areInSameZone(const Board* board , const Character* first , const Character* Second)
 {
     const auto& firstZone = board->getSpace(first->getPosition()).zone;
     const auto& SecondZone = board->getSpace(Second->getPosition()).zone ; 

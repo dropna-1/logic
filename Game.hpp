@@ -9,6 +9,7 @@
 #include "player.hpp"
 
 class PendingAction;
+class GameContext;
 class Character;
 class Card;
 

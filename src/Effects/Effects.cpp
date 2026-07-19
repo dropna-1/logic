@@ -1,6 +1,7 @@
 #include "Effects/Effects.hpp"
 #include "Effects/Conditions.hpp"
 #include "Ability/IAbility.hpp"
+#include "Pending.hpp"
 #include "Game.hpp"
 #include <cstdlib>
 #include <algorithm>
@@ -240,7 +241,7 @@ void RaveningEffect::execute(GameContext& context , const vector<Character*>& ta
     if(context.getGame()->getPendingCombat()->selection.character == nullptr ||
        context.getGame()->getPendingCombat()->selection.destination == -1 )
     {
-        context.getGame()->requestAction(make_unique<RaveningAction>()) ;
+        context.getGame()->requestAction(make_unique<RaveningAction>(*context.getGame())) ;
         return ;
     }
     if(context.getGame()->canMove(context.getGame()->getPendingCombat()->selection.destination))

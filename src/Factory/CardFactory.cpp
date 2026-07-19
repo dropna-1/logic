@@ -183,7 +183,8 @@ shared_ptr<Deck> CardFactory::createSherlockDeck()
         2 , 
         "AFTER COMBAT: If you won the combat, look at your opponet's hand."
     );
-    StudyMethods->addEffect(TriggerType::AfterCombat, EffectTarget::EnemyHero, make_shared<WonBattleCondition>() ,
+    StudyMethods->addEffect(TriggerType::AfterCombat, EffectTarget::EnemyHero, make_shared<WonBattleCondition>(
+        ConditionTarget::FriendlyHero) ,
         make_shared<ShowHandEffect>()) ;
     addCopies(deck , 2 , StudyMethods) ;
 
@@ -242,7 +243,7 @@ shared_ptr<Deck> CardFactory::createDraculaDeck()
         "AFTER COMBAT: If you won the combat, place Dracula in any space Adjacent to the Opposing Fighter" 
     );
     ThirstForSustenance->addEffect(TriggerType::AfterCombat, EffectTarget::FriendlyHero, 
-        make_shared<WonBattleCondition>(),make_shared<ThirstEffect>());
+        make_shared<WonBattleCondition>(ConditionTarget::FriendlyHero),make_shared<ThirstEffect>());
     addCopies(deck , 3 , ThirstForSustenance);
 
     auto Exploit = createCard(

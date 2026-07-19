@@ -8,6 +8,7 @@
 #include "Effects/IConditions.hpp"
 #include "Effects/IEffects.hpp"
 
+class IConditions;
 
 struct EffectEntry
 {
@@ -36,7 +37,7 @@ class Card
             int value,
             int boost ,
             const std::string& description);
-        void addEffect(TriggerType , EffectTarget , std::shared_ptr<IConditions> , shared_ptr<IEffect>) ;
+        void addEffect(TriggerType , EffectTarget , std::shared_ptr<IConditions> , std::shared_ptr<IEffect>) ;
         const std::string& getName() const;
         int getValue() const;
         int getBoost() const;
