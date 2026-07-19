@@ -1,16 +1,16 @@
 #include "ui/App.hpp"
 #include "ui/MainMenu.hpp"
+#include "ui/PlayerSetup.hpp"
 
 App::App() 
 : screen_(ftxui::ScreenInteractive::TerminalOutput())
 , current_screen_(ScreenType::MainMenu) 
 {
-    main_menu_ = std::make_shared<MainMenu>([this] (){
+    main_menu_ = std::make_shared<MainMenu>([this](){
         SetScreen(ScreenType::PlayerSetup);
-        ChangeScreen();
     });
 
-    current_component_ = main_menu_->GetComponent();
+    ChangeScreen();
 }
 
 void App::SetScreen(ScreenType screen){
@@ -25,10 +25,13 @@ void App::ChangeScreen(){
         current_component_ = main_menu_->GetComponent();
         break;
     case ScreenType::PlayerSetup:
+        current_component_ =player_setup_->GetComponent();
         break;
     case ScreenType::Exit:
         screen_.ExitLoopClosure()();
+        return;
     default:
+        current_component_ = main_menu_->GetComponent();
         break;
     }
 }
