@@ -5,5 +5,5 @@ the_name_of_your_project
 LANGUAGES CXX
 )
 file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_executable(app Pending.cpp player.cpp Game.cpp ${SOURCES})
+add_executable(app main.cpp Pending.cpp player.cpp Game.cpp ${SOURCES})
 target_include_directories(app PUBLIC "include" .)
