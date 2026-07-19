@@ -1,8 +1,11 @@
 #pragma once
 #include <iostream>
 #include <memory>
-#include "include/Characters/Hero.hpp"
+#include <vector>
 using namespace std;
+
+class Hero;
+class Character;
 
 class Player {
     string name;

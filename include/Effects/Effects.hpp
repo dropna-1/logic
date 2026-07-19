@@ -138,3 +138,9 @@ class BeastFormEffect : public IEffect
     public :
         void execute(GameContext& context , const vector<Character*>& targets) override ;
 };
+
+class ShowHandEffect : public IEffect
+{
+    public :
+        void execute(GameContext& context , const vector<Character*>& targets) override ;
+};

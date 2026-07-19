@@ -1,7 +1,6 @@
 #include "Ability/SherlockAbility.hpp"
 using namespace std ;
 
-// esm o tozihat ability ro badan dorost mikonam
 string SherlockAbility::getName() const
 {
     return "Sherlock ability";
@@ -9,7 +8,7 @@ string SherlockAbility::getName() const
 
 string SherlockAbility::getDescription() const
 {
-    return "Sherlock ABility";
+    return "Effects on HOLMES and DR.WATSON cards cannot be canceled by an opponet.(Effects on ANY cards can be canceled)";
 }
 
 bool SherlockAbility::allowCancel(Card* card , GameContext& context) 

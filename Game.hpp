@@ -1,13 +1,16 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <queue>
 #include "board.hpp"
 #include "include/Characters/Hero.hpp"
 #include "Factory/HeroFactory.hpp"
-#include "Cards/Cards.hpp"
+#include "Effects/GameContext.hpp"
 #include "player.hpp"
-#include "Pending.hpp"
-using namespace std;
+
+class PendingAction;
+class Character;
+class Card;
 
 struct AttackOption {
     Character* attacker;
@@ -18,6 +21,10 @@ struct AttackOption {
 struct Option {
     std::string text;
     int id;
+
+    bool operator<(const Option& other){
+        return id < other.id; 
+    }
 };
 
 
@@ -39,22 +46,22 @@ enum class CombatStage{
 
 struct PendingSelection{
     Character* character = nullptr;
-    vector<int> cards;
+    std::vector<int> cards;
     int destination = -1;
 };
 
 struct PendingCombat{
     AttackOption option;
 
-    shared_ptr<Card> attackCard;
-    shared_ptr<Card> defenseCard;
+    std::shared_ptr<Card> attackCard;
+    std::shared_ptr<Card> defenseCard;
 
-    GameContext context;
+    GameContext& context;
     CombatStage stage;
     PendingSelection selection;
 
-    PendingCombat(AttackOption option, shared_ptr<Card> attackCard, 
-        shared_ptr<Card> defenseCard, GameContext context) : option(option), 
+    PendingCombat(AttackOption option, std::shared_ptr<Card> attackCard, 
+        std::shared_ptr<Card> defenseCard, GameContext& context) : option(option), 
         attackCard(attackCard), defenseCard(defenseCard), context(context),
         stage(CombatStage::DefenseImmediate) {}
 };
@@ -66,16 +73,16 @@ class Game {
     Player player1;
     Player player2;
     
-    shared_ptr<Hero> dracula;
-    shared_ptr<Hero> sherlock;
+    std::shared_ptr<Hero> dracula;
+    std::shared_ptr<Hero> sherlock;
 
     Player* currentPlayer;
     Player* otherPlayer;
 
     int actionsRemaining = 2;
 
-    queue<unique_ptr<PendingAction>> pendingActions;
-    unique_ptr<PendingCombat> pendingCombat;
+    std::queue<unique_ptr<PendingAction>> pendingActions;
+    std::unique_ptr<PendingCombat> pendingCombat;
 
 public:
 
@@ -85,8 +92,8 @@ public:
     void changeTurn();
     Hero* checkWinner();
     Board& getBoard();
-    shared_ptr<Hero> getDracula() const;
-    unique_ptr<PendingCombat>& getPendingCombat();
+    std::shared_ptr<Hero> getDracula() const;
+    std::unique_ptr<PendingCombat>& getPendingCombat();
     /*-----------------------------------------------------------------*/
     void setPlayer1(const string& name, const int& age);
     void setPlayer2(const string& name, const int& age);
@@ -94,18 +101,18 @@ public:
     Player* getOtherPlayer();
     Player* getFirstPlayer();
     void choiceHero(Player& player, HeroType choice);
-    vector<Option> getSidekickPlacement(Character* character);
-    const vector<shared_ptr<Card>>& showOtherHand();
+    std::vector<Option> getSidekickPlacement(Character* character);
+    const std::vector<std::shared_ptr<Card>>& showOtherHand();
     /*-----------------------------------------------------------------*/
-    vector<Option> getAvailableMoves(Character* character, const int& spacing);
-    vector<Option> getAllSpaces();
+    std::vector<Option> getAvailableMoves(Character* character, const int& spacing);
+    std::vector<Option> getAllSpaces();
     bool canMove(int to) const;
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
-    bool canManever(vector<int> availableMoves) const;
-    vector<Option> getFreeSpacesNearby(Character* character);
+    bool canManever(std::vector<int> availableMoves) const;
+    std::vector<Option> getFreeSpacesNearby(Character* character);
     /*------------------------------------------------------------------*/
-    void requestAction(unique_ptr<PendingAction> action);
+    void requestAction(std::unique_ptr<PendingAction> action);
     bool hasPendingMove() const;
     PendingAction* currentPendingAction();
     void completePendingMove(const int& position);
@@ -114,17 +121,17 @@ public:
     int getRemainingActions() const;
     void addAction();
     /*------------------------------------------------------------------*/
-    vector<AttackOption> getAttackableTargets();
-    vector<Card*> getPlayableAttackCard(Character* attacker);
-    vector<Card*> getPlayableDefenseCard(Character* defender);
-    bool canDefense(vector<Card*> playableDefenseCard) const;
-    bool canAttack(vector<Card*> playableAttackCard,
-        vector<AttackOption> targets) const;
-    vector<Character*> getEnemiesNearby(Character* character);
+    std::vector<AttackOption> getAttackableTargets();
+    std::vector<Card*> getPlayableAttackCard(Character* attacker);
+    std::vector<Card*> getPlayableDefenseCard(Character* defender);
+    bool canDefense(std::vector<Card*> playableDefenseCard) const;
+    bool canAttack(std::vector<Card*> playableAttackCard,
+        std::vector<AttackOption> targets) const;
+    std::vector<Character*> getEnemiesNearby(Character* character);
     /*------------------------------------------------------------------*/
     void playScheme(Character* source, const int& schemeCardIndex);
-    vector<Card*> getSchemeCards(Character* character);
-    bool canPlayScheme(vector<Card*> playableSchemeCard) const;
+    std::vector<Card*> getSchemeCards(Character* character);
+    bool canPlayScheme(std::vector<Card*> playableSchemeCard) const;
     /*------------------------------------------------------------------*/
     int calculateDamage(Card* attack, Card* defense);
     void combat(AttackOption option, const int& attackCardIndex, 

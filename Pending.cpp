@@ -130,6 +130,8 @@ std::vector<Option> DraculaAction::getOption(Game& game){
 }
 
 void DraculaAction::submit(Game& game, int choice){
-    game.getDracula().get()->getAbility().get()->execute(neighboors.at(choice));
+    game.getDracula().get()->getAbility().get()->execute(
+        neighboors.at(choice), game.getDracula().get()
+    );
 }
 

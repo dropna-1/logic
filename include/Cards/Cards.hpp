@@ -17,16 +17,6 @@ struct EffectEntry
     std::shared_ptr<IEffect> effect ;
 };
 
-struct RequestEntry
-{
-    RequestType type ;
-    EffectTarget target ;
-    MoveMode mode = MoveMode::AnySpace ;
-    int MoveRange = 0 ; 
-    int count = 0 ;
-};
-
-
 class Card 
 {
     private:
@@ -38,7 +28,6 @@ class Card
         int boost ;
         std::string description ;
         std::vector<EffectEntry> effects ;
-        std::vector<RequestEntry> requests ;
     public :
         Card(const std::string& name,
             CardType type,
@@ -57,12 +46,9 @@ class Card
         const std::string& getDescription() const ;
         std::vector<EffectEntry>& getEffects() ;
         const std::vector<EffectEntry>& getEffects() const ;
-        const std::vector<RequestEntry>& getRequests() const ;
         void execute(TriggerType , GameContext&) ;
-        void applyRequest(GameContext&) ;
         void setBoost(int) ;
         void setValue(int) ;
-        void addRequest(RequestEntry) ;
             
 };
 
