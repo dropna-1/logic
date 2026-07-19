@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "board.hpp"
+#include "Board/board.hpp"
 #include "Characters/Character.hpp"
 #include "IConditions.hpp"
 

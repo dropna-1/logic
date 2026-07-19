@@ -2,8 +2,8 @@
 
 #include "Characters/Hero.hpp"
 #include "Characters/SideKick.hpp"
-#include "board.hpp"
-#include "player.hpp"
+#include "Board/board.hpp"
+#include "Player/player.hpp"
 #include "Cards/Cards.hpp"
 
 class Card ;

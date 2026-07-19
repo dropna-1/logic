@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
-#include "Game.hpp"
-#include "include/Characters/Character.hpp"
+#include "Game/Game.hpp"
+#include "Characters/Character.hpp"
+
 
 enum class MoveMode
 {

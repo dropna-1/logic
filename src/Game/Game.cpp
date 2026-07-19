@@ -1,8 +1,8 @@
 #include <algorithm>
-#include "include/Characters/SideKick.hpp"
-#include "Game.hpp"
+#include "Characters/SideKick.hpp"
+#include "Game/Game.hpp"
 #include "Cards/Deck.hpp"
-#include "Pending.hpp"
+#include "Pending/Pending.hpp"
 using namespace std;
 
 

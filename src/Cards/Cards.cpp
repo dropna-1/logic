@@ -1,5 +1,5 @@
 #include "Cards/Cards.hpp"
-#include "Pending.hpp"
+#include "Pending/Pending.hpp"
 using namespace std ;
 
 Card::Card(const string& name,

@@ -1,6 +1,6 @@
-#include "player.hpp"
-#include "include/Characters/SideKick.hpp"
-#include "include/Characters/Hero.hpp"
+#include "Player/player.hpp"
+#include "Characters/SideKick.hpp"
+#include "Characters/Hero.hpp"
 
 
 void Player::setHero(shared_ptr<Hero> hero){

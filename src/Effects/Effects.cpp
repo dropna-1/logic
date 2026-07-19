@@ -1,8 +1,8 @@
 #include "Effects/Effects.hpp"
 #include "Effects/Conditions.hpp"
 #include "Ability/IAbility.hpp"
-#include "Pending.hpp"
-#include "Game.hpp"
+#include "Pending/Pending.hpp"
+#include "Game/Game.hpp"
 #include <cstdlib>
 #include <algorithm>
 using namespace std ;

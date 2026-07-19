@@ -2,11 +2,11 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include "board.hpp"
-#include "include/Characters/Hero.hpp"
+#include "Board/board.hpp"
+#include "Characters/Hero.hpp"
 #include "Factory/HeroFactory.hpp"
 #include "Effects/GameContext.hpp"
-#include "player.hpp"
+#include "Player/player.hpp"
 
 class PendingAction;
 class GameContext;
