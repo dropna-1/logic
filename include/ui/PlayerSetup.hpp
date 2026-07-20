@@ -14,6 +14,8 @@ public:
     PlayerSetup(std::function<void(PlayerInfo p1, PlayerInfo p2)> on_start_);
     ftxui::Component GetComponent();
 private:
+    bool ValidatePlayers();
+
     PlayerInfo player1_;
     PlayerInfo player2_;
 
@@ -22,6 +24,6 @@ private:
     ftxui::Component p2_name_input_;
     ftxui::Component p2_age_input_;
 
-    ftxui::Component renderer_;
+    ftxui::Component component_;
     std::function<void(PlayerInfo, PlayerInfo)> on_start_;
 };

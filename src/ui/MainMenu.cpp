@@ -6,11 +6,12 @@
 
 using namespace ftxui;
 
-MainMenu::MainMenu(std::function<void()> on_play) : on_play_(std::move(on_play))
+MainMenu::MainMenu(std::function<void()> on_play, std::function<void()> on_exit) : 
+on_play_(std::move(on_play)), on_exit_(std::move(on_exit)) 
 {
     auto play = Button("Play", on_play_);
     auto help = Button("Help", [] {});
-    auto exit = Button("Exit", [] {});
+    auto exit = Button("Exit", on_exit_);
 
     auto container = ftxui::Container::Vertical({
         play,
@@ -18,7 +19,7 @@ MainMenu::MainMenu(std::function<void()> on_play) : on_play_(std::move(on_play))
         exit
     });
 
-    component_ = Renderer(container, [play, help, exit]
+    component_ = Renderer(container, [=]
     {
         return vbox({
             filler(),
