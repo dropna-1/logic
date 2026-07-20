@@ -27,54 +27,71 @@ PlayerSetup::PlayerSetup(std::function<void(PlayerInfo, PlayerInfo)> on_start)
         start_btn
     });
 
-    component_ = Renderer(container, [p1n=p1_name_input_, p1a=p1_age_input_, 
+    component_ = Renderer(container, [p1n=p1_name_input_, p1a=p1_age_input_, this,
                                      p2n=p2_name_input_, p2a=p2_age_input_, start=start_btn] {
-    auto player1_box = vbox({
-        text("Player 1") | bold | center,
-        separator(),
-        p1n->Render(),
-        separator(),
-        p1a->Render(),
-    }) | borderDouble | color(Color::DarkGoldenrod);
+        auto player1_box = vbox({
+            text("Player 1") | bold | center,
+            separator(),
+            p1n->Render(),
+            separator(),
+            p1a->Render(),
+        }) | borderDouble | color(Color::DarkGoldenrod);
 
-    auto player2_box = vbox({
-        text("Player 2") | bold | center,
-        separator(),
-        p2n->Render(),
-        separator(),
-        p2a->Render(),
-    }) | borderDouble | color(Color::DarkRedBis);
+        auto player2_box = vbox({
+            text("Player 2") | bold | center,
+            separator(),
+            p2n->Render(),
+            separator(),
+            p2a->Render(),
+        }) | borderDouble | color(Color::DarkRedBis);
 
-        return vbox({
-            filler(),
-            text("Player Setup") | color(Color::Cyan) | center | bold,
-            separator() | color(Color::Cyan) | bold,
-            
-            player1_box,
-            filler(),
-            
-            player2_box,
-            filler(),
-            
-            start->Render() | size(ftxui::WIDTH, ftxui::EQUAL, 100) | center,
-            filler()
-        }) | borderDouble | color(Color::BlueViolet) | size(WIDTH, EQUAL, 100) | center | bold;
+        Elements elements;
+        elements.push_back(filler());
+        elements.push_back(text("Player Setup") | color(Color::Cyan) | center | bold);
+        elements.push_back(separator() | color(Color::Cyan) | bold);
+        elements.push_back(player1_box);
+        elements.push_back(filler());
+        elements.push_back(player2_box);
+        elements.push_back(filler());
+        if(!error_message_.empty()){
+            elements.push_back(text(error_message_) | color(Color::Red) | center);
+        }
+        elements.push_back(start->Render() | size(ftxui::WIDTH, ftxui::EQUAL, 100) | center);
+        elements.push_back(filler());
+
+        return vbox(std::move(elements))
+        | borderDouble | color(Color::BlueViolet) 
+        | size(WIDTH, EQUAL, 100) | center | bold;
     });
 }
 
-bool PlayerSetup::ValidatePlayers(){
-    try{
+bool PlayerSetup::ValidatePlayers() {
+    error_message_.clear();
+
+    if (player1_.name.empty()) {
+        error_message_ = "Player 1 name is required.";
+        return false;
+    }
+    if (player2_.name.empty()) {
+        error_message_ = "Player 2 name is required.";
+        return false;
+    }
+    if (player1_.name == player2_.name) {
+        error_message_ = "Players must have different names.";
+        return false;
+    }
+    try {
         player1_.age = std::stoi(player1_.age_str);
         player2_.age = std::stoi(player2_.age_str);
-    } catch(...) {
-         return false;
     }
-    if(player1_.name.empty() || player2_.name.empty())
-        return  false;
-    
-    if (player1_.age <= 0 || player2_.age <= 0)
+    catch (...) {
+        error_message_ = "Age must be a number.";
         return false;
-    
+    }
+    if (player1_.age <= 0 || player2_.age <= 0) {
+        error_message_ = "Age must be greater than 0.";
+        return false;
+    }
     return true;
 }
 

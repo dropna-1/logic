@@ -15,6 +15,7 @@ public:
     ftxui::Component GetComponent();
 private:
     bool ValidatePlayers();
+    std::string error_message_;
 
     PlayerInfo player1_;
     PlayerInfo player2_;
