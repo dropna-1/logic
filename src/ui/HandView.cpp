@@ -14,12 +14,12 @@ Element HandView::Render(Player& player) const
     for(auto& card : player.getHero()->getDeck()->getHand())
     {
         cards.push_back(cardview.Render(*card)) ;
-        //cards.push_back(separatorEmpty()) ;
+        cards.push_back(separatorEmpty()) ;
     }
-    /*if (!cards.empty())
+    if (!cards.empty())
     {
         cards.pop_back();
-    }*/
+    }
     std::string title = "Hand (" +to_string(player.getHero()->getDeck()->getHand().size()) +"/7)";
     return window(text(title) | bold | center,hbox(std::move(cards)));
 }

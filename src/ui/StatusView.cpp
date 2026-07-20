@@ -55,31 +55,75 @@ static string ShortName(const std::string& name)
     return name;
 }
 
-Element RenderCharacter(const string& name, int hp, int maxHp)
+Color CharacterColor(const string& name)
 {
-    return vbox({
-        hbox({text(ShortName(name)), text(" ")  ,text(MakeBar(hp, maxHp)) ,filler() , text(to_string(hp) + "/" + to_string(maxHp))})  
-    }) ;
+    if(name == "Sherlock")
+        return Color::BlueLight;
+
+    if(name == "Dr.Watson")
+        return Color::LightCyan1Bis;
+
+    if(name == "Dracula")
+        return Color::RedLight;
+
+    if(name.find("Sister") != string::npos)
+        return Color::HotPink;
+
+    return Color::White;
 }
 
-Element RenderPlayer(Player& player)
+Element RenderCharacter(
+    const string& name,
+    int hp,
+    int maxHp
+)
+{
+    Decorator hpColor = color(Color::GreenLight);
+
+    double ratio = static_cast<double>(hp) / maxHp;
+
+    if(ratio <= 0.30)
+        hpColor = color(Color::RedLight);
+    else if(ratio <= 0.70)
+        hpColor = color(Color::YellowLight);
+
+    auto title =
+        text(name)
+        | color(CharacterColor(name));
+
+    if(name == "Sherlock" ||
+       name == "Dracula")
+        title = title | bold;
+
+    return hbox({
+        title,
+        text(" "),
+        text(MakeBar(hp,maxHp)),
+        filler(),
+        text(to_string(hp)+"/"+to_string(maxHp))
+    });
+}
+
+
+
+Element RenderPlayer(Player& player )
 {
     auto hero = player.getHero() ;
     Elements elements ;
-    elements.push_back(RenderCharacter(hero->getname(),hero->getHp(),hero->getMaxhp())) ;
+    elements.push_back(RenderCharacter(hero->getname(),hero->getHp(),hero->getMaxhp() )) ;
     for(auto& sidekick : hero->getSidekicks())
     {
         elements.push_back(separatorEmpty()) ;
-        elements.push_back(RenderCharacter(sidekick->getname(),sidekick->getHp(),sidekick->getMaxhp())) ;
+        elements.push_back(RenderCharacter(sidekick->getname(),sidekick->getHp(),sidekick->getMaxhp() )) ;
     }
     elements.push_back(separator());
-    elements.push_back(hbox({text("Hand"),filler(),
+    elements.push_back(hbox({text("Hand") | bold,filler(),
         text(std::to_string(hero->getDeck()->getHand().size()))})) ;
-    elements.push_back(hbox({text("Discard"),filler(),
+    elements.push_back(hbox({text("Discard") | bold,filler(),
         text(std::to_string(hero->getDeck()->getDiscardPileSize()))})
     );
     
-    return window(text(hero->getname()) | bold | center, 
+    return window(text(hero->getname()) | color(CharacterColor(player.getHero()->getname())) | bold | center , 
                   vbox(move(elements))
                   ) | size(WIDTH, EQUAL , 34) ;
 }

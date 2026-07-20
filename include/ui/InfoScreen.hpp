@@ -8,6 +8,7 @@
 #include "ui/BoardView.hpp"
 #include "ui/StatusView.hpp"
 #include "ui/HandView.hpp"
+#include "ui/TurnView.hpp"
 
 class InfoScreen
 {
@@ -20,7 +21,7 @@ public:
     ) const;
 
 private:
-
+    TurnView turnView ;
     BoardView boardView;
     StatusView statusView;
     HandView handView;

@@ -8,6 +8,7 @@ Element InfoScreen::Render(
     Player& player2
 ) const
 {
+    Element turnPanel = turnView.Render(player1 , 1) ;
     Element boardPanel =
         boardView.Render(
             board,
@@ -27,20 +28,21 @@ Element InfoScreen::Render(
         );
 
     return vbox({
+        turnPanel ,
 
         hbox({
 
-            boardPanel | flex,
+            boardPanel | flex | color(Color::DarkSlateGray1),
 
             separator(),
 
-            statusPanel
+            statusPanel | color(Color::BlueViolet)
 
         }),
 
         separator(),
 
-        handPanel
+        handPanel | color(Color::BlueViolet)
 
     });
 }

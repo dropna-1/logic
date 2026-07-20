@@ -24,19 +24,20 @@ namespace
         {
             case CardType::Attack :
             {
-                return "Type : Attack" ;
+                return "[ ATTACK ]" ;
+                
             }
             case CardType::Defend :
             {
-                return "Type : Defend" ;
+                return "[ DEFEND ]" ;
             }
             case CardType::Scheme :
             {
-                return "Type : Scheme" ;
+                return "[ SCHEME ]" ;
             }
             case CardType::Versalite :
             {
-                return "Type : Versalite" ;    
+                return "[ VERSALITE ]" ;    
             }
             default :
             {
@@ -44,13 +45,33 @@ namespace
             }
         }
     }
+    Color CardTypeColor(CardType type)
+    {
+        switch(type)
+        {
+            case CardType::Attack:
+                return Color::RedLight;
+
+            case CardType::Defend:
+                return Color::BlueLight;
+
+            case CardType::Scheme:
+                return Color::YellowLight;
+
+            case CardType::Versalite:
+                return Color::MagentaLight;
+
+            default:
+                return Color::White;
+        }
+    }
 }
 
 Element CardView::Render(const Card& card) const
 {
-    auto title = text(ShortenName(card.getName())) | center | bold  ;
-    auto type = text(CardTypeToString(card.getType())) | center ;
-    auto value = hbox({text("Value : ") , text(to_string(card.getValue()))}) ;
-    auto boost = hbox({text("Boost : "),text(std::to_string(card.getBoost()))});
-    return window(title , vbox({type ,separator()  , value , boost})) | size(WIDTH ,EQUAL , 18 ) ;
+    auto title = text(ShortenName(card.getName())) | center | bold | color(Color::White) ;
+    auto type = text(CardTypeToString(card.getType())) | center | color(CardTypeColor(card.getType()));
+    auto value = hbox({text("Value : ") | color(Color::GrayLight) , text(to_string(card.getValue()))}) ;
+    auto boost = hbox({text("Boost : ") | color(Color::GrayLight) ,text(std::to_string(card.getBoost()))});
+    return window(title , vbox({type ,separator()  , value , boost})) | size(WIDTH ,EQUAL , 18 ) | color(CardTypeColor(card.getType())) ;
 }
