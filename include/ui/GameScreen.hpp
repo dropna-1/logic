@@ -12,7 +12,7 @@ public:
     ftxui::Component GetComponent();
 
 private:
-    Game* game_;
+    Game* game_ = nullptr;
 
     ftxui::Component menu_;
     ftxui::Component renderer_;

@@ -27,7 +27,7 @@ PlayerSetup::PlayerSetup(std::function<void(PlayerInfo, PlayerInfo)> on_start)
         start_btn
     });
 
-    component_ = Renderer(container, [p1n=p1_name_input_, p1a=p1_age_input_, this,
+    component_ = Renderer(container, [this, p1n=p1_name_input_, p1a=p1_age_input_,
                                      p2n=p2_name_input_, p2a=p2_age_input_, start=start_btn] {
         auto player1_box = vbox({
             text("Player 1") | bold | center,

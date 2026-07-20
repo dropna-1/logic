@@ -6,11 +6,12 @@
 
 using namespace ftxui;
 
-MainMenu::MainMenu(std::function<void()> on_play, std::function<void()> on_exit) : 
-on_play_(std::move(on_play)), on_exit_(std::move(on_exit)) 
+MainMenu::MainMenu(std::function<void()> on_play, std::function<void()> on_help,
+std::function<void()> on_exit) : on_play_(std::move(on_play)),
+ on_exit_(std::move(on_exit)),  on_help_(std::move(on_help))
 {
     auto play = Button("Play", on_play_);
-    auto help = Button("Help", [] {});
+    auto help = Button("Help", on_help_);
     auto exit = Button("Exit", on_exit_);
 
     auto container = ftxui::Container::Vertical({

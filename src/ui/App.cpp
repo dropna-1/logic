@@ -3,6 +3,7 @@
 #include "ui/MainMenu.hpp"
 #include "ui/PlayerSetup.hpp"
 #include "ui/HeroSelection.hpp"
+#include "ui/HelpScreen.hpp"
 
 App::App() 
 : screen_(ftxui::ScreenInteractive::TerminalOutput())
@@ -10,7 +11,12 @@ App::App()
 {
     main_menu_ = std::make_shared<MainMenu>(
     [this](){SetScreen(ScreenType::PlayerSetup);},
-    [this](){screen_.ExitLoopClosure()();});
+    [this](){screen_.ExitLoopClosure()();},
+    [this](){SetScreen(ScreenType::HelpScreen);});
+
+    help_screen_ = std::make_shared<HelpScreen>(
+        [this](){SetScreen(ScreenType::MainMenu);}
+    );
 
     player_setup_ = std::make_shared<PlayerSetup>(
         [this](PlayerInfo p1, PlayerInfo p2){
@@ -33,6 +39,7 @@ App::App()
     root_ = ftxui::Container::Tab(
         {
             main_menu_->GetComponent(),
+            help_screen_->GetComponent(),
             player_setup_->GetComponent(),
             hero_selection_->GetComponent()
         },
@@ -46,11 +53,14 @@ void App::SetScreen(ScreenType screen){
     case ScreenType::MainMenu:
         current_tab_ = 0;
         break;
-    case ScreenType::PlayerSetup:
+    case ScreenType::HelpScreen:
         current_tab_ = 1;
         break;
-    case ScreenType::HeroSelection:
+    case ScreenType::PlayerSetup:
         current_tab_ = 2;
+        break;
+    case ScreenType::HeroSelection:
+        current_tab_ = 3;
         break;    
     default:
         current_tab_ = 0;

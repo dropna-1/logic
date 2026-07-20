@@ -7,9 +7,11 @@
 class MainMenu;
 class PlayerSetup;
 class HeroSelection;
+class HelpScreen;
 
 enum class ScreenType{
     MainMenu,
+    HelpScreen,
     PlayerSetup,
     HeroSelection,
     GameScreen
@@ -33,4 +35,5 @@ private:
     std::shared_ptr<MainMenu> main_menu_;
     std::shared_ptr<PlayerSetup> player_setup_;
     std::shared_ptr<HeroSelection> hero_selection_;
+    std::shared_ptr<HelpScreen> help_screen_;
 };
