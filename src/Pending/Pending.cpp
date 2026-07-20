@@ -1,5 +1,7 @@
 #include "Pending/Pending.hpp"
 #include "Cards/Deck.hpp"
+#include "Game/Game.hpp"
+#include "Player/player.hpp"
 using namespace std;
 
 bool PendingAction::isFinished() const {

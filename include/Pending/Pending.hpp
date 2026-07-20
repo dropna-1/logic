@@ -1,8 +1,10 @@
 #pragma once
 #include <vector>
-#include "Game/Game.hpp"
 #include "Characters/Character.hpp"
+#include "Common/Option.hpp"
 
+class Game;
+class Player;
 
 enum class MoveMode
 {
@@ -23,7 +25,7 @@ public:
 /*-----------------------------------------------------------------*/
 class MoveAction : public PendingAction {
 private:
-    vector<Option> spaces;
+    std::vector<Option> spaces;
     Character* currentCharacter;
     Character* otherCharacter;
     MoveMode mode;
@@ -37,7 +39,7 @@ public:
 class RaveningAction : public PendingAction {
 private:
     std::vector<Character*> allCharacters;
-    vector<Option> spaces;
+    std::vector<Option> spaces;
     Character* selected = nullptr;
     int stage = 0;
 public:
@@ -48,7 +50,7 @@ public:
 /*-----------------------------------------------------------------*/
 class ChooseCardAction : public PendingAction {
 private:
-    vector<int> selectedCards;
+    std::vector<int> selectedCards;
     Player* selected = nullptr;
     int minCards;
     int maxCards;
@@ -68,7 +70,7 @@ public:
 };
 /*-----------------------------------------------------------------*/
 class DraculaAction : public PendingAction {
-    vector<Character*> neighboors;
+    std::vector<Character*> neighboors;
 public:
     std::vector<Option> getOption(Game& game) override;
     void submit(Game& game, int choice) override;

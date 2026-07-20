@@ -7,8 +7,9 @@
 #include "Factory/HeroFactory.hpp"
 #include "Effects/GameContext.hpp"
 #include "Player/player.hpp"
+#include "Pending/Pending.hpp"
+#include "Common/Option.hpp"
 
-class PendingAction;
 class GameContext;
 class Character;
 class Card;
@@ -17,17 +18,6 @@ struct AttackOption {
     Character* attacker;
     Character* target;
 };
-
-
-struct Option {
-    std::string text;
-    int id;
-
-    bool operator<(const Option& other){
-        return id < other.id; 
-    }
-};
-
 
 enum class CombatStage{
     DefenseImmediate,
@@ -100,7 +90,7 @@ public:
     void setPlayer2(const string& name, const int& age);
     Player* getCurrentPlayer();
     Player* getOtherPlayer();
-    Player* getFirstPlayer();
+    void setupPlayers();
     void choiceHero(Player& player, HeroType choice);
     std::vector<Option> getSidekickPlacement(Character* character);
     const std::vector<std::shared_ptr<Card>>& showOtherHand();

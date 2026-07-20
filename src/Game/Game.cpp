@@ -31,10 +31,15 @@ void Game::setPlayer2(const string& name, const int& age){
 }
 
 
-Player* Game::getFirstPlayer(){
-    if(player1.getAge() <= player2.getAge())
-        return &player1;
-    return &player2;
+void Game::setupPlayers(){
+    if(player1.getAge() <= player2.getAge()){
+        currentPlayer = &player1;
+        otherPlayer = &player2;
+    }
+    else{
+        otherPlayer = &player1;
+        currentPlayer = &player2;
+    }
 }
 
 
@@ -54,15 +59,6 @@ void Game::choiceHero(Player& player, HeroType choice){
 
 
 void Game::setupGame(){
-    if(player1.getAge() <= player2.getAge()){
-        currentPlayer = &player1;
-        otherPlayer = &player2;
-    }
-    else{
-        otherPlayer = &player1;
-        currentPlayer = &player2;
-    }
-
     for(int i = 0; i < 10; i++)
         (i < 5 ? currentPlayer : otherPlayer)->getHero()->getDeck().get()->drawCard();
 }
