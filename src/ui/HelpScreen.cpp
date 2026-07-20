@@ -9,8 +9,10 @@ using namespace ftxui;
 HelpScreen::HelpScreen(std::function<void()> on_back)
     : on_back_(std::move(on_back))
 {
+    auto back = Button("Back", on_back_);
+    auto container = Container::Vertical({back});
     component_ = CatchEvent(
-        Renderer([&] {
+        Renderer(container, [=](){
             return vbox({
                 text("UNMATCHED - HELP")
                     | bold
@@ -59,16 +61,17 @@ HelpScreen::HelpScreen(std::function<void()> on_back)
 
                 separator(),
 
-                text("Press ESC to return")
+                text("Press ESC or Select Back to return")
                     | center
-                    | color(Color::Yellow)
-
+                    | color(Color::Yellow),
+                
+                back->Render() | size(WIDTH, EQUAL, 70) | color(Color::Cyan)
             })
             | borderRounded
             | size(WIDTH, EQUAL, 70)
             | center;
         }),
-        [this](Event event) {
+        [this](ftxui::Event event) {
             if (event == Event::Escape) {
                 if (on_back_)
                     on_back_();

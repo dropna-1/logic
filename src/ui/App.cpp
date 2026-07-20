@@ -11,8 +11,8 @@ App::App()
 {
     main_menu_ = std::make_shared<MainMenu>(
     [this](){SetScreen(ScreenType::PlayerSetup);},
-    [this](){screen_.ExitLoopClosure()();},
-    [this](){SetScreen(ScreenType::HelpScreen);});
+    [this](){SetScreen(ScreenType::HelpScreen);},
+    [this](){screen_.ExitLoopClosure()();});
 
     help_screen_ = std::make_shared<HelpScreen>(
         [this](){SetScreen(ScreenType::MainMenu);}
