@@ -7,10 +7,6 @@
 
 using namespace ftxui;
 
-HeroType getHeroType(int index){
-    return (index == 0 ? HeroType::Sherlock : HeroType::Dracula);
-}
-
 HeroSelection::HeroSelection(std::function<void()> on_finish)
     : on_finish_(std::move(on_finish))
 {
@@ -33,7 +29,6 @@ HeroSelection::HeroSelection(std::function<void()> on_finish)
             }
             return false;
         }
-
     );
 }
 
@@ -53,14 +48,15 @@ void HeroSelection::SelectHero() {
         return;
 
     if (!first_player_selected_) {
-        game_->choiceHero(*game_->getCurrentPlayer(), getHeroType(selected_));
+        game_->choiceHero(*game_->getCurrentPlayer(), type_heroes_.at(selected_).hero_type_);
         game_->changeTurn();
         first_player_selected_ = true;
         heroes_.erase(heroes_.begin() + selected_);
+        type_heroes_.erase(type_heroes_.begin() + selected_);
         selected_ = 0;
     }
     else {
-        game_->choiceHero(*game_->getCurrentPlayer(), getHeroType(0));
+        game_->choiceHero(*game_->getCurrentPlayer(), type_heroes_.at(0).hero_type_);
         game_->changeTurn();
         if (on_finish_)
             on_finish_();

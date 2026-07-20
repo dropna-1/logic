@@ -3,10 +3,16 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "Enums/TypeEnums.hpp"
 
 #include <ftxui/component/component.hpp>
 
 class Game;
+
+struct Heroes{
+    std::string hero_name_;
+    HeroType hero_type_;
+};
 
 class HeroSelection {
 public:
@@ -24,6 +30,11 @@ private:
     std::vector<std::string> heroes_{
         "Sherlock Holmes",
         "Dracula"
+    };
+
+    std::vector<Heroes> type_heroes_{
+        {"Sherlock Holmes", HeroType::Sherlock},
+        {"Dracula", HeroType::Dracula}
     };
 
     int selected_ = 0;
