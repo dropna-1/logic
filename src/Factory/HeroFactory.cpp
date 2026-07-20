@@ -19,8 +19,8 @@ shared_ptr<Hero> HeroFactory::createDracula()
 {
     auto hero = make_shared<Hero>("Dracula" , 13 , 2, AttackType::Melee , HeroType::Dracula) ;
     hero->setDeck(CardFactory::createDraculaDeck()) ;
-    hero->addSidekick(make_shared<SideKick>("Sister" , 1 , 2 , AttackType::Ranged)) ;
-    hero->addSidekick(make_shared<SideKick>("Sister" , 1 , 2 , AttackType::Ranged)) ;
-    hero->addSidekick(make_shared<SideKick>("Sister" , 1 , 2 , AttackType::Ranged)) ;
+    hero->addSidekick(make_shared<SideKick>("Sister 1" , 1 , 2 , AttackType::Ranged)) ;
+    hero->addSidekick(make_shared<SideKick>("Sister 2" , 1 , 2 , AttackType::Ranged)) ;
+    hero->addSidekick(make_shared<SideKick>("Sister 3" , 1 , 2 , AttackType::Ranged)) ;
     return hero ;
 }
