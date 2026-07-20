@@ -1,38 +1,46 @@
 #include "ui/InfoScreen.hpp"
 
-#include "ui/BoardView.hpp"
-#include "ui/StatusView.hpp"
-#include "ui/HandView.hpp"
-
-#include "Game/Game.hpp"
-
 using namespace ftxui;
 
-Element InfoScreen::Render(Game& game) const
+Element InfoScreen::Render(
+    Board& board,
+    Player& player1,
+    Player& player2
+) const
 {
-    BoardView board;
-    StatusView status;
-    HandView hand;
+    Element boardPanel =
+        boardView.Render(
+            board,
+            player1,
+            player2
+        );
 
-    auto left =
-        board.Render(
-            game.getBoard(),
-            *game.getCurrentPlayer(),
-            *game.getOtherPlayer()) |  xflex_shrink ;
-    auto right =
-        status.Render(
-            *game.getCurrentPlayer(),
-            *game.getOtherPlayer());
-    auto bottom =
-        hand.Render(
-            *game.getCurrentPlayer());
+    Element statusPanel =
+        statusView.Render(
+            player1,
+            player2
+        );
+
+    Element handPanel =
+        handView.Render(
+            player1
+        );
+
     return vbox({
+
         hbox({
-            left ,
+
+            boardPanel | flex,
+
             separator(),
-            right
+
+            statusPanel
+
         }),
+
         separator(),
-        bottom
+
+        handPanel
+
     });
 }
