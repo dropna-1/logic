@@ -1,8 +1,11 @@
 #pragma once
 #include <functional>
 #include <string>
+#include <memory>
 #include <ftxui/component/component.hpp>
-#include <ui/InfoScreen.hpp>
+#include "ui/InfoScreen.hpp"
+#include "ui/Actions/IAction.hpp"
+
 
 class Game;
 
@@ -15,13 +18,14 @@ enum class SelectedType {
 
 class GameScreen {
 public:
-    GameScreen(std::function<void()> on_exit);
+    explicit GameScreen(std::function<void()> on_exit);
 
     void SetGame(Game* game);
     ftxui::Component GetComponent();
-    void BuildMenu();
 
 private:
+    void BuildMenu();
+
     Game* game_ = nullptr;
     std::function<void()> on_exit_;
 
@@ -34,4 +38,6 @@ private:
 
     ftxui::Component menu_;
     ftxui::Component component_;
+
+    std::unique_ptr<IAction> current_action_;
 };

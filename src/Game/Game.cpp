@@ -81,11 +81,12 @@ const vector<shared_ptr<Card>>& Game::showOtherHand(){
 }
 
 
-bool Game::useAction(){
-    if(actionsRemaining == 0)
-        return false;
+void Game::useAction(){
     actionsRemaining--;
-    return true;
+    if(actionsRemaining == 0){
+        changeTurn();
+        startTurn();
+    }
 }
 
 
@@ -108,6 +109,7 @@ vector<Option> Game::getAvailableMoves(Character* character,
     while(!q.empty()){
         auto current = q.front();
         q.pop();
+
         int place = current.first;
         int dist = current.second;
 
@@ -115,21 +117,32 @@ vector<Option> Game::getAvailableMoves(Character* character,
             continue;
 
         for(int next : board.getSpace(place).neighbors){
+            bool enemy = false;
+            bool dom = false;
+
             if(visited[next])
                 continue;
-            if(next == otherPlayer->getHero()->getPosition())
+
+            for(Character* c : otherPlayer->getAllCharacters())
+                if(next == c->getPosition()){
+                    enemy = true;
+                    break;
+                }
+            
+            if(enemy)
                 continue;
-            for(auto sidekick : otherPlayer->getHero()->getSidekicks())
-                if(next == sidekick.get()->getPosition())
-                    continue;
+
+            for(Character* c : currentPlayer->getAllCharacters())
+                if(next == c->getPosition()){
+                    dom = true;
+                    break;
+                }
 
             visited[next] = true;
             q.push({next, dist+1});
-
-            for(auto sidekick : currentPlayer->getHero()->getSidekicks())
-                if(next == sidekick.get()->getPosition())
-                    continue;    
-            reachable.push_back({"House", next});
+  
+            if(!dom)
+                reachable.push_back({"House", next});
         }
     }
     sort(reachable.begin(), reachable.end());
@@ -178,6 +191,14 @@ bool Game::canManever(){
             return true;
     return false;
 }
+
+
+void Game::performManeuver(Character* character, const int& pos){
+    move(character, pos);
+    currentPlayer->getHero().get()->getDeck().get()->drawCard();
+    useAction();
+}
+
 
 
 void Game::requestAction(unique_ptr<PendingAction> action){

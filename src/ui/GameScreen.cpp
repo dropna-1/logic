@@ -1,5 +1,6 @@
 #include "ui/GameScreen.hpp"
 #include "Game/Game.hpp"
+#include "ui/Actions/ManeuverAction.hpp"
 
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
@@ -19,9 +20,22 @@ GameScreen::GameScreen(std::function<void()> on_exit)
 
     component_ = CatchEvent(
         Renderer(container, [&] {
-            if (!game_) {
+            if (!game_)
                 return text("No Game");
+
+            if(current_action_)
+            {
+                return vbox({
+                    info_screen_.Render(
+                        game_->getBoard(),
+                        *game_->getCurrentPlayer(),
+                        *game_->getOtherPlayer()
+                    ),
+                    separator(),
+                    current_action_->GetComponent()->Render()
+                });
             }
+
             BuildMenu();
 
             return vbox({
@@ -36,10 +50,17 @@ GameScreen::GameScreen(std::function<void()> on_exit)
         }),
 
         [this](Event event) {
+            if(current_action_)
+            {
+                current_action_->GetComponent()->OnEvent(event);
+                if(current_action_->IsFinished())
+                    current_action_.reset();
+                return true;
+            }
             if (event == Event::Return) {
                 switch (selected_type_.at(selected_)) {
                 case SelectedType::Maneuver:
-                    // Maneuver
+                    current_action_ = std::make_unique<ManeuverAction>(game_);
                     break;
 
                 case SelectedType::Combat:
@@ -73,6 +94,7 @@ Component GameScreen::GetComponent()
 
 void GameScreen::BuildMenu(){
     actions_.clear();
+    selected_type_.clear();
     if(!game_) return;
 
     if(game_->canManever()){

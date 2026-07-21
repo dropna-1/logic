@@ -101,14 +101,16 @@ public:
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
     bool canManever();
+    void performManeuver(Character* character, const int& pos);
     std::vector<Option> getFreeSpacesNearby(Character* character);
+    bool isOccupied(int position);
     /*------------------------------------------------------------------*/
     void requestAction(std::unique_ptr<PendingAction> action);
     bool hasPendingMove() const;
     PendingAction* currentPendingAction();
     void completePendingMove(const int& position);
     /*------------------------------------------------------------------*/
-    bool useAction();
+    void useAction();
     int getRemainingActions() const;
     void addAction();
     /*------------------------------------------------------------------*/
