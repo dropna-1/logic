@@ -1,5 +1,4 @@
 #include "ui/BoardView.hpp"
-#include "ui/SpaceView.hpp"
 
 #include "Board/board.hpp"
 #include "Player/player.hpp"
@@ -40,15 +39,19 @@ namespace
     }
 }
 
-string MakeLabel(const string& s)
+string MakeLabel(int id, const Board& board, const string& text)
 {
-    string label = s;
+    string label = text;
 
-    if(label.size()==1)
+    if(label.size() == 1)
         label = "0" + label;
-
-    if(label.size()>2)
+    if(label.size() > 2)
         label = label.substr(0,2);
+
+    const auto& zone = board.getSpace(id).zone;
+
+    if(zone.size() > 1)
+        return "{" + label + "}";
 
     return "(" + label + ")";
 }
@@ -164,14 +167,10 @@ string BoardView::GetSpaceLabel(
     return to_string(position);
 }
 
-Color BoardView::GetPlayerColor(
-    int position,
-    Player& p1,
-    Player& p2
-) const
+Color BoardView::GetPlayerColor( int position, Player& p1, Player& p2) const
 {
     auto hero = p1.getHero();
-
+    
     if(hero)
     {
         if(hero->getPosition()==position)
@@ -219,15 +218,15 @@ Color BoardView::GetZoneColor(const Board& board, int position) const
     }
 }
 
-Color BoardView::GetZoneBackground( const Board& board, int position) const
+/*Color BoardView::GetZoneBackground( const Board& board, int position) const
 {
     const auto& zone = board.getSpace(position).zone;
 
     if(zone.size() > 1)
-        return Color::DarkOrange3; 
+        return Color::GrayLight; 
 
     return Color::Default;
-}
+}*/
 
 
 bool BoardView::IsSecret(int position) const
@@ -281,13 +280,11 @@ Element BoardView::RenderLine(const string& line, int row, Board& board, Player&
 
         if(c == Color::Default)
             c = GetZoneColor(board,id);
-
-        Color bg = GetZoneBackground(board,id);
-
+        
         parts.push_back(
             text(
-                MakeLabel(GetSpaceLabel(id,p1,p2))
-            ) | color(c) | bgcolor(bg) 
+                MakeLabel(id, board ,GetSpaceLabel(id,p1,p2))
+            )  | color(c)
         );
         current = pos.col + 4;
     }
@@ -320,12 +317,90 @@ Element BoardView::Render(Board& board, Player& player1, Player& player2) const
             )
         );
     }
-
-    return window(
-        text(" Baskerville Manor "),
-        vbox(move(rows))
-    );
+    return window( text(" Baskerville Manor "), vbox(move(rows)) );
+    
 }
 
 
+Element BoardView::RenderPreviewLine(
+    const std::string& line,
+    int row,
+    int selectedPosition,
+    Board& board
+) const
+{
+    struct SpaceRef
+    {
+        int id;
+        int col;
+    };
 
+    std::vector<SpaceRef> spaces;
+
+    for(int id = 0; id < 32; id++)
+        if(SpacePosition[id].row == row)
+            spaces.push_back({id, SpacePosition[id].col});
+
+    std::sort(spaces.begin(), spaces.end(),
+        [](auto& a, auto& b)
+        {
+            return a.col < b.col;
+        });
+
+    Elements parts;
+
+    int current = 0;
+
+    for(auto& s : spaces)
+    {
+        if(s.col > current)
+        {
+            parts.push_back(
+                text(line.substr(current, s.col-current))
+            );
+        }
+
+        Decorator deco = color(Color::GrayLight);
+
+        if(s.id == selectedPosition)
+            deco = color(Color::YellowLight) | bold;
+
+        parts.push_back(
+            text(MakeLabel(s.id, board ,std::to_string(s.id))) | deco
+        );
+
+        current = s.col + 4;
+    }
+
+    if(current < (int)line.size())
+        parts.push_back(text(line.substr(current)));
+
+    return hbox(std::move(parts));
+}
+
+Element BoardView::RenderPlacementPreview(
+    Board& board,
+    int selectedPosition
+) const
+{
+    Canvas canvas = CreateEmptyBoard();
+
+    Elements rows;
+
+    for(int i = 0; i < canvas.size(); i++)
+    {
+        rows.push_back(
+            RenderPreviewLine(
+                canvas[i],
+                i,
+                selectedPosition , 
+                board
+            )
+        );
+    }
+
+    return window(
+        text(" Available Positions "),
+        vbox(std::move(rows))
+    );
+}

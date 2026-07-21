@@ -108,8 +108,23 @@ Element RenderCharacter(
 
 Element RenderPlayer(Player& player )
 {
+    Element playerInfo =
+    vbox({
+        text(player.getName())
+            | bold
+            | color(Color::YellowLight)
+            | center,
+
+        text("Age : " + to_string(player.getAge()))
+            | color(Color::GrayLight)
+            | center,
+
+        separator()
+    });
+
     auto hero = player.getHero() ;
     Elements elements ;
+    elements.push_back(playerInfo);
     elements.push_back(RenderCharacter(hero->getname(),hero->getHp(),hero->getMaxhp() )) ;
     for(auto& sidekick : hero->getSidekicks())
     {
@@ -123,7 +138,7 @@ Element RenderPlayer(Player& player )
         text(std::to_string(hero->getDeck()->getDiscardPileSize())) | color(Color::White) })
     );
     
-    return window(text(hero->getname()) | color(CharacterColor(player.getHero()->getname())) | bold | center , 
+    return window(text(player.getName()) | color(CharacterColor(player.getHero()->getname())) | bold | center , 
                   vbox(move(elements))
                   ) | size(WIDTH, EQUAL , 34) ;
 }
