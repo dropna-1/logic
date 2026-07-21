@@ -19,3 +19,8 @@ bool SherlockAbility::allowCancel(Card* card , GameContext& context)
     }
     return false ;
 }
+
+bool SherlockAbility::HasAbilityOnStart() 
+{
+    return false ;
+}

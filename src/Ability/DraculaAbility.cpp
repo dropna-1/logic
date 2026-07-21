@@ -22,3 +22,8 @@ void DraculaAbility::SendRequest(Game* game)
 {
     game->requestAction(make_unique<DraculaAction>()) ;
 }
+
+bool DraculaAbility::HasAbilityOnStart() 
+{
+    return true ;
+}
