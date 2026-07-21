@@ -69,9 +69,73 @@ namespace
 
 Element CardView::Render(const Card& card) const
 {
-    auto title = text(ShortenName(card.getName())) | center | bold | color(Color::White) ;
-    auto type = text(CardTypeToString(card.getType())) | center | color(CardTypeColor(card.getType()));
-    auto value = hbox({text("Value : ") | color(Color::GrayLight) , text(to_string(card.getValue()))}) ;
-    auto boost = hbox({text("Boost : ") | color(Color::GrayLight) ,text(std::to_string(card.getBoost()))});
-    return window(title , vbox({type ,separator()  , value , boost})) | size(WIDTH ,EQUAL , 18 ) | color(CardTypeColor(card.getType())) ;
+    Color bg;
+    Color border;
+
+    switch(card.getType())
+    {
+        case CardType::Attack:
+            bg = Color::DarkRedBis;
+            border = Color::RedLight;
+            break;
+
+        case CardType::Defend:
+            bg = Color::DarkBlue ;
+            border = Color::BlueLight;
+            break;
+
+        case CardType::Scheme:
+            bg = Color::DarkGreen;
+            border = Color::YellowLight;
+            break;
+
+        case CardType::Versalite:
+            bg = Color::Purple4;
+            border = Color::MagentaLight;
+            break;
+
+        default:
+            bg = Color::Black;
+            border = Color::White;
+    }
+
+    auto title =
+        text(ShortenName(card.getName()))
+        | center
+        | bold
+        | color(Color::White);
+
+    auto type =
+        text(CardTypeToString(card.getType()))
+        | center
+        | bold
+        | color(Color::White);
+
+    auto value =
+        hbox({
+            text("Value : ") | color(Color::GrayLight),
+            text(to_string(card.getValue()))
+                | bold
+                | color(Color::White)
+        });
+
+    auto boost =
+        hbox({
+            text("Boost : ") | color(Color::GrayLight),
+            text(to_string(card.getBoost()))
+                | color(Color::White)
+        });
+
+    auto content =
+        vbox({
+            type,
+            separator(),
+            value,
+            boost
+        })
+        | bgcolor(bg);
+
+    return window(title, content)
+           | size(WIDTH, EQUAL, 18)
+           | color(border);
 }
