@@ -117,11 +117,11 @@ public:
     std::vector<Card*> getPlayableDefenseCard(Character* defender);
     bool canDefense(Character* character);
     bool canAttack();
-    std::vector<Character*> getEnemiesNearby(Character* character);
+    std::vector<Character*> getEnemiesNearby();
     /*------------------------------------------------------------------*/
     void playScheme(Character* source, const int& schemeCardIndex);
     std::vector<Card*> getSchemeCards(Character* character);
-    bool canPlayScheme(std::vector<Card*> playableSchemeCard) const;
+    bool canPlayScheme();
     /*------------------------------------------------------------------*/
     int calculateDamage(Card* attack, Card* defense);
     void combat(AttackOption option, const int& attackCardIndex, 

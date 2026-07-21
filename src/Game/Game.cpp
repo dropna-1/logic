@@ -211,7 +211,7 @@ int Game::calculateDamage(Card* attack, Card* defense){
 }
 
 
-vector<Character*> Game::getEnemiesNearby(Character* character){
+vector<Character*> Game::getEnemiesNearby(){
     vector<Character*> enemies;
     auto neighboors = board.getSpace(dracula.get()->getPosition()).neighbors;
     for(int target : neighboors){
@@ -331,8 +331,10 @@ vector<AttackOption> Game::getAttackableTargets()
 
 bool Game::canAttack()
 {
+    if(getAttackableTargets().empty())
+        return false;
     for(Character* c : currentPlayer->getAllCharacters())
-        if(!getPlayableAttackCard(c).empty() && !getEnemiesNearby(c).empty())
+        if(!getPlayableAttackCard(c).empty())
             return true;
     return false;
 }
@@ -358,10 +360,11 @@ int Game::boost(Character* self, vector<int>& cards){
 }
 
 
-bool Game::canPlayScheme(vector<Card*> playableSchemeCard) const{
-    if(playableSchemeCard.empty())
-        return false;
-    return true;
+bool Game::canPlayScheme(){
+    for(Character* c : currentPlayer->getAllCharacters())
+        if(!getSchemeCards(c).empty())
+            return true;
+    return false;
 }
 
 

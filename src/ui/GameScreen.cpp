@@ -10,7 +10,7 @@ using namespace ftxui;
 GameScreen::GameScreen(std::function<void()> on_exit)
     : on_exit_(std::move(on_exit))
 {
-    BuildMenu();
+    actions_.push_back(" ");
     menu_ = Menu(&actions_, &selected_);
 
     auto container = Container::Vertical({
@@ -22,6 +22,8 @@ GameScreen::GameScreen(std::function<void()> on_exit)
             if (!game_) {
                 return text("No Game");
             }
+            BuildMenu();
+
             return vbox({
                 info_screen_.Render(
                     game_->getBoard(),
@@ -35,20 +37,20 @@ GameScreen::GameScreen(std::function<void()> on_exit)
 
         [this](Event event) {
             if (event == Event::Return) {
-                switch (selected_) {
-                case 0:
+                switch (selected_type_.at(selected_)) {
+                case SelectedType::Maneuver:
                     // Maneuver
                     break;
 
-                case 1:
+                case SelectedType::Combat:
                     // Attack
                     break;
 
-                case 2:
+                case SelectedType::Scheme:
                     // Scheme
                     break;
 
-                case 3:
+                case SelectedType::EndTurn:
                     game_->changeTurn();
                     break;
                 }
@@ -73,11 +75,18 @@ void GameScreen::BuildMenu(){
     actions_.clear();
     if(!game_) return;
 
-    if (game_->canManever())
+    if(game_->canManever()){
         actions_.push_back("Maneuver");
-    if(game_->canAttack())
-        actions_.push_back("Attack");
-
-    actions_.push_back("Scheme");
+        selected_type_.push_back(SelectedType::Maneuver);
+    }
+    if(game_->canAttack()){
+        actions_.push_back("Combat");
+        selected_type_.push_back(SelectedType::Combat);
+    }
+    if(game_->canPlayScheme()){
+        actions_.push_back("Scheme");
+        selected_type_.push_back(SelectedType::Scheme);
+    }
     actions_.push_back("End Turn");
+    selected_type_.push_back(SelectedType::EndTurn);
 }

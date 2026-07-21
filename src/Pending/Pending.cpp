@@ -125,7 +125,7 @@ void ShowCardAction::submit(Game& game, int choice){
 /*-----------------------------------------------------------------*/
 std::vector<Option> DraculaAction::getOption(Game& game){
     vector<Option> options;
-    neighboors = game.getEnemiesNearby(game.getDracula().get());
+    neighboors = game.getEnemiesNearby();
     for(auto character : neighboors)
         options.push_back({character->getname(), character->getPosition()});
     return options;
