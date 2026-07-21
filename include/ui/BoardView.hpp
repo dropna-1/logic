@@ -24,7 +24,10 @@ class BoardView
             Player& player1,
             Player& player2
         ) const;
-
+        ftxui::Element RenderPlacementPreview(
+        Board& board,
+        int selectedPosition
+) const;
     private:
 
         using Canvas = std::vector<std::string>;
@@ -34,7 +37,8 @@ class BoardView
         ftxui::Color GetZoneColor(const Board& board, int position) const;
         bool IsSecret(int position) const;
         ftxui::Element RenderLine( const std::string& line, int row, Board& board, Player& p1, Player& p2) const;
-        ftxui::Color GetZoneBackground( const Board& board,int position) const ;
+        ftxui::Element RenderPreviewLine( const std::string& line,int row,int selectedPosition ,Board& board) const ;
+
 };
 
  

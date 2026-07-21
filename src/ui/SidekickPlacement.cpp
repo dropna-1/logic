@@ -4,6 +4,7 @@
 #include "Player/player.hpp"
 #include "Characters/Character.hpp"
 #include "Characters/SideKick.hpp"
+#include "ui/BoardView.hpp"
 
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
@@ -19,28 +20,40 @@ SidekickPlacement::SidekickPlacement(std::function<void()> on_finish)
         Renderer(menu_, [&] {
             if (!game_)
                 return text("No Game");
-            return vbox({
-                text("Sidekick Placement")
-                    | bold
-                    | center,
+            BoardView board_view_ ;
+            int preview =
+            positions_[selected_].id;
+
+            return hbox({
+
+                window(
+                    text("Sidekick Placement"),
+                    vbox({
+
+                        text("Player : " +
+                            game_->getCurrentPlayer()->getName())
+                            | center,
+
+                        text("Place : " +
+                            current_character_->getname())
+                            | center,
+
+                        separator(),
+
+                        menu_->Render()
+
+                    })
+                )
+                | size(WIDTH, EQUAL, 40),
 
                 separator(),
 
-                text("Player : " +
-                    game_->getCurrentPlayer()->getName())
-                    | center,
+                board_view_.RenderPlacementPreview(
+                    game_->getBoard(),
+                    preview
+                )
 
-                text("Place : " +
-                    (current_character_ ? current_character_->getname() : ""))
-                    | center,
-
-                separator(),
-
-                menu_->Render()
-
-            })
-            | borderRounded
-            | size(WIDTH, EQUAL, 50);
+            });
 
         }),
         [this](Event event){

@@ -30,7 +30,8 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                     info_screen_.Render(
                         game_->getBoard(),
                         *game_->getCurrentPlayer(),
-                        *game_->getOtherPlayer()
+                        *game_->getOtherPlayer(),
+                        *game_
                     ),
                     separator(),
                     current_action_->GetComponent()->Render()
@@ -43,7 +44,8 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                 info_screen_.Render(
                     game_->getBoard(),
                     *game_->getCurrentPlayer(),
-                    *game_->getOtherPlayer()
+                    *game_->getOtherPlayer() ,
+                    *game_
                 ),
                 separator(),
                 menu_->Render()

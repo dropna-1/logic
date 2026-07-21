@@ -9,4 +9,5 @@ class DraculaAbility : public IAbility
         void SendRequest(Game*) override ;
         std::string getName() const override;
         std::string getDescription() const override;
+        bool HasAbilityOnStart() override ;
 };

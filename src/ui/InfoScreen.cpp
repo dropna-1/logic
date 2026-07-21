@@ -5,10 +5,11 @@ using namespace ftxui;
 Element InfoScreen::Render(
     Board& board,
     Player& player1,
-    Player& player2
+    Player& player2, 
+    const Game& game 
 ) const
 {
-    Element turnPanel = turnView.Render(player1 , 1) ;
+    Element turnPanel = turnView.Render(game,player1) ;
     Element boardPanel =
         boardView.Render(
             board,

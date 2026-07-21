@@ -8,5 +8,6 @@ class SherlockAbility : public IAbility
         std::string getName() const override;
         std::string getDescription() const override;
 
-        bool allowCancel(Card* card , GameContext& context) override;        
+        bool allowCancel(Card* card , GameContext& context) override; 
+        bool HasAbilityOnStart() override ;       
 };
