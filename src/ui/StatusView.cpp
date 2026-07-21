@@ -125,6 +125,7 @@ Element RenderPlayer(Player& player )
     auto hero = player.getHero() ;
     Elements elements ;
     elements.push_back(playerInfo);
+    elements.push_back(separator()) ;
     elements.push_back(RenderCharacter(hero->getname(),hero->getHp(),hero->getMaxhp() )) ;
     for(auto& sidekick : hero->getSidekicks())
     {
@@ -134,6 +135,7 @@ Element RenderPlayer(Player& player )
     elements.push_back(separator());
     elements.push_back(hbox({text("Hand") | bold | color(Color::White) ,filler() ,
         text(std::to_string(hero->getDeck()->getHand().size())) | color(Color::White) })) ;
+    elements.push_back(separatorEmpty()) ;
     elements.push_back(hbox({text("Discard") | bold | color(Color::White) ,filler()  , 
         text(std::to_string(hero->getDeck()->getDiscardPileSize())) | color(Color::White) })
     );

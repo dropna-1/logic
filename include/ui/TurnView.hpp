@@ -4,9 +4,10 @@
 #include <string>
 
 class Player;
+class Game ;
 
 class TurnView
 {
 public:
-    ftxui::Element Render(Player& currentPlayer,int turnNumber) const;
+    ftxui::Element Render(const Game& game , Player& player) const;
 };

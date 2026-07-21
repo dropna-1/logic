@@ -2,12 +2,13 @@
 
 #include "Player/player.hpp"
 #include "Characters/Hero.hpp"
+#include "Game/Game.hpp"
 
 using namespace ftxui;
 
-Element TurnView::Render(Player& player, int turn) const
+Element TurnView::Render(const Game& game , Player& player) const
 {
-    auto hero = player.getHero();
+    auto hero = player.getHero() ;
 
     return window(
         text(" TURN ") | color(Color::Gold1) | bold,
@@ -15,10 +16,10 @@ Element TurnView::Render(Player& player, int turn) const
         vbox({
 
             hbox({
-                text("Turn ")
+                text("Remaining Action : ")
                     | color(Color::GrayLight),
 
-                text(std::to_string(turn))
+                text(std::to_string(game.getRemainingActions()))
                     | color(Color::Gold1)
                     | bold,
             }),

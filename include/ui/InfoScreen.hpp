@@ -17,7 +17,8 @@ public:
     ftxui::Element Render(
         Board& board,
         Player& player1,
-        Player& player2
+        Player& player2, 
+        const Game& game 
     ) const;
 
 private:
