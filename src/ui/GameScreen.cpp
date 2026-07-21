@@ -1,6 +1,7 @@
 #include "ui/GameScreen.hpp"
 #include "Game/Game.hpp"
 #include "ui/Actions/ManeuverAction.hpp"
+#include "ui/Actions/CombatAction.hpp"
 
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
@@ -64,7 +65,7 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                     break;
 
                 case SelectedType::Combat:
-                    // Attack
+                    current_action_ = std::make_unique<CombatAction>(game_);
                     break;
 
                 case SelectedType::Scheme:

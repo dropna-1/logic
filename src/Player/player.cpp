@@ -28,8 +28,13 @@ string Player::getName(){
 }
 
 vector<Character*> Player::getAllCharacters(){
-    vector<Character*> characters{hero.get()};
+    vector<Character*> characters;
+    if(hero.get()->isAlive())
+        characters.push_back(hero.get());
+
     for(auto sidekick : hero.get()->getSidekicks())
-        characters.push_back(sidekick.get());
+        if(sidekick.get()->isAlive())
+            characters.push_back(sidekick.get());
+            
     return characters;
 }

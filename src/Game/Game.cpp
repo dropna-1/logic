@@ -3,6 +3,7 @@
 #include "Game/Game.hpp"
 #include "Cards/Deck.hpp"
 #include "Pending/Pending.hpp"
+#include "Factory/CardFactory.hpp"
 using namespace std;
 
 
@@ -206,7 +207,7 @@ void Game::requestAction(unique_ptr<PendingAction> action){
 }
 
 
-bool Game::hasPendingMove() const{
+bool Game::hasPendingAction() const{
     return !pendingActions.empty();
 }
 
@@ -218,7 +219,7 @@ PendingAction* Game::currentPendingAction(){
 }
 
 
-void Game::completePendingMove(const int& position){
+void Game::completePendingAction(const int& position){
     pendingActions.pop();
 }
 
@@ -246,41 +247,43 @@ vector<Character*> Game::getEnemiesNearby(){
     return enemies;
 }
 
-vector<Card*> Game::getPlayableAttackCard(Character* attacker)
+vector<Option> Game::getPlayableAttackCard(Character* attacker)
 {
-    vector<Card*> playableCards;
+    vector<Option> playableCards;
     bool ishero = attacker->isHero();
-    for(auto card : currentPlayer->getHero().get()->getDeck().get()->getHand())
+    auto ahand =currentPlayer->getHero().get()->getDeck().get()->getHand();
+    for(int card = 0; card < ahand.size(); card++)
 
-        if(card.get()->getType() == CardType::Attack || 
-        card.get()->getType() == CardType::Versalite)
+        if(ahand.at(card)->getType() == CardType::Attack || 
+        ahand.at(card)->getType() == CardType::Versalite)
         {
-            if(card.get()->getFighter() == FighterType::Any)
-                playableCards.push_back(card.get());
-            else if(ishero && card.get()->getFighter() == FighterType::Hero)
-                playableCards.push_back(card.get());
-            else if(!ishero && card.get()->getFighter() == FighterType::Sidekick)
-                playableCards.push_back(card.get()); 
+            if(ahand.at(card)->getFighter() == FighterType::Any)
+                playableCards.push_back({ahand.at(card).get()->getName(), card});
+            else if(ishero && ahand.at(card)->getFighter() == FighterType::Hero)
+                playableCards.push_back({ahand.at(card).get()->getName(), card});
+            else if(!ishero && ahand.at(card)->getFighter() == FighterType::Sidekick)
+                playableCards.push_back({ahand.at(card).get()->getName(), card}); 
         }
     return playableCards;
 }
 
 
-vector<Card*> Game::getPlayableDefenseCard(Character* defender)
+vector<Option> Game::getPlayableDefenseCard(Character* defender)
 {
-    vector<Card*> playableCards;
+    vector<Option> playableCards;
     bool ishero = defender->isHero();
-    for(auto card : otherPlayer->getHero().get()->getDeck().get()->getHand())
+    auto dhand = otherPlayer->getHero().get()->getDeck().get()->getHand();
+    for(int card = 0; card < dhand.size(); card++)
     
-        if(card.get()->getType() == CardType::Defend || 
-        card.get()->getType() == CardType::Versalite)
+        if(dhand.at(card)->getType() == CardType::Defend || 
+        dhand.at(card)->getType() == CardType::Versalite)
         {
-            if(card.get()->getFighter() == FighterType::Any)
-                playableCards.push_back(card.get());
-            else if(ishero && card.get()->getFighter() == FighterType::Hero)
-                playableCards.push_back(card.get());
-            else if(!ishero && card.get()->getFighter() == FighterType::Sidekick)
-                playableCards.push_back(card.get());
+            if(dhand.at(card)->getFighter() == FighterType::Any)
+                playableCards.push_back({dhand.at(card).get()->getName(), card});
+            else if(ishero && dhand.at(card)->getFighter() == FighterType::Hero)
+                playableCards.push_back({dhand.at(card).get()->getName(), card});
+            else if(!ishero && dhand.at(card)->getFighter() == FighterType::Sidekick)
+                playableCards.push_back({dhand.at(card).get()->getName(), card});
         }
     return playableCards;
 }
@@ -406,7 +409,7 @@ void Game::playScheme(Character* source, const int& schemeCardIndex)
 
     schemeCard.get()->execute(TriggerType::None, context);
 
-    if(hasPendingMove())
+    if(hasPendingAction())
         return;
 
     currentPlayer->getHero().get()->getDeck()
@@ -415,13 +418,16 @@ void Game::playScheme(Character* source, const int& schemeCardIndex)
 
 
 void Game::combat(AttackOption option, const int& attackCardIndex, 
-    const int& defenseCardIndex){
+    std::optional<int> defenseCardIndex){
 
-    auto attackCard = currentPlayer->getHero().get()->getDeck()
+    shared_ptr<Card> attackCard = currentPlayer->getHero().get()->getDeck()
     .get()->playCard(attackCardIndex);
 
-    auto defenseCard = otherPlayer->getHero().get()->getDeck().
-    get()->playCard(defenseCardIndex);
+    shared_ptr<Card> defenseCard = nullptr;
+
+    if(defenseCardIndex.has_value())
+        shared_ptr<Card> defenseCard = otherPlayer->getHero().get()->getDeck().
+        get()->playCard(defenseCardIndex.value());
 
     GameContext context(
         currentPlayer,
@@ -450,9 +456,11 @@ void Game::continueCombat()
         /*---------------------------immediat---------------------------*/
         case CombatStage::DefenseImmediate:
         {
-            pendingCombat.get()->defenseCard->execute(TriggerType::Immediately, 
-                pendingCombat.get()->context);
-            if(hasPendingMove())
+            if(pendingCombat->defenseCard)
+                pendingCombat.get()->defenseCard->execute(TriggerType::Immediately, 
+                    pendingCombat.get()->context);
+                    
+            if(hasPendingAction())
                 return;
             pendingCombat.get()->stage = CombatStage::AttackImmediate;
             continue;
@@ -462,7 +470,7 @@ void Game::continueCombat()
         {
             pendingCombat.get()->attackCard->execute(TriggerType::Immediately, 
                 pendingCombat.get()->context);
-            if(hasPendingMove())
+            if(hasPendingAction())
                 return;
             pendingCombat.get()->stage = CombatStage::DefenseDuring;
             continue;
@@ -470,9 +478,11 @@ void Game::continueCombat()
         /*---------------------------during---------------------------*/
         case CombatStage::DefenseDuring:
         {
-            pendingCombat.get()->defenseCard->execute(TriggerType::DuringCombat, 
-                pendingCombat.get()->context);
-            if(hasPendingMove())
+            if(pendingCombat->defenseCard)
+                pendingCombat.get()->defenseCard->execute(TriggerType::DuringCombat, 
+                    pendingCombat.get()->context);
+
+            if(hasPendingAction())
                 return;
             pendingCombat.get()->stage = CombatStage::AttackDuring;
             continue;
@@ -482,7 +492,7 @@ void Game::continueCombat()
         {
             pendingCombat.get()->attackCard->execute(TriggerType::DuringCombat, 
                 pendingCombat.get()->context);
-            if(hasPendingMove())
+            if(hasPendingAction())
                 return;
             pendingCombat.get()->stage = CombatStage::DealDamage;
             continue;
@@ -504,9 +514,11 @@ void Game::continueCombat()
         /*---------------------------after---------------------------*/
         case CombatStage::DefenseAfter:
         {
-            pendingCombat.get()->defenseCard->execute(TriggerType::AfterCombat, 
-                pendingCombat.get()->context);
-            if(hasPendingMove())
+            if(pendingCombat->defenseCard)
+                pendingCombat.get()->defenseCard->execute(TriggerType::AfterCombat, 
+                    pendingCombat.get()->context);
+
+            if(hasPendingAction())
                 return;
             pendingCombat.get()->stage = CombatStage::AttackAfter;
             continue;
@@ -516,7 +528,7 @@ void Game::continueCombat()
         {
             pendingCombat.get()->attackCard->execute(TriggerType::AfterCombat, 
                 pendingCombat.get()->context);
-            if(hasPendingMove())
+            if(hasPendingAction())
                 return;
             pendingCombat.get()->stage = CombatStage::Discard;
             continue;

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <optional>
 #include "Board/board.hpp"
 #include "Characters/Hero.hpp"
 #include "Factory/HeroFactory.hpp"
@@ -13,11 +14,6 @@
 class GameContext;
 class Character;
 class Card;
-
-struct AttackOption {
-    Character* attacker;
-    Character* target;
-};
 
 enum class CombatStage{
     DefenseImmediate,
@@ -103,20 +99,19 @@ public:
     bool canManever();
     void performManeuver(Character* character, const int& pos);
     std::vector<Option> getFreeSpacesNearby(Character* character);
-    bool isOccupied(int position);
     /*------------------------------------------------------------------*/
     void requestAction(std::unique_ptr<PendingAction> action);
-    bool hasPendingMove() const;
+    bool hasPendingAction() const;
     PendingAction* currentPendingAction();
-    void completePendingMove(const int& position);
+    void completePendingAction(const int& position);
     /*------------------------------------------------------------------*/
     void useAction();
     int getRemainingActions() const;
     void addAction();
     /*------------------------------------------------------------------*/
     std::vector<AttackOption> getAttackableTargets();
-    std::vector<Card*> getPlayableAttackCard(Character* attacker);
-    std::vector<Card*> getPlayableDefenseCard(Character* defender);
+    std::vector<Option> getPlayableAttackCard(Character* attacker);
+    std::vector<Option> getPlayableDefenseCard(Character* defender);
     bool canDefense(Character* character);
     bool canAttack();
     std::vector<Character*> getEnemiesNearby();
@@ -127,6 +122,6 @@ public:
     /*------------------------------------------------------------------*/
     int calculateDamage(Card* attack, Card* defense);
     void combat(AttackOption option, const int& attackCardIndex, 
-        const int& defenseCardIndex);
+        std::optional<int> defenseCardIndex);
     void continueCombat();
 };
