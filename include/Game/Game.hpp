@@ -100,7 +100,7 @@ public:
     bool canMove(int to) const;
     void move(Character* character, const int& pos);
     int boost(Character* self, vector<int>& cards);
-    bool canManever(std::vector<int> availableMoves) const;
+    bool canManever();
     std::vector<Option> getFreeSpacesNearby(Character* character);
     /*------------------------------------------------------------------*/
     void requestAction(std::unique_ptr<PendingAction> action);
@@ -115,9 +115,8 @@ public:
     std::vector<AttackOption> getAttackableTargets();
     std::vector<Card*> getPlayableAttackCard(Character* attacker);
     std::vector<Card*> getPlayableDefenseCard(Character* defender);
-    bool canDefense(std::vector<Card*> playableDefenseCard) const;
-    bool canAttack(std::vector<Card*> playableAttackCard,
-        std::vector<AttackOption> targets) const;
+    bool canDefense(Character* character);
+    bool canAttack();
     std::vector<Character*> getEnemiesNearby(Character* character);
     /*------------------------------------------------------------------*/
     void playScheme(Character* source, const int& schemeCardIndex);

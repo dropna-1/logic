@@ -5,11 +5,16 @@
 #include "ui/HeroSelection.hpp"
 #include "ui/HelpScreen.hpp"
 #include "ui/GameScreen.hpp"
+#include "ui/SidekickPlacement.hpp"
 
 App::App() 
 : screen_(ftxui::ScreenInteractive::TerminalOutput())
-, current_screen_(ScreenType::MainMenu) 
+, current_screen_(ScreenType::MainMenu)
 {
+    game_screen_ = std::make_shared<GameScreen>(
+        [this](){SetScreen(ScreenType::MainMenu);}
+    );
+    
     main_menu_ = std::make_shared<MainMenu>(
     [this](){SetScreen(ScreenType::PlayerSetup);},
     [this](){SetScreen(ScreenType::HelpScreen);},
@@ -36,13 +41,16 @@ App::App()
     hero_selection_ = std::make_shared<HeroSelection>(
         [this](){
             game_.get()->setupGame();
-            game_screen_->SetGame(game_.get());
-            SetScreen(ScreenType::GameScreen);
+            sidekick_placement_->SetGame(game_.get());
+            SetScreen(ScreenType::SidekickPlacement);
         }
     );
 
-    game_screen_ = std::make_shared<GameScreen>(
-        [this](){SetScreen(ScreenType::MainMenu);}
+    sidekick_placement_ = std::make_shared<SidekickPlacement>(
+        [this](){
+            game_screen_->SetGame(game_.get());
+            SetScreen(ScreenType::GameScreen);
+        }
     );
 
     root_ = ftxui::Container::Tab(
@@ -51,6 +59,7 @@ App::App()
             help_screen_->GetComponent(),
             player_setup_->GetComponent(),
             hero_selection_->GetComponent(),
+            sidekick_placement_->GetComponent(),
             game_screen_->GetComponent()
         },
         &current_tab_);
@@ -72,9 +81,12 @@ void App::SetScreen(ScreenType screen){
     case ScreenType::HeroSelection:
         current_tab_ = 3;
         break;
-    case ScreenType::GameScreen:
+    case ScreenType::SidekickPlacement:
         current_tab_ = 4;
-        break;  
+        break; 
+    case ScreenType::GameScreen:
+        current_tab_ = 5;
+        break;   
     default:
         current_tab_ = 0;
         break;

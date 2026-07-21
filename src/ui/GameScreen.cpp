@@ -10,6 +10,7 @@ using namespace ftxui;
 GameScreen::GameScreen(std::function<void()> on_exit)
     : on_exit_(std::move(on_exit))
 {
+    BuildMenu();
     menu_ = Menu(&actions_, &selected_);
 
     auto container = Container::Vertical({
@@ -66,4 +67,17 @@ void GameScreen::SetGame(Game* game)
 Component GameScreen::GetComponent()
 {
     return component_;
+}
+
+void GameScreen::BuildMenu(){
+    actions_.clear();
+    if(!game_) return;
+
+    if (game_->canManever())
+        actions_.push_back("Maneuver");
+    if(game_->canAttack())
+        actions_.push_back("Attack");
+
+    actions_.push_back("Scheme");
+    actions_.push_back("End Turn");
 }

@@ -12,6 +12,7 @@ public:
 
     void SetGame(Game* game);
     ftxui::Component GetComponent();
+    void BuildMenu();
 
 private:
     Game* game_ = nullptr;
@@ -19,12 +20,7 @@ private:
 
     InfoScreen info_screen_;
 
-    std::vector<std::string> actions_{
-        "Maneuver",
-        "Attack",
-        "Scheme",
-        "End Turn"
-    };
+    std::vector<std::string> actions_;
 
     int selected_ = 0;
 

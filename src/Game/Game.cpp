@@ -59,6 +59,8 @@ void Game::choiceHero(Player& player, HeroType choice){
 
 
 void Game::setupGame(){
+    currentPlayer->getHero().get()->setPosition(18);
+    otherPlayer->getHero().get()->setPosition(4);
     for(int i = 0; i < 10; i++)
         (i < 5 ? currentPlayer : otherPlayer)->getHero()->getDeck().get()->drawCard();
 }
@@ -170,10 +172,11 @@ void Game::move(Character* character, const int& pos){
 }
 
 
-bool Game::canManever(vector<int> availableMoves) const{
-    if(availableMoves.empty())
-        return false;
-    return true;
+bool Game::canManever(){
+    for(Character* c : currentPlayer->getAllCharacters())
+        if(!getAvailableMoves(c, c->getMovement()).empty())
+            return true;
+    return false;
 }
 
 
@@ -326,17 +329,17 @@ vector<AttackOption> Game::getAttackableTargets()
 }
 
 
-bool Game::canAttack(vector<Card*> playableAttackCard,
-    vector<AttackOption> targets) const
+bool Game::canAttack()
 {
-    if(playableAttackCard.empty() || targets.empty())
-        return false;
-    return true;
+    for(Character* c : currentPlayer->getAllCharacters())
+        if(!getPlayableAttackCard(c).empty() && !getEnemiesNearby(c).empty())
+            return true;
+    return false;
 }
 
 
-bool Game::canDefense(vector<Card*> playableDefenseCard) const{
-    if(playableDefenseCard.empty())
+bool Game::canDefense(Character* character){
+    if(getPlayableDefenseCard(character).empty())
         return false;
     return true;
 }
