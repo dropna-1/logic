@@ -31,7 +31,7 @@ public:
         spaces.push_back({{2, 14, 22}, {4}});
         spaces.push_back({{12, 13}, {4}});
         spaces.push_back({{10, 16, 17}, {5}});
-        spaces.push_back({{1, 2}, {1}});
+        spaces.push_back({{1, 2}, {5}});
         spaces.push_back({{8, 15, 18, 19, 28, 29}, {5, 6}});
         spaces.push_back({{16, 17}, {5}});
         spaces.push_back({{0, 11, 23, 17, 20}, {6}}); /*secret*/

@@ -61,7 +61,7 @@ Color CharacterColor(const string& name)
         return Color::BlueLight;
 
     if(name == "Dr.Watson")
-        return Color::LightCyan1Bis;
+        return Color::DeepSkyBlue4Bis;
 
     if(name == "Dracula")
         return Color::RedLight;
@@ -98,9 +98,9 @@ Element RenderCharacter(
     return hbox({
         title,
         text(" "),
-        text(MakeBar(hp,maxHp)),
+        text(MakeBar(hp,maxHp)) | Decorator(hpColor),
         filler(),
-        text(to_string(hp)+"/"+to_string(maxHp))
+        text(to_string(hp)+"/"+to_string(maxHp)) | Decorator(hpColor)
     });
 }
 
@@ -117,10 +117,10 @@ Element RenderPlayer(Player& player )
         elements.push_back(RenderCharacter(sidekick->getname(),sidekick->getHp(),sidekick->getMaxhp() )) ;
     }
     elements.push_back(separator());
-    elements.push_back(hbox({text("Hand") | bold,filler(),
-        text(std::to_string(hero->getDeck()->getHand().size()))})) ;
-    elements.push_back(hbox({text("Discard") | bold,filler(),
-        text(std::to_string(hero->getDeck()->getDiscardPileSize()))})
+    elements.push_back(hbox({text("Hand") | bold | color(Color::White) ,filler() ,
+        text(std::to_string(hero->getDeck()->getHand().size())) | color(Color::White) })) ;
+    elements.push_back(hbox({text("Discard") | bold | color(Color::White) ,filler()  , 
+        text(std::to_string(hero->getDeck()->getDiscardPileSize())) | color(Color::White) })
     );
     
     return window(text(hero->getname()) | color(CharacterColor(player.getHero()->getname())) | bold | center , 

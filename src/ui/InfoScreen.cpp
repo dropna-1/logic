@@ -32,7 +32,7 @@ Element InfoScreen::Render(
 
         hbox({
 
-            boardPanel | flex | color(Color::DarkSlateGray1),
+            boardPanel | flex | color(Color::White),
 
             separator(),
 

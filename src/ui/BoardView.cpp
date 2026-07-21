@@ -9,6 +9,7 @@
 
 #include <array>
 #include <vector>
+#include <algorithm>
 
 using namespace ftxui;
 using namespace std;
@@ -57,19 +58,19 @@ BoardView::Canvas BoardView::CreateEmptyBoard() const
 {
     return {
 "                                                   ",
-"     ---             ---            ---            ",
+"*    ---            ---             --*           ",
 "   |        \\   /  \\   /    \\   /   \\              ",
-"   |                             ---               ",
+"   |                            -----              ",
 "     ---      |               |        |           ",
 "   |       \\  |               |  ----              ",
 "   |                          | /       \\          ",
-"   |       /            ----    ---    --          ",
+"   |       /       *    ----    ---    --         ",
 "     ---            /        | \\          |        ",
 "   |                         |  \\         |        ",
 "   |           /    \\        |   \\        |        ",
 "     ------             ---    ---    ---         ",
 "   |               /    \\   |       \\    /         ",
-"     ---    ---    ------                          ",
+"*    ---    ---    ------                         ",
 "                                                   ",
 "                                                   ",
 };
@@ -121,34 +122,6 @@ static const Position SpacePosition[32] =
     {13, 37}, // 30
     {11, 41}, // 31
 };
-
-void BoardView::PutText(Canvas& canvas, int row, int col, const string& text) const
-{
-    for(size_t i=0;i<text.size();i++)
-    {
-        if(col+(int)i >= (int)canvas[row].size())
-            break;
-        canvas[row][col+i]=text[i];
-    }
-}
-
-
-void BoardView::DrawSpaces(Canvas& canvas, Board&, Player& player1, Player& player2) const
-{
-    for(int i=0;i<32;i++)
-    {
-        auto pos = SpacePosition[i];
-
-        PutText(
-            canvas,
-            pos.row,
-            pos.col,
-            MakeLabel(
-                GetSpaceLabel(i,player1,player2)
-            )
-        );
-    }
-}
 
 string BoardView::GetSpaceLabel(
     int position,
@@ -224,10 +197,7 @@ Color BoardView::GetPlayerColor(
     return Color::Default;
 }
 
-Color BoardView::GetZoneColor(
-    const Board& board,
-    int position
-) const
+Color BoardView::GetZoneColor(const Board& board, int position) const
 {
     const auto& zone = board.getSpace(position).zone;
 
@@ -236,18 +206,29 @@ Color BoardView::GetZoneColor(
 
     switch(zone[0])
     {
-        case 1: return Color::Green;
-        case 2: return Color::Yellow;
-        case 3: return Color::Cyan;
-        case 4: return Color::Magenta;
-        case 5: return Color::Blue;
-        case 6: return Color::Red;
-        case 7: return Color::GrayLight;
+        case 1: return Color::CyanLight;
+        case 2: return Color::SandyBrown;
+        case 3: return Color::Khaki1;
+        case 4: return Color::DarkBlue;
+        case 5: return Color::Purple4;
+        case 6: return Color::LightGreen;
+        case 7: return Color::SkyBlue1 ;
 
         default:
-            return Color::Default;
+            return Color::Black ;
     }
 }
+
+Color BoardView::GetZoneBackground( const Board& board, int position) const
+{
+    const auto& zone = board.getSpace(position).zone;
+
+    if(zone.size() > 1)
+        return Color::DarkOrange3; 
+
+    return Color::Default;
+}
+
 
 bool BoardView::IsSecret(int position) const
 {
@@ -257,23 +238,89 @@ bool BoardView::IsSecret(int position) const
         || position==23;
 }
 
+Element BoardView::RenderLine(const string& line, int row, Board& board, Player& p1, Player& p2) const
+{
+    struct SpaceRef
+    {
+        int id;
+        int col;
+    };
+
+    vector<SpaceRef> spaces;
+
+    for(int id=0; id<32; id++)
+    {
+        if(SpacePosition[id].row == row)
+            spaces.push_back({id, SpacePosition[id].col});
+    }
+    sort(spaces.begin(), spaces.end(),
+    [](auto& a, auto& b)
+    {
+        return a.col < b.col;
+    });
+    Elements parts;
+
+    int current = 0;
+
+    for(auto& s : spaces)
+    {
+        int id = s.id ;
+        auto pos = SpacePosition[id];
+
+        if(pos.row != row)
+            continue;
+
+        if(pos.col > current)
+        {
+            parts.push_back(
+                text(line.substr(current, pos.col-current))
+            );
+        }
+
+        Color c = GetPlayerColor(id,p1,p2);
+
+        if(c == Color::Default)
+            c = GetZoneColor(board,id);
+
+        Color bg = GetZoneBackground(board,id);
+
+        parts.push_back(
+            text(
+                MakeLabel(GetSpaceLabel(id,p1,p2))
+            ) | color(c) | bgcolor(bg) 
+        );
+        current = pos.col + 4;
+    }
+
+    if(current < (int)line.size())
+    {
+        parts.push_back(
+            text(line.substr(current))
+        );
+    }
+
+    return hbox(std::move(parts));
+}
+
 Element BoardView::Render(Board& board, Player& player1, Player& player2) const
 {
     Canvas canvas = CreateEmptyBoard();
-    DrawSpaces(
-        canvas,
-        board,
-        player1,
-        player2
-    );
-    
+
     vector<Element> rows;
 
-    for(auto& line : canvas)
+    for(int i=0;i<canvas.size();i++)
     {
-        rows.push_back(text(line));
+        rows.push_back(
+            RenderLine(
+                canvas[i],
+                i,
+                board,
+                player1,
+                player2
+            )
+        );
     }
-    
+
     return window(
         text(" Baskerville Manor "),
         vbox(move(rows))
