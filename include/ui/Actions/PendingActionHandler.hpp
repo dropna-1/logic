@@ -4,6 +4,7 @@
 
 #include <ftxui/component/component.hpp>
 #include "ui/SelectionMenu.hpp"
+#include "Common/Option.hpp"
 
 class Game;
 
@@ -17,6 +18,7 @@ public:
 
     ftxui::Component GetComponent();
     bool IsFinished() const;
+    void Finish();
 
 private:
     Game* game_ = nullptr;
@@ -26,7 +28,10 @@ private:
     std::function<void()> on_submit_;
 
     bool finished_ = false;
+    bool showing_ = false;
+
+    std::vector<Option> options;
 
     void ShowPending();
-    void Finish();
+    void HandleSelection(int index);
 };

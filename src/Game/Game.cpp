@@ -11,7 +11,7 @@ Game::Game() : dracula(HeroFactory::createDracula())
 , sherlock(HeroFactory::createSherlock()){}
 
 
-shared_ptr<Hero> Game::getDracula() const{
+shared_ptr<Hero>& Game::getDracula(){
     return dracula;
 }
 
@@ -64,8 +64,6 @@ void Game::setupGame(){
     otherPlayer->getHero().get()->setPosition(4);
     for(int i = 0; i < 10; i++)
         (i < 5 ? currentPlayer : otherPlayer)->getHero()->getDeck().get()->drawCard();
-    // if(!currentPlayer->getHero().get()->getAbility().get()->HasAbilityOnStart())
-    //     currentPlayer->getHero().get()->getAbility().get()->SendRequest(this);
 }
 
 
@@ -93,9 +91,9 @@ void Game::useAction(){
 
 void Game::nextTurn(){
     changeTurn();
+    if(currentPlayer->getHero().get()->getAbility().get()->HasAbilityOnStart())
+        currentPlayer->getHero().get()->getAbility().get()->SendRequest(this);
     resetAction();
-    // if(currentPlayer->getHero().get()->getAbility().get()->HasAbilityOnStart())
-    //     currentPlayer->getHero().get()->getAbility().get()->SendRequest(this);
 }
 
 int Game::getRemainingActions() const{
@@ -235,7 +233,7 @@ int Game::calculateDamage(Card* attack, Card* defense){
     if(defense == nullptr)
         return attack->getValue();
     if(attack->getValue() > defense->getValue())
-        return defense->getValue() - attack->getValue();
+        return attack->getValue() - defense->getValue();
     return 0;
 }
 
@@ -302,18 +300,20 @@ vector<Option> Game::getPlayableDefenseCard(Character* defender)
 }
 
 
-vector<Card*> Game::getSchemeCards(Character* character)
+vector<Option> Game::getSchemeCards(Character* character)
 {
-    vector<Card*> playableCards;
+    vector<Option> playableCards;
     bool ishero = character->isHero();
-    for(auto card : otherPlayer->getHero().get()->getDeck().get()->getHand())
-
-        if(card.get()->getType() == CardType::Scheme)
+    auto ahand = otherPlayer->getHero().get()->getDeck().get()->getHand();
+    for(int card = 0; card < ahand.size(); card++)
+        if(ahand.at(card).get()->getType() == CardType::Scheme)
         {
-            if(ishero && card.get()->getFighter() == FighterType::Hero)
-                playableCards.push_back(card.get());
-            else if(!ishero && card.get()->getFighter() == FighterType::Sidekick)
-                playableCards.push_back(card.get());
+            if(ishero && ahand.at(card).get()->getFighter() == FighterType::Hero)
+                playableCards.push_back({ahand.at(card).get()->getName()+" | "+
+                    ahand.at(card).get()->getDescription(), card});
+            else if(!ishero && ahand.at(card).get()->getFighter() == FighterType::Sidekick)
+                playableCards.push_back({ahand.at(card).get()->getName()+" | "+
+                    ahand.at(card).get()->getDescription(), card});
         }
     return playableCards;
 }
@@ -370,8 +370,8 @@ bool Game::canAttack()
 {
     if(getAttackableTargets().empty())
         return false;
-    for(Character* c : currentPlayer->getAllCharacters())
-        if(!getPlayableAttackCard(c).empty())
+    for(auto c : currentPlayer->getHero()->getDeck()->getHand())
+        if(c->getType() == CardType::Attack || c->getType() == CardType::Versalite)
             return true;
     return false;
 }
@@ -398,8 +398,8 @@ int Game::boost(Character* self, vector<int>& cards){
 
 
 bool Game::canPlayScheme(){
-    for(Character* c : currentPlayer->getAllCharacters())
-        if(!getSchemeCards(c).empty())
+    for(auto c : currentPlayer->getHero()->getDeck()->getHand())
+        if(c->getType() == CardType::Scheme)
             return true;
     return false;
 }
@@ -439,7 +439,7 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
     shared_ptr<Card> defenseCard = nullptr;
 
     if(defenseCardIndex.has_value())
-        shared_ptr<Card> defenseCard = otherPlayer->getHero().get()->getDeck().
+        defenseCard = otherPlayer->getHero().get()->getDeck().
         get()->playCard(defenseCardIndex.value());
 
     GameContext context(
@@ -514,8 +514,10 @@ void Game::continueCombat()
         /*---------------------------damage---------------------------*/
         case CombatStage::DealDamage:
         {
-            int damage = calculateDamage(pendingCombat.get()->attackCard.get(), 
-            pendingCombat.get()->defenseCard.get());
+            int damage = calculateDamage(pendingCombat.get()->attackCard.get(), nullptr);
+            if(pendingCombat->defenseCard)
+                damage = calculateDamage(pendingCombat.get()->attackCard.get(), 
+                pendingCombat.get()->defenseCard.get());
 
             if(damage > 0){
                 pendingCombat.get()->option.target->takeDamage(damage);
@@ -550,10 +552,10 @@ void Game::continueCombat()
         /*---------------------------discard---------------------------*/
         case CombatStage::Discard:
         {
-            currentPlayer->getHero().get()->getDeck()
+            otherPlayer->getHero().get()->getDeck()
                 .get()->discardCard(pendingCombat.get()->defenseCard);
 
-            otherPlayer->getHero().get()->getDeck()
+            currentPlayer->getHero().get()->getDeck()
                 .get()->discardCard(pendingCombat.get()->attackCard);
 
             pendingCombat.get()->stage = CombatStage::Finished;

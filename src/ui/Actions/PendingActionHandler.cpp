@@ -2,6 +2,7 @@
 
 #include "Game/Game.hpp"
 #include "Pending/Pending.hpp"
+#include <iostream>
 
 #include <ftxui/component/component.hpp>
 
@@ -12,7 +13,8 @@ PendingActionHandler::PendingActionHandler(Game* game,
     std::function<void()> on_submit
 )
     : game_(game), on_finish_(std::move(on_finish)), on_submit_(std::move(on_submit)) 
-    {ShowPending();}
+    {std::cout << "Show Pending";
+        ShowPending();}
 
 Component PendingActionHandler::GetComponent()
 {
@@ -60,6 +62,7 @@ void PendingActionHandler::ShowPending()
                 Finish();
                 return;
             }
+ 
             game_->currentPendingAction()->submit(*game_, options[index].id);
 
             if(game_->currentPendingAction()->isFinished())
@@ -67,7 +70,7 @@ void PendingActionHandler::ShowPending()
 
             if(on_submit_)
                 on_submit_();
-
+            
             if(game_->hasPendingAction())
                 ShowPending();
 

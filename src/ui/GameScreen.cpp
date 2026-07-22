@@ -25,17 +25,15 @@ GameScreen::GameScreen(std::function<void()> on_exit)
         if (!game_)
             return text("No Game");
 
-        // if (!current_action_ && !pending_handler_ && game_->hasPendingAction())
-        // {
-        //     pending_handler_ =
-        //         std::make_unique<PendingActionHandler>(
-        //             game_,
-        //             [this]{
-        //                 pending_handler_.reset();
-        //             },
-        //             nullptr
-        //         );
-        // }
+        if (!current_action_ && !pending_handler_ && game_->hasPendingAction())
+        {
+            pending_handler_ =
+                std::make_unique<PendingActionHandler>(
+                    game_,
+                    [this]{pending_handler_.reset();},
+                    nullptr
+                );
+        }
 
             Element bottom;
             if(current_action_)

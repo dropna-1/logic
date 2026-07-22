@@ -11,7 +11,6 @@
 #include "Pending/Pending.hpp"
 #include "Common/Option.hpp"
 
-class GameContext;
 class Character;
 class Card;
 
@@ -35,6 +34,7 @@ struct PendingSelection{
     Character* character = nullptr;
     std::vector<int> cards;
     int destination = -1;
+    bool showHand = false;
 };
 
 struct PendingCombat{
@@ -43,7 +43,7 @@ struct PendingCombat{
     std::shared_ptr<Card> attackCard;
     std::shared_ptr<Card> defenseCard;
 
-    GameContext& context;
+    GameContext context;
     CombatStage stage;
     PendingSelection selection;
 
@@ -79,7 +79,7 @@ public:
     void nextTurn();
     Hero* checkWinner();
     Board& getBoard();
-    std::shared_ptr<Hero> getDracula() const;
+    std::shared_ptr<Hero>& getDracula();
     std::unique_ptr<PendingCombat>& getPendingCombat();
     /*-----------------------------------------------------------------*/
     void setPlayer1(const string& name, const int& age);
@@ -118,7 +118,7 @@ public:
     std::vector<Character*> getEnemiesNearby();
     /*------------------------------------------------------------------*/
     void playScheme(Character* source, const int& schemeCardIndex);
-    std::vector<Card*> getSchemeCards(Character* character);
+    std::vector<Option> getSchemeCards(Character* character);
     bool canPlayScheme();
     /*------------------------------------------------------------------*/
     int calculateDamage(Card* attack, Card* defense);
