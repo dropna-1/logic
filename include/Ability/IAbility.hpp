@@ -14,7 +14,7 @@ class IAbility
             return true ;
         }
 
-        virtual bool HasAbilityOnStart() ;
+        virtual bool HasAbilityOnStart() = 0;
         virtual void SendRequest(Game*) 
         {
         }

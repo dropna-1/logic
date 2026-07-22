@@ -21,22 +21,28 @@ GameScreen::GameScreen(std::function<void()> on_exit)
 
     component_ = CatchEvent(
         Renderer(container, [&] {
-            if (!game_)
-                return text("No Game");
 
+        if (!game_)
+            return text("No Game");
+
+        // if (!current_action_ && !pending_handler_ && game_->hasPendingAction())
+        // {
+        //     pending_handler_ =
+        //         std::make_unique<PendingActionHandler>(
+        //             game_,
+        //             [this]{
+        //                 pending_handler_.reset();
+        //             },
+        //             nullptr
+        //         );
+        // }
+
+            Element bottom;
             if(current_action_)
-            {
-                return vbox({
-                    info_screen_.Render(
-                        game_->getBoard(),
-                        *game_->getCurrentPlayer(),
-                        *game_->getOtherPlayer(),
-                        *game_
-                    ),
-                    separator(),
-                    current_action_->GetComponent()->Render()
-                });
-            }
+                bottom = current_action_->GetComponent()->Render();
+            else if(pending_handler_)
+                bottom = pending_handler_->GetComponent()->Render();
+            else{bottom = menu_->Render();}
 
             BuildMenu();
 
@@ -48,7 +54,7 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                     *game_
                 ),
                 separator(),
-                menu_->Render()
+                bottom
             });
         }),
 
@@ -58,6 +64,13 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                 current_action_->GetComponent()->OnEvent(event);
                 if(current_action_->IsFinished())
                     current_action_.reset();
+                return true;
+            }
+            if(pending_handler_)
+            {
+                pending_handler_->GetComponent()->OnEvent(event);
+                if(pending_handler_->IsFinished())
+                    pending_handler_.reset();
                 return true;
             }
             if (event == Event::Return) {
@@ -75,7 +88,7 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                     break;
 
                 case SelectedType::EndTurn:
-                    game_->changeTurn();
+                    game_->nextTurn();
                     break;
                 }
                 return true;

@@ -12,6 +12,8 @@ CombatAction::CombatAction(Game* game)
 
 ftxui::Component CombatAction::GetComponent()
 {
+    if(pending_handler_)
+        return pending_handler_->GetComponent();
     return menu_.GetComponent();
 }
 
@@ -108,7 +110,14 @@ void CombatAction::SelectAttackCard()
                 );
 
                 if(game_->hasPendingAction())
-                    HandlePendingAction();
+                {
+                    pending_handler_ =
+                        std::make_unique<PendingActionHandler>(
+                            game_, 
+                            [this](){Finish();},
+                            [this](){game_->continueCombat();}
+                        );
+                }
                 else
                     Finish();
             }
@@ -160,57 +169,18 @@ void CombatAction::SelectDefenseCard()
             );
 
             if(game_->hasPendingAction())
-                HandlePendingAction();
-            else
-                Finish();
-        }
-    );
-    menu_.SetOnCancel(
-        [this](){}
-    );
-}
-
-void CombatAction::HandlePendingAction()
-{
-    if (!game_->hasPendingAction())
-    {
-        Finish();
-        return;
-    }
-    auto* pending = game_->currentPendingAction();
-    auto options = pending->getOption(*game_);
-
-    std::vector<std::string> items;
-
-    for (const auto& option : options)
-        items.push_back(option.text + ' ' + std::to_string(option.id));
-
-    menu_.SetTitle("Choose");
-    menu_.SetItems(items);
-
-    menu_.SetOnAccept(
-        [this, pending, options](int index)
-        {
-            if(index < 0 ||
-               index >= static_cast<int>(options.size()))
             {
-                Finish();
-                return;
+                pending_handler_ =
+                    std::make_unique<PendingActionHandler>(
+                        game_, 
+                        [this](){Finish();},
+                        [this](){game_->continueCombat();}
+                    );
             }
-
-            pending->submit(*game_, options[index].id);
-            if(!pending->isFinished())
-                HandlePendingAction();
-
-            game_->continueCombat();
-
-            if(game_->hasPendingAction())
-                HandlePendingAction();
             else
                 Finish();
         }
     );
-
     menu_.SetOnCancel(
         [this](){}
     );

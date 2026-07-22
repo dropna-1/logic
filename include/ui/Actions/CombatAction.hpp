@@ -1,6 +1,8 @@
 #pragma once
 #include "ui/Actions/IAction.hpp"
 #include "Common/Option.hpp"
+#include "ui/Actions/PendingActionHandler.hpp"
+#include <memory>
 #include <vector>
 #include <optional>
 
@@ -24,11 +26,12 @@ private:
     int selectedAttackCard_ = -1;
     std::optional<int> selectedDefenseCard_ = std::nullopt;
 
+    std::unique_ptr<PendingActionHandler> pending_handler_;
+
 private:
 
     void SelectCombat();
     void SelectAttackCard();
     void SelectDefenseCard();
-    void HandlePendingAction();
 
 };

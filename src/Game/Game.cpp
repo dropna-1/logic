@@ -64,10 +64,12 @@ void Game::setupGame(){
     otherPlayer->getHero().get()->setPosition(4);
     for(int i = 0; i < 10; i++)
         (i < 5 ? currentPlayer : otherPlayer)->getHero()->getDeck().get()->drawCard();
+    // if(!currentPlayer->getHero().get()->getAbility().get()->HasAbilityOnStart())
+    //     currentPlayer->getHero().get()->getAbility().get()->SendRequest(this);
 }
 
 
-void Game::startTurn(){
+void Game::resetAction(){
     actionsRemaining = 2;
 }
 
@@ -85,11 +87,16 @@ const vector<shared_ptr<Card>>& Game::showOtherHand(){
 void Game::useAction(){
     actionsRemaining--;
     if(actionsRemaining == 0){
-        changeTurn();
-        startTurn();
+        nextTurn();
     }
 }
 
+void Game::nextTurn(){
+    changeTurn();
+    resetAction();
+    // if(currentPlayer->getHero().get()->getAbility().get()->HasAbilityOnStart())
+    //     currentPlayer->getHero().get()->getAbility().get()->SendRequest(this);
+}
 
 int Game::getRemainingActions() const{
     return actionsRemaining;
@@ -219,7 +226,7 @@ PendingAction* Game::currentPendingAction(){
 }
 
 
-void Game::completePendingAction(const int& position){
+void Game::completePendingAction(){
     pendingActions.pop();
 }
 
@@ -258,11 +265,14 @@ vector<Option> Game::getPlayableAttackCard(Character* attacker)
         ahand.at(card)->getType() == CardType::Versalite)
         {
             if(ahand.at(card)->getFighter() == FighterType::Any)
-                playableCards.push_back({ahand.at(card).get()->getName(), card});
+                playableCards.push_back({ahand.at(card).get()->getName()+" | "+
+                    ahand.at(card).get()->getDescription(), card});
             else if(ishero && ahand.at(card)->getFighter() == FighterType::Hero)
-                playableCards.push_back({ahand.at(card).get()->getName(), card});
+                playableCards.push_back({ahand.at(card).get()->getName()+" | "+
+                    ahand.at(card).get()->getDescription(), card});
             else if(!ishero && ahand.at(card)->getFighter() == FighterType::Sidekick)
-                playableCards.push_back({ahand.at(card).get()->getName(), card}); 
+                playableCards.push_back({ahand.at(card).get()->getName()+" | "+
+                    ahand.at(card).get()->getDescription(), card}); 
         }
     return playableCards;
 }
@@ -279,11 +289,14 @@ vector<Option> Game::getPlayableDefenseCard(Character* defender)
         dhand.at(card)->getType() == CardType::Versalite)
         {
             if(dhand.at(card)->getFighter() == FighterType::Any)
-                playableCards.push_back({dhand.at(card).get()->getName(), card});
+                playableCards.push_back({dhand.at(card).get()->getName()+" | "+
+                    dhand.at(card).get()->getDescription(), card});
             else if(ishero && dhand.at(card)->getFighter() == FighterType::Hero)
-                playableCards.push_back({dhand.at(card).get()->getName(), card});
+                playableCards.push_back({dhand.at(card).get()->getName()+" | "+
+                    dhand.at(card).get()->getDescription(), card});
             else if(!ishero && dhand.at(card)->getFighter() == FighterType::Sidekick)
-                playableCards.push_back({dhand.at(card).get()->getName(), card});
+                playableCards.push_back({dhand.at(card).get()->getName()+" | "+
+                    dhand.at(card).get()->getDescription(), card});
         }
     return playableCards;
 }
@@ -444,6 +457,7 @@ void Game::combat(AttackOption option, const int& attackCardIndex,
         option, attackCard, defenseCard, context
     );
 
+    useAction();
     continueCombat();
 }
 

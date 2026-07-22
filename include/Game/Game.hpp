@@ -75,8 +75,8 @@ public:
 
     Game();
     void setupGame();
-    void startTurn();
     void changeTurn();
+    void nextTurn();
     Hero* checkWinner();
     Board& getBoard();
     std::shared_ptr<Hero> getDracula() const;
@@ -103,11 +103,12 @@ public:
     void requestAction(std::unique_ptr<PendingAction> action);
     bool hasPendingAction() const;
     PendingAction* currentPendingAction();
-    void completePendingAction(const int& position);
+    void completePendingAction();
     /*------------------------------------------------------------------*/
     void useAction();
     int getRemainingActions() const;
     void addAction();
+    void resetAction();
     /*------------------------------------------------------------------*/
     std::vector<AttackOption> getAttackableTargets();
     std::vector<Option> getPlayableAttackCard(Character* attacker);

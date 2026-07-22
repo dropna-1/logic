@@ -5,6 +5,7 @@
 #include <ftxui/component/component.hpp>
 #include "ui/InfoScreen.hpp"
 #include "ui/Actions/IAction.hpp"
+#include "ui/Actions/PendingActionHandler.hpp"
 
 
 class Game;
@@ -40,4 +41,7 @@ private:
     ftxui::Component component_;
 
     std::unique_ptr<IAction> current_action_;
+    std::unique_ptr<PendingActionHandler> pending_handler_;
+
+    bool menu_built_ = false;
 };
