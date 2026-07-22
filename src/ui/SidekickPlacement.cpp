@@ -104,8 +104,8 @@ void SidekickPlacement::LoadCurrentSidekick()
     for(const auto& option : positions_)
         labels_.push_back(option.text + std::to_string(option.id));
 
-    menu_ = Menu(&labels_, &selected_);
     selected_ = 0;
+    menu_ = Menu(&labels_, &selected_);
 }
 
 void SidekickPlacement::SetGame(Game* game)

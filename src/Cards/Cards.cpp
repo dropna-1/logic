@@ -117,4 +117,5 @@ void Card::execute(TriggerType trigger , GameContext& context)
         auto targets = context.getTargets(entry.target) ;
         entry.effect->execute(context , targets) ;
     }
+    context.swapPlayers();
 }

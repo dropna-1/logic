@@ -1,4 +1,5 @@
 #include "Effects/GameContext.hpp"
+#include <algorithm>
 using namespace std ;
 
 GameContext::GameContext(
@@ -193,4 +194,8 @@ void GameContext::setSelectedCardsIndex(vector<int> indexes)
 vector<int> GameContext::getSelectedCardsIndex() const 
 {
     return seletedCardsIndex ;
+}
+
+void GameContext::swapPlayers(){
+    std::swap(currentPlayer, enemyPlayer);
 }

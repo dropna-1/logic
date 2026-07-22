@@ -46,4 +46,5 @@ class GameContext
         void setSelectedCardsIndex(std::vector<int>)  ;
         std::vector<int> getSelectedCardsIndex() const  ;
         Game* getGame() const ;
+        void swapPlayers();
 };

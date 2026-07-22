@@ -68,35 +68,14 @@ void PendingActionHandler::ShowPending()
                 return;
             }
  
-            /*game_->currentPendingAction()->submit(*game_, options[index].id);
+            game_->currentPendingAction()->submit(*game_, options[index].id);
 
             if(game_->currentPendingAction()->isFinished())
                 game_->completePendingAction();
 
             if(on_submit_)
-                on_submit_();*/
+                on_submit_();
             
-            // من
-            game_->currentPendingAction()->submit(*game_, options[index].id);
-
-std::cout << "A\n";
-
-if(game_->currentPendingAction()->isFinished())
-{
-    std::cout << "B\n";
-    game_->completePendingAction();
-    std::cout << "C\n";
-}
-
-std::cout << "D\n";
-
-if(on_submit_)
-{
-    std::cout << "E\n";
-    on_submit_();
-    std::cout << "F\n";
-}
-            //من
             if(game_->hasPendingAction())
                 ShowPending();
             else
