@@ -13,8 +13,7 @@ PendingActionHandler::PendingActionHandler(Game* game,
     std::function<void()> on_submit
 )
     : game_(game), on_finish_(std::move(on_finish)), on_submit_(std::move(on_submit)) 
-    {std::cout << "Show Pending";
-        ShowPending();}
+    {ShowPending();}
 
 Component PendingActionHandler::GetComponent()
 {
@@ -50,6 +49,12 @@ void PendingActionHandler::ShowPending()
     for(const auto& option : options)
         items.push_back(option.text + " " + std::to_string(option.id));
 
+    if(items.empty()){
+        game_->completePendingAction();
+        Finish();
+        return;
+    }
+
     menu_.SetTitle("Choose");
     menu_.SetItems(items);
 
@@ -73,7 +78,6 @@ void PendingActionHandler::ShowPending()
             
             if(game_->hasPendingAction())
                 ShowPending();
-
             else
                 Finish();
         }

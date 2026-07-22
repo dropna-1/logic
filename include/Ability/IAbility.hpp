@@ -2,9 +2,13 @@
 
 #include <iostream>
 #include "Cards/Cards.hpp"
-#include "Effects/GameContext.hpp"
 #include "Characters/Character.hpp"
-#include "Game/Game.hpp"
+
+class Game;
+class GameContext;
+class Card;
+class Hero;
+
 class IAbility
 {
     public:

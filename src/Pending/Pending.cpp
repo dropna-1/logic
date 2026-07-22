@@ -120,8 +120,10 @@ std::vector<Option> ShowCardAction::getOption(Game& game){
 }
 
 void ShowCardAction::submit(Game& game, int choice){
-    game.getPendingCombat()->selection.showHand = true;
     finished = true;
+    if(choice == -1)
+        return;
+    game.getPendingCombat()->selection.showHand = true;
 }
 /*-----------------------------------------------------------------*/
 std::vector<Option> DraculaAction::getOption(Game& game){
@@ -129,13 +131,16 @@ std::vector<Option> DraculaAction::getOption(Game& game){
     neighboors = game.getEnemiesNearby();
     for(int c = 0; c < neighboors.size(); c++)
         options.push_back({neighboors.at(c)->getname(), c});
+    options.push_back({"Continue", -1});
     return options;
 }
 
 void DraculaAction::submit(Game& game, int choice){
+    finished = true;
+    if(choice == -1)
+        return;
     game.getDracula().get()->getAbility().get()->execute(
         neighboors.at(choice), game.getDracula().get()
     );
-    finished = true;
 }
 

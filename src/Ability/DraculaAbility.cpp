@@ -1,6 +1,7 @@
 #include "Ability/DraculaAbility.hpp"
 #include "Cards/Deck.hpp"
 #include "Pending/Pending.hpp"
+#include "Game/Game.hpp"
 // inam esm o tozihatesho badan misazam
 std::string DraculaAbility::getName() const
 {

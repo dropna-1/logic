@@ -2,6 +2,7 @@
 #include "Game/Game.hpp"
 #include "ui/Actions/ManeuverAction.hpp"
 #include "ui/Actions/CombatAction.hpp"
+#include "ui/Actions/SchemeAction.hpp"
 
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
@@ -19,8 +20,7 @@ GameScreen::GameScreen(std::function<void()> on_exit)
         menu_
     });
 
-    component_ = CatchEvent(
-        Renderer(container, [&] {
+    component_ = CatchEvent(Renderer(container, [&] {
 
         if (!game_)
             return text("No Game");
@@ -30,30 +30,28 @@ GameScreen::GameScreen(std::function<void()> on_exit)
             pending_handler_ =
                 std::make_unique<PendingActionHandler>(
                     game_,
-                    [this]{pending_handler_.reset();},
+                    nullptr,
                     nullptr
                 );
         }
 
-            Element bottom;
-            if(current_action_)
-                bottom = current_action_->GetComponent()->Render();
-            else if(pending_handler_)
-                bottom = pending_handler_->GetComponent()->Render();
-            else{bottom = menu_->Render();}
+        Element bottom;
+        if(current_action_)
+            bottom = current_action_->GetComponent()->Render();
+        else if(pending_handler_)
+            bottom = pending_handler_->GetComponent()->Render();
+        else{bottom = menu_->Render();}
 
-            BuildMenu();
-
-            return vbox({
-                info_screen_.Render(
-                    game_->getBoard(),
-                    *game_->getCurrentPlayer(),
-                    *game_->getOtherPlayer() ,
-                    *game_
-                ),
-                separator(),
-                bottom
-            });
+        return vbox({
+            info_screen_.Render(
+                game_->getBoard(),
+                *game_->getCurrentPlayer(),
+                *game_->getOtherPlayer() ,
+                *game_
+            ),
+            separator(),
+            bottom
+        });
         }),
 
         [this](Event event) {
@@ -82,7 +80,7 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                     break;
 
                 case SelectedType::Scheme:
-                    // Scheme
+                    current_action_ = std::make_unique<SchemeAction>(game_);
                     break;
 
                 case SelectedType::EndTurn:
@@ -125,4 +123,6 @@ void GameScreen::BuildMenu(){
     }
     actions_.push_back("End Turn");
     selected_type_.push_back(SelectedType::EndTurn);
+
+    menu_ = Menu(&actions_, &selected_);
 }

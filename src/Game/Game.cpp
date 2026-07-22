@@ -64,6 +64,8 @@ void Game::setupGame(){
     otherPlayer->getHero().get()->setPosition(4);
     for(int i = 0; i < 10; i++)
         (i < 5 ? currentPlayer : otherPlayer)->getHero()->getDeck().get()->drawCard();
+    if(currentPlayer->getHero().get()->getAbility().get()->HasAbilityOnStart())
+        currentPlayer->getHero().get()->getAbility().get()->SendRequest(this);
 }
 
 
@@ -427,6 +429,8 @@ void Game::playScheme(Character* source, const int& schemeCardIndex)
 
     currentPlayer->getHero().get()->getDeck()
     .get()->discardFromHand(schemeCardIndex);
+
+    useAction();
 }
 
 
