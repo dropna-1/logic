@@ -166,7 +166,7 @@ void ManeuverAction::SelectDestination()
         }
     );
     menu_.SetOnCancel(
-        [this](){Finish();}
+        [this](){}
     );
 }
 
