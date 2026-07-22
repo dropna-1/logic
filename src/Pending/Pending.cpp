@@ -142,10 +142,5 @@ void DraculaAction::submit(Game& game, int choice){
     game.getDracula().get()->getAbility().get()->execute(
         neighboors.at(choice), game.getDracula().get()
     );
-<<<<<<< HEAD
-=======
-    
-    finished = true;
->>>>>>> e25acdb (fixed bugs)
 }
 

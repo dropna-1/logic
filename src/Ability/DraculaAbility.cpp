@@ -2,10 +2,6 @@
 #include "Cards/Deck.hpp"
 #include "Pending/Pending.hpp"
 #include "Game/Game.hpp"
-<<<<<<< HEAD
-// inam esm o tozihatesho badan misazam
-=======
->>>>>>> e25acdb (fixed bugs)
 std::string DraculaAbility::getName() const
 {
     return "Dracula Ability" ;
