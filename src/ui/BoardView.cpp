@@ -63,7 +63,7 @@ BoardView::Canvas BoardView::CreateEmptyBoard() const
 "                                                   ",
 "*    ---            ---             --*           ",
 "   |        \\   /  \\   /    \\   /   \\              ",
-"   |                            -----              ",
+"   |                    ---     -----              ",
 "     ---      |               |        |           ",
 "   |       \\  |               |  ----              ",
 "   |                          | /       \\          ",
@@ -140,14 +140,14 @@ string BoardView::GetSpaceLabel(
         if(!hero)
             return "";
 
-        if(hero->getPosition()==position)
+        if(hero->getPosition()==position && hero->isAlive())
             return ShortName(hero->getname());
 
         auto& sidekicks = hero->getSidekicks();
 
         for(const auto& sidekick : sidekicks)
         {
-            if(sidekick->getPosition()==position)
+            if(sidekick->getPosition()==position && sidekick->isAlive())
                 return ShortName(sidekick->getname());
         }
 
@@ -217,17 +217,6 @@ Color BoardView::GetZoneColor(const Board& board, int position) const
             return Color::Black ;
     }
 }
-
-/*Color BoardView::GetZoneBackground( const Board& board, int position) const
-{
-    const auto& zone = board.getSpace(position).zone;
-
-    if(zone.size() > 1)
-        return Color::GrayLight; 
-
-    return Color::Default;
-}*/
-
 
 bool BoardView::IsSecret(int position) const
 {

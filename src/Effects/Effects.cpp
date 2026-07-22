@@ -177,6 +177,8 @@ void ReviveSister::execute(GameContext& context ,  const vector<Character*>& tar
 
 void AmbushEffect::execute(GameContext& context ,  const vector<Character*>& targets)
 {
+    if(context.getEnemyPlayer()->getHero()->getDeck()->getHandSize()==0)
+        return;
     int randomindex = (rand())%(context.getEnemyPlayer()->getHero()->getDeck()->getHandSize());
     Card* randomcard = context.getEnemyPlayer()->getHero()->getDeck()->previewCard(randomindex);
     context.getCurrentCard()->setValue(context.getCurrentCard()->getValue() + randomcard->getBoost()) ;
@@ -249,7 +251,7 @@ void RaveningEffect::execute(GameContext& context , const vector<Character*>& ta
         context.getGame()->move(context.getGame()->getPendingCombat()->selection.character , 
         context.getGame()->getPendingCombat()->selection.destination) ;
     }
-    int count ;
+    int count = 0 ;
     for(auto sister : targets)
     {
         if(areAdjacent(context.getBoard() , context.getGame()->getPendingCombat()->selection.character , sister))
