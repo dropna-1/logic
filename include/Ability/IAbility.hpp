@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+<<<<<<< HEAD
 #include "Cards/Cards.hpp"
 #include "Characters/Character.hpp"
 
@@ -9,6 +10,14 @@ class GameContext;
 class Card;
 class Hero;
 
+=======
+#include "Characters/Character.hpp"
+
+class Card ;
+class Hero ;
+class Game;
+class GameContext ;
+>>>>>>> e25acdb (fixed bugs)
 class IAbility
 {
     public:

@@ -43,6 +43,7 @@ class Card
         int getBoost() const;
         CardType getType() const;
         FighterType getFighter() const;
+        std::string getFighterName() const;
         TriggerType getTrigger() const;
         const std::string& getDescription() const ;
         std::vector<EffectEntry>& getEffects() ;

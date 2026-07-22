@@ -6,10 +6,10 @@
 #include "Board/board.hpp"
 #include "Characters/Hero.hpp"
 #include "Factory/HeroFactory.hpp"
-#include "Effects/GameContext.hpp"
 #include "Player/player.hpp"
 #include "Pending/Pending.hpp"
 #include "Common/Option.hpp"
+#include "Effects/GameContext.hpp"
 
 class Character;
 class Card;

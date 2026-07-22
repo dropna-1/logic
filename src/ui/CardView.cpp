@@ -126,12 +126,19 @@ Element CardView::Render(const Card& card) const
                 | color(Color::White)
         });
 
+    auto fighter = 
+        hbox({
+            text("Fighter : ") | color(Color::GrayLight) ,
+            text(card.getFighterName()) | color(Color::White)
+        });
+
     auto content =
         vbox({
             type,
             separator(),
             value,
-            boost
+            boost,
+            fighter
         })
         | bgcolor(bg);
 

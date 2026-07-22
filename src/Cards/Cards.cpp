@@ -34,6 +34,27 @@ FighterType Card::getFighter() const
     return fighter;
 }
 
+string Card::getFighterName() const
+{
+    string fname ="" ;
+    switch(fighter)
+    {
+        case FighterType::Hero :
+        {
+            return "Hero" ;
+        }
+        case FighterType::Sidekick :
+        {
+            return "SideKick" ;
+        }
+        case FighterType::Any :
+        {
+            return "Any" ; 
+        }
+        default : 
+            return "Unknown" ;
+    }
+}
 TriggerType Card::getTrigger() const
 {
     return trigger;

@@ -1,4 +1,5 @@
 #include "Ability/SherlockAbility.hpp"
+#include "Game/Game.hpp"
 using namespace std ;
 
 string SherlockAbility::getName() const
