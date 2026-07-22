@@ -34,6 +34,7 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                     nullptr
                 );
         }
+        BuildMenu();
 
         Element bottom;
         if(current_action_)
@@ -50,7 +51,7 @@ GameScreen::GameScreen(std::function<void()> on_exit)
                 *game_
             ),
             separator(),
-            bottom
+            bottom | borderDouble | color(Color::Cyan3) | frame
         });
         }),
 
@@ -123,6 +124,4 @@ void GameScreen::BuildMenu(){
     }
     actions_.push_back("End Turn");
     selected_type_.push_back(SelectedType::EndTurn);
-
-    menu_ = Menu(&actions_, &selected_);
 }

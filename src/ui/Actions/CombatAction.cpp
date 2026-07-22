@@ -146,7 +146,7 @@ void CombatAction::SelectDefenseCard()
         options.push_back(card.text);
     }
 
-    menu_.SetTitle("Select Defense Card By " + game_->getCurrentPlayer()->getName());
+    menu_.SetTitle("Select Defense Card By " + game_->getOtherPlayer()->getName());
     menu_.SetItems(options);
 
     menu_.SetOnAccept(

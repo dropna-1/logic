@@ -95,7 +95,7 @@ public:
     std::vector<Option> getAllSpaces();
     bool canMove(int to) const;
     void move(Character* character, const int& pos);
-    int boost(Character* self, vector<int>& cards);
+    int boost(Character* self, const int& cardIndex);
     bool canManever();
     void performManeuver(Character* character, const int& pos);
     std::vector<Option> getFreeSpacesNearby(Character* character);

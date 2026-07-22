@@ -60,12 +60,56 @@ void ManeuverAction::SelectCharacter()
                 Finish();
                 return;
             }
-            SelectDestination();
+
+            movement_ = selectedCharacter_->getMovement();
+            SelectBoostCard();
         }
     );
 
     menu_.SetOnCancel(
         [this](){Finish();}
+    );
+}
+
+
+void ManeuverAction::SelectBoostCard()
+{
+    hand_ = game_->getCurrentPlayer()->getHero()->getDeck()->getHand();
+    std::vector<std::string> items;
+
+    for(int c = 0; c < hand_.size(); c++)
+        items.push_back(hand_.at(c)->getName() + " (+" + 
+        std::to_string(hand_.at(c)->getBoost()) + ")");
+
+    items.push_back("Skip");
+
+    menu_.SetTitle("Select Boost Card");
+    menu_.SetItems(items);
+
+    menu_.SetOnAccept(
+        [this](int index)
+        {
+            if(index == static_cast<int>(hand_.size()))
+            {
+                SelectDestination();
+                return;
+            }
+
+            movement_ =
+                game_->boost(
+                    selectedCharacter_,
+                    index
+                );
+
+            SelectDestination();
+        }
+    );
+
+    menu_.SetOnCancel(
+        [this]()
+        {
+            SelectCharacter();
+        }
     );
 }
 
@@ -76,7 +120,7 @@ void ManeuverAction::SelectDestination()
     availableMoves_ =
         game_->getAvailableMoves(
             selectedCharacter_,
-            selectedCharacter_->getMovement()
+            movement_
         );
 
     if(availableMoves_.empty())

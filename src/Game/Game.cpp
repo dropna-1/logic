@@ -386,15 +386,13 @@ bool Game::canDefense(Character* character){
 }
 
 
-int Game::boost(Character* self, vector<int>& cards){
+int Game::boost(Character* self, const int& cardIndex)
+{
     int movement = self->getMovement();
-    for(int cardIndex : cards){
-        movement += currentPlayer->getHero().get()->getDeck()
-        .get()->getHand().at(cardIndex).get()->getBoost();
+    movement += currentPlayer->getHero()->getDeck()->getHand()
+    .at(cardIndex)->getBoost();
 
-        currentPlayer->getHero().get()->getDeck()
-        .get()->discardFromHand(cardIndex);
-    }
+    currentPlayer->getHero()->getDeck()->discardFromHand(cardIndex);
     return movement;
 }
 
