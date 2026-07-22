@@ -566,6 +566,11 @@ void Game::continueCombat()
         /*---------------------------finish---------------------------*/
         case CombatStage::Finished:
         {
+            auto& s = pendingCombat->selection;
+            s.cards.clear();
+            s.character = nullptr;
+            s.destination = -1;
+            s.showHand = false;
             pendingCombat.reset();
             return;
         }
